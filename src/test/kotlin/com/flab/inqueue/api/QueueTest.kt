@@ -14,32 +14,34 @@ class QueueTest {
     @DisplayName("사용자 작업열 검증 기능 api")
     fun validateJobQueue() {
 
-        var eventId = "testEvent1"
+        val eventId = "testEvent1"
+        val userId = "testUser1"
 
         val response = given().log().all()
                 .header("Authorization","ClientId:(StringToSign를 ClientSecret으로 Hmac 암호화)")
-                .pathParam("id",eventId)
+                .pathParam("eventId",eventId)
+                .pathParam("userId",userId)
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
             .`when`()
-                .post("v1/jobs/{eventId}/validate")
+                .post("v1/event/{eventId}/job-queue-check")
             .then().log().all()
-                .assertThat()
                 .statusCode(HttpStatus.OK.value())
     }
 
     @Test
     @DisplayName("사용자 작업열 종료 api")
     fun closeJopQueue() {
-        var eventId = "testEvent1"
+        val eventId = "testEvent1"
+        val userId = "testUser1"
 
         val response = given().log().all()
                 .header("Authorization","ClientId:(StringToSign를 ClientSecret으로 Hmac 암호화)")
-                .pathParam("id",eventId)
+            .pathParam("eventId",eventId)
+            .pathParam("userId",userId)
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
             .`when`()
-                .post("v1/jobs/{eventId}/finish")
+                .post("v1/event/{eventId}/finish")
             .then().log().all()
-                .assertThat()
                 .statusCode(HttpStatus.OK.value())
     }
 
