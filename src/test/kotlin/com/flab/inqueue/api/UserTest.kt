@@ -1,31 +1,39 @@
 package com.flab.inqueue.api
 
+import com.fasterxml.jackson.databind.ObjectMapper
+import com.flab.inqueue.dto.*
 import io.restassured.RestAssured.given
 import org.assertj.core.api.Assertions.*
 import org.hamcrest.Matchers.equalTo
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.springframework.boot.test.context.SpringBootTest
+import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
 
 @SpringBootTest
 class UserTest {
 
+    private val objectMapper = ObjectMapper()
 
     @Test
     @DisplayName("토큰 발급 api")
     fun tokenApiSpec() {
-        val body = hashMapOf<String, String>()
-        body["eventId"] = "testEvent1"
+        val authRequest = AuthRequest("testEvent1")
 
         val response = given().log().all()
             .header("Authorization","ClientId:(StringToSign를 ClientSecret으로 Hmac 암호화)")
-            .body(body)
+            .body(authRequest)
             .contentType(MediaType.APPLICATION_JSON_VALUE)
-            .`when`().post("v1/auth/token")
-            .then().log().all()
-            .assertThat()
-            .body("accessToken", equalTo("jwtToken"))
+        .`when`()
+            .post("v1/auth/token")
+        .then().log().all()
+            .statusCode(HttpStatus.OK.value())
+            .extract()
+
+        val authResponse = objectMapper.readValue(response.body().asString(), AuthResponse::class.java)
+
+        assertThat(authResponse.accessToken).isEqualTo("JWT TOKEN")
     }
     @Test
     @DisplayName("사용자 대기열 진입 api")
@@ -33,16 +41,17 @@ class UserTest {
         var eventId = "testEvent1"
 
         val response = given().log().all()
-            .header("Authorization","AccessToken")
-            .header("clientId","String")
-            .pathParam("id",eventId)
-            .contentType(MediaType.APPLICATION_JSON_VALUE)
-            .`when`().post("v1/events/{eventId}/enter")
+                .header("Authorization","AccessToken")
+                .header("clientId","String")
+                .pathParam("id",eventId)
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+            .`when`()
+                .post("v1/events/{eventId}/enter")
             .then().log().all()
-            .assertThat()
-            .body("status", equalTo("ENUM(WAIT,ENTER)"))
-            .body("expectedInfo.time", equalTo("ISO-8601(hh:mm:ss+09:00)"))
-            .body("expectedInfo.order", equalTo(0))
+                .assertThat()
+                .body("status", equalTo("ENUM(WAIT,ENTER)"))
+                .body("expectedInfo.time", equalTo("ISO-8601(hh:mm:ss+09:00)"))
+                .body("expectedInfo.order", equalTo(0))
     }
 
     @Test
@@ -52,16 +61,17 @@ class UserTest {
         var eventId = "testEvent1"
 
         val response = given().log().all()
-            .header("Authorization", "AccessToken")
-            .header("clientId", "String")
-            .pathParam("id", eventId)
-            .contentType(MediaType.APPLICATION_JSON_VALUE)
-            .`when`().get("v1/events/{eventId}")
+                .header("Authorization", "AccessToken")
+                .header("clientId", "String")
+                .pathParam("id", eventId)
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+            .`when`()
+                .get("v1/events/{eventId}")
             .then().log().all()
-            .assertThat()
-            .body("status", equalTo("ENUM(WAIT,ENTER)"))
-            .body("expectedInfo.time", equalTo("ISO-8601(hh:mm:ss+09:00)"))
-            .body("expectedInfo.order", equalTo(0))
+                .assertThat()
+                .body("status", equalTo("ENUM(WAIT,ENTER)"))
+                .body("expectedInfo.time", equalTo("ISO-8601(hh:mm:ss+09:00)"))
+                .body("expectedInfo.order", equalTo(0))
 
     }
 }

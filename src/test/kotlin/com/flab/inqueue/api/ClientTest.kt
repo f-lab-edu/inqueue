@@ -1,13 +1,16 @@
 package com.flab.inqueue.api
 
+import com.fasterxml.jackson.databind.ObjectMapper
+import com.flab.inqueue.dto.EventRequest
+import com.flab.inqueue.dto.EventResponse
 import io.restassured.RestAssured.given
 import org.assertj.core.api.Assertions.*
-import org.hamcrest.Matchers.equalTo
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
+import java.time.LocalDateTime
 
 @SpringBootTest
 class ClientTest {
@@ -16,28 +19,35 @@ class ClientTest {
     @Test
     @DisplayName("행사 도메인 CRUD")
     fun createEvent() {
-        val body = hashMapOf<String, String>()
-        body["name"] = "name"
-        body["description"] = "description"
-        body["place"] = "place"
-        body["time"] = "time"
-        body["startTime"] = "startTime"
-        body["endTime"] = "endTime"
-        body["personnel"] = "personnel"
-        body["waitQueueStartTime"] = "waitQueueStartTime"
-        body["waitQueueEndTime"] = "waitQueueEndTime"
-        body["type"] = "type"
-        body["jobQueueSize"] = "jobQueueSize"
-        body["jobQueueLimitTime"] = "jobQueueLimitTime"
-        body["redirectUrl"] = "redirectUrl"
+        val eventRequest = EventRequest(
+            "name",
+            "description",
+            "place",
+            LocalDateTime.now(),
+            LocalDateTime.now(),
+            LocalDateTime.now(),
+            10L,
+            LocalDateTime.now(),
+            LocalDateTime.now(),
+            "type",
+            10L,
+            LocalDateTime.now(),
+            "redirectUrl"
+        )
 
-        val response = given().log().all()
-            .header("Authorization","ClientId:(StringToSign를 ClientSecret으로 Hmac 암호화)")
-            .body(body)
-            .contentType(MediaType.APPLICATION_JSON_VALUE)
-            .`when`().post("v1/event")
+        val response =
+            given().log().all()
+                .header("Authorization", "ClientId:(StringToSign를 ClientSecret으로 Hmac 암호화)")
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .body(eventRequest)
+            .`when`()
+                .post("v1/event")
             .then().log().all()
-            .assertThat()
-            .body("eventId", equalTo("UUID"))
+                .statusCode(HttpStatus.OK.value())
+                .extract()
+
+        val eventReponse = ObjectMapper().readValue(response.body().asString(), EventResponse::class.java)
+
+        assertThat(eventReponse.eventId).isNotNull
     }
 }

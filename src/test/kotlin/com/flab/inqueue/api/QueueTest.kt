@@ -2,9 +2,6 @@ package com.flab.inqueue.api
 
 import io.restassured.RestAssured.given
 import org.assertj.core.api.Assertions.*
-import org.hamcrest.Matchers.equalTo
-import org.hamcrest.core.Is.`is`
-import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.springframework.boot.test.context.SpringBootTest
@@ -13,27 +10,21 @@ import org.springframework.http.MediaType
 
 @SpringBootTest
 class QueueTest {
-
-
-
-
-
     @Test
     @DisplayName("사용자 작업열 검증 기능 api")
     fun validateJobQueue() {
 
         var eventId = "testEvent1"
 
-
         val response = given().log().all()
-            .header("Authorization","ClientId:(StringToSign를 ClientSecret으로 Hmac 암호화)")
-            .pathParam("id",eventId)
-            .contentType(MediaType.APPLICATION_JSON_VALUE)
-            .`when`().post("v1/jobs/{eventId}/validate")
+                .header("Authorization","ClientId:(StringToSign를 ClientSecret으로 Hmac 암호화)")
+                .pathParam("id",eventId)
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+            .`when`()
+                .post("v1/jobs/{eventId}/validate")
             .then().log().all()
-            .assertThat()
-            .statusCode(HttpStatus.OK.value())
-
+                .assertThat()
+                .statusCode(HttpStatus.OK.value())
     }
 
     @Test
@@ -41,16 +32,15 @@ class QueueTest {
     fun closeJopQueue() {
         var eventId = "testEvent1"
 
-
         val response = given().log().all()
-            .header("Authorization","ClientId:(StringToSign를 ClientSecret으로 Hmac 암호화)")
-            .pathParam("id",eventId)
-            .contentType(MediaType.APPLICATION_JSON_VALUE)
-            .`when`().post("v1/jobs/{eventId}/finish")
+                .header("Authorization","ClientId:(StringToSign를 ClientSecret으로 Hmac 암호화)")
+                .pathParam("id",eventId)
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+            .`when`()
+                .post("v1/jobs/{eventId}/finish")
             .then().log().all()
-            .assertThat()
-            .statusCode(HttpStatus.OK.value())
-
+                .assertThat()
+                .statusCode(HttpStatus.OK.value())
     }
 
 }
