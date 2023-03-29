@@ -48,10 +48,14 @@ class UserTest {
             .`when`()
                 .post("v1/events/{eventId}/enter")
             .then().log().all()
-                .assertThat()
-                .body("status", equalTo("ENUM(WAIT,ENTER)"))
-                .body("expectedInfo.time", equalTo("ISO-8601(hh:mm:ss+09:00)"))
-                .body("expectedInfo.order", equalTo(0))
+                .statusCode(HttpStatus.OK.value())
+                .extract()
+
+        val eventReponse = objectMapper.readValue(response.body().asString(), QueueResponse::class.java)
+
+        assertThat(eventReponse.status).isNotNull
+        assertThat(eventReponse.expectedInfo.time).isNotNull
+        assertThat(eventReponse.expectedInfo.order).isNotNull
     }
 
     @Test
@@ -68,10 +72,13 @@ class UserTest {
             .`when`()
                 .get("v1/events/{eventId}")
             .then().log().all()
-                .assertThat()
-                .body("status", equalTo("ENUM(WAIT,ENTER)"))
-                .body("expectedInfo.time", equalTo("ISO-8601(hh:mm:ss+09:00)"))
-                .body("expectedInfo.order", equalTo(0))
+                .statusCode(HttpStatus.OK.value())
+                .extract()
 
+        val eventReponse = objectMapper.readValue(response.body().asString(), QueueResponse::class.java)
+
+        assertThat(eventReponse.status).isNotNull
+        assertThat(eventReponse.expectedInfo.time).isNotNull
+        assertThat(eventReponse.expectedInfo.order).isNotNull
     }
 }
