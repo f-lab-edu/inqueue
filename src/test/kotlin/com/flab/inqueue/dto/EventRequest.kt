@@ -7,7 +7,6 @@ data class EventRequest(
     val name: String,
     val description: String,
     val place: String,
-    val time: LocalDateTime,
     val startTime: LocalDateTime,
     val endTime: LocalDateTime,
     val personnel: Long,
@@ -15,7 +14,7 @@ data class EventRequest(
     val waitQueueEndTime: LocalDateTime,
     val type: String,
     val jobQueueSize: Long,
-    val jobQueueLimitTime: LocalDateTime,
+    val jobQueueLimitTime: Long,
     val redirectUrl: String
 )
 
