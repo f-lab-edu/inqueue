@@ -7,6 +7,7 @@ import org.assertj.core.api.Assertions.*
 import org.hamcrest.Matchers.equalTo
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
+import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
@@ -14,7 +15,8 @@ import org.springframework.http.MediaType
 @SpringBootTest
 class UserTest {
 
-    private val objectMapper = ObjectMapper()
+    @Autowired
+    private lateinit var objectMapper: ObjectMapper
 
     @Test
     @DisplayName("토큰 발급 api")
