@@ -23,7 +23,7 @@ class QueueTest {
                 .pathParam("userId",userId)
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
             .`when`()
-                .post("v1/event/{eventId}/job-queue-check")
+                .post("v1/event/${eventId}/job-queue-check/${userId}")
             .then().log().all()
                 .statusCode(HttpStatus.OK.value())
     }
@@ -40,7 +40,7 @@ class QueueTest {
             .pathParam("userId",userId)
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
             .`when`()
-                .post("v1/event/{eventId}/finish")
+                .post("v1/event/${eventId}/job-queue-check/${userId}")
             .then().log().all()
                 .statusCode(HttpStatus.OK.value())
     }
