@@ -64,7 +64,7 @@ object ValidateJobQueueDocument {
     )
 
     private fun headerFiledSnippet(): Snippet {
-        return requestHeaders(//요청 헤더
+        return requestHeaders(
             headerWithName(HttpHeaders.AUTHORIZATION).description("ClientId:(StringToSign를 ClientSecret으로 Hmac 암호화)"),
             headerWithName(HttpHeaders.CONTENT_TYPE).description("요청-Type")
         )
@@ -86,7 +86,7 @@ object CloseJopQueueDocument {
     )
 
     private fun headerFiledSnippet(): Snippet {
-        return requestHeaders(//요청 헤더
+        return requestHeaders(
             headerWithName(HttpHeaders.AUTHORIZATION).description("ClientId:(StringToSign를 ClientSecret으로 Hmac 암호화)"),
             headerWithName(HttpHeaders.CONTENT_TYPE).description("요청-Type")
         )
