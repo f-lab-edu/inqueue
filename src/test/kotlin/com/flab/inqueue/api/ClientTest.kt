@@ -1,5 +1,6 @@
 package com.flab.inqueue.api
 
+import com.flab.inqueue.AcceptanceTest
 import com.flab.inqueue.dto.EventRequest
 import io.restassured.RestAssured.given
 import org.assertj.core.api.Assertions.*
@@ -9,10 +10,16 @@ import org.junit.jupiter.api.Test
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
+import org.springframework.test.context.ActiveProfiles
 import java.time.LocalDateTime
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
-class ClientTest {
+@ActiveProfiles("test")
+class ClientTest : AcceptanceTest() {
+
+    @Test
+    fun test(){
+    }
 
     @Test
     @DisplayName("행사 도메인 CRUD")

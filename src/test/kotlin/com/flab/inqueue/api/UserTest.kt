@@ -1,5 +1,6 @@
 package com.flab.inqueue.api
 
+import com.flab.inqueue.AcceptanceTest
 import com.flab.inqueue.dto.*
 import io.restassured.RestAssured.given
 import org.assertj.core.api.Assertions.*
@@ -10,8 +11,8 @@ import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
 
-@SpringBootTest
-class UserTest {
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
+class UserTest : AcceptanceTest(){
 
     @Test
     @DisplayName("토큰 발급 api")
@@ -32,7 +33,7 @@ class UserTest {
     @Test
     @DisplayName("사용자 대기열 진입 api")
     fun enterWaitQueue() {
-        var eventId = "testEvent1"
+        val eventId = "testEvent1"
 
         given().log().all()
             .header("Authorization", "AccessToken")
@@ -51,8 +52,7 @@ class UserTest {
     @Test
     @DisplayName("사용자 대기열 조회 api")
     fun retrieveWaitQueue() {
-
-        var eventId = "testEvent1"
+        val eventId = "testEvent1"
 
         given().log().all()
             .header("Authorization", "AccessToken")
