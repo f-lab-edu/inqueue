@@ -19,5 +19,5 @@ data class EventRequest(
 )
 
 data class EventResponse(
-    val eventId : String
+    val eventId: String
 )

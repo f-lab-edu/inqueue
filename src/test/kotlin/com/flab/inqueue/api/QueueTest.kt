@@ -17,15 +17,13 @@ class QueueTest {
         val eventId = "testEvent1"
         val userId = "testUser1"
 
-        val response = given().log().all()
-                .header("Authorization","ClientId:(StringToSign를 ClientSecret으로 Hmac 암호화)")
-                .pathParam("eventId",eventId)
-                .pathParam("userId",userId)
-                .contentType(MediaType.APPLICATION_JSON_VALUE)
-            .`when`()
-                .post("v1/event/${eventId}/job-queue-check/${userId}")
-            .then().log().all()
-                .statusCode(HttpStatus.OK.value())
+        given().log().all()
+            .header("Authorization", "ClientId:(StringToSign를 ClientSecret으로 Hmac 암호화)")
+            .contentType(MediaType.APPLICATION_JSON_VALUE).
+        `when`()
+            .post("v1/event/${eventId}/job-queue-check/${userId}").
+        then().log().all()
+            .statusCode(HttpStatus.OK.value())
     }
 
     @Test
@@ -34,15 +32,12 @@ class QueueTest {
         val eventId = "testEvent1"
         val userId = "testUser1"
 
-        val response = given().log().all()
-                .header("Authorization","ClientId:(StringToSign를 ClientSecret으로 Hmac 암호화)")
-            .pathParam("eventId",eventId)
-            .pathParam("userId",userId)
-                .contentType(MediaType.APPLICATION_JSON_VALUE)
-            .`when`()
-                .post("v1/event/${eventId}/job-queue-check/${userId}")
-            .then().log().all()
-                .statusCode(HttpStatus.OK.value())
+        given().log().all()
+            .header("Authorization", "ClientId:(StringToSign를 ClientSecret으로 Hmac 암호화)")
+            .contentType(MediaType.APPLICATION_JSON_VALUE).
+        `when`()
+            .post("v1/event/${eventId}/job-queue-finish/${userId}").
+        then().log().all()
+            .statusCode(HttpStatus.OK.value())
     }
-
 }
