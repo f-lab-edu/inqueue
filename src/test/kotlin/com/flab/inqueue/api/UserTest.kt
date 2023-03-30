@@ -48,9 +48,10 @@ class UserTest : AcceptanceTest() {
             .filter(EnterWaitQueueDocument.FILTER)
             .header(HttpHeaders.AUTHORIZATION, "AccessToken")
             .header("clientId", "String")
+            .pathParam("eventId", eventId)
             .contentType(MediaType.APPLICATION_JSON_VALUE).
         `when`()
-            .post("v1/events/${eventId}/enter").
+            .post("v1/events/{eventId}/enter").
         then().log().all()
             .statusCode(HttpStatus.OK.value())
             .assertThat()
@@ -68,9 +69,10 @@ class UserTest : AcceptanceTest() {
             .filter(RetrieveWaitQueueDocument.FILTER)
             .header(HttpHeaders.AUTHORIZATION, "AccessToken")
             .header("clientId", "String")
+            .pathParam("eventId", eventId)
             .contentType(MediaType.APPLICATION_JSON_VALUE).
         `when`()
-            .get("v1/events/${eventId}").
+            .get("v1/events/{eventId}").
         then().log().all()
             .statusCode(HttpStatus.OK.value())
             .assertThat()
