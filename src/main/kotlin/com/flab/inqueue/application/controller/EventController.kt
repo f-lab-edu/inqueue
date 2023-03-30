@@ -1,9 +1,9 @@
 package com.flab.inqueue.application.controller
 
+import com.flab.inqueue.domain.dto.EventRequest
 import com.flab.inqueue.domain.dto.EventResponse
 import com.flab.inqueue.domain.dto.QueueInfo
 import com.flab.inqueue.domain.dto.QueueResponse
-import com.sun.jdi.request.EventRequest
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 import java.time.LocalTime
@@ -15,7 +15,7 @@ class EventController {
     @PostMapping
     fun createEvent(
         @RequestHeader("Authorization") accessKey: String,
-        eventRequest: EventRequest
+        @RequestBody eventRequest: EventRequest
     ): EventResponse {
         return EventResponse("eventId")
     }
