@@ -8,7 +8,6 @@ import org.assertj.core.api.Assertions.*
 import org.hamcrest.Matchers.notNullValue
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
-import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
@@ -21,7 +20,6 @@ import org.springframework.restdocs.restassured.RestAssuredRestDocumentation
 import org.springframework.restdocs.restassured.RestDocumentationFilter
 import org.springframework.restdocs.snippet.Snippet
 
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
 class UserTest : AcceptanceTest() {
 
     @Test
