@@ -49,28 +49,22 @@ tasks.withType<KotlinCompile> {
     }
 }
 
-tasks.withType<Test> {
-    useJUnitPlatform()
-}
-
 val snippetsDir by extra { file("build/generated-snippets") }
 
-tasks.test {
-    outputs.dir(snippetsDir)
-}
+tasks {
+    test {
+        outputs.dir(snippetsDir)
+        useJUnitPlatform()
+    }
+    asciidoctor {
+        dependsOn(test)
+        configurations("asciidoctorExt")
+        inputs.dir(snippetsDir)
+    }
 
-tasks.asciidoctor {
-    dependsOn(tasks.test)
-    configurations("asciidoctorExt")
-    baseDirFollowsSourceFile()  // 3
-    inputs.dir(snippetsDir)
-}
-tasks.register<Copy>("copyDocument") {
-    dependsOn(tasks.asciidoctor)
-    from(file("build/docs/asciidoc/index.html"))
-    into(file("src/main/resources/static/docs"))
-}
-
-tasks.bootJar {
-    dependsOn("copyDocument")
+    bootJar {
+        dependsOn(asciidoctor)
+        from("${asciidoctor.get().outputDir}/html5")
+        into(file("static/docs"))
+    }
 }
