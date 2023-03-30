@@ -1,6 +1,7 @@
 package com.flab.inqueue.api
 
 import com.fasterxml.jackson.databind.ObjectMapper
+import com.flab.inqueue.AcceptanceTest
 import com.flab.inqueue.dto.EventRequest
 import com.flab.inqueue.dto.EventResponse
 import io.restassured.RestAssured.given
@@ -11,14 +12,21 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
+import org.springframework.test.context.ActiveProfiles
 import java.time.LocalDateTime
 
 @SpringBootTest
-class ClientTest {
+@ActiveProfiles("test")
+class ClientTest : AcceptanceTest() {
 
 
     @Autowired
     private lateinit var objectMapper: ObjectMapper
+
+    @Test
+    fun test(){
+
+    }
 
     @Test
     @DisplayName("행사 도메인 CRUD")

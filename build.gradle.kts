@@ -26,6 +26,12 @@ dependencies {
 
     testImplementation("io.rest-assured:rest-assured:5.3.0")
     testImplementation("org.springframework.boot:spring-boot-starter-test")
+
+    /* testcontainers */
+    testImplementation("org.testcontainers:testcontainers:1.17.2")
+    testImplementation("org.testcontainers:junit-jupiter:1.17.2")
+    testImplementation("org.testcontainers:mysql:1.17.2")
+
 }
 
 tasks.withType<KotlinCompile> {

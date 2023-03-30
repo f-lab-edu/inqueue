@@ -1,10 +1,10 @@
 package com.flab.inqueue.api
 
 import com.fasterxml.jackson.databind.ObjectMapper
+import com.flab.inqueue.AcceptanceTest
 import com.flab.inqueue.dto.*
 import io.restassured.RestAssured.given
 import org.assertj.core.api.Assertions.*
-import org.hamcrest.Matchers.equalTo
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
@@ -13,7 +13,7 @@ import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
 
 @SpringBootTest
-class UserTest {
+class UserTest : AcceptanceTest(){
 
     @Autowired
     private lateinit var objectMapper: ObjectMapper

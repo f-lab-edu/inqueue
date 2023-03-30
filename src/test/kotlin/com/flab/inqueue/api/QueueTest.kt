@@ -1,5 +1,6 @@
 package com.flab.inqueue.api
 
+import com.flab.inqueue.AcceptanceTest
 import io.restassured.RestAssured.given
 import org.assertj.core.api.Assertions.*
 import org.junit.jupiter.api.DisplayName
@@ -9,7 +10,7 @@ import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
 
 @SpringBootTest
-class QueueTest {
+class QueueTest : AcceptanceTest(){
     @Test
     @DisplayName("사용자 작업열 검증 기능 api")
     fun validateJobQueue() {
