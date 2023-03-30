@@ -1,4 +1,4 @@
-package com.flab.inqueue.dto
+package com.flab.inqueue.domain.dto
 
 import java.time.LocalDateTime
 
@@ -16,8 +16,4 @@ data class EventRequest(
     val jobQueueSize: Long,
     val jobQueueLimitTime: Long,
     val redirectUrl: String
-)
-
-data class EventResponse(
-    val eventId: String
 )

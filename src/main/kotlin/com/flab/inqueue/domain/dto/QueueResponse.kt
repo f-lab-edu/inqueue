@@ -1,4 +1,4 @@
-package com.flab.inqueue.dto
+package com.flab.inqueue.domain.dto
 
 import java.time.LocalTime
 

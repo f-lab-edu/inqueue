@@ -2,7 +2,7 @@ package com.flab.inqueue.api
 
 import com.flab.inqueue.AcceptanceTest
 import com.flab.inqueue.REST_DOCS_DOCUMENT_IDENTIFIER
-import com.flab.inqueue.dto.EventRequest
+import com.flab.inqueue.domain.dto.EventRequest
 import io.restassured.RestAssured.given
 import org.assertj.core.api.Assertions.*
 import org.hamcrest.Matchers.notNullValue
@@ -47,7 +47,7 @@ class ClientTest : AcceptanceTest() {
         given(this.spec)
             .filter(CreateEventDocument.FILTER)
             .log().all()
-            .header(HttpHeaders.AUTHORIZATION, "ClientId:(StringToSign를 ClientSecret으로 Hmac 암호화)")
+            .header(HttpHeaders.AUTHORIZATION, "X-Client-Id:(StringToSign를 ClientSecret으로 Hmac 암호화)")
             .contentType(MediaType.APPLICATION_JSON_VALUE)
             .body(eventRequest).
         `when`()
@@ -69,7 +69,7 @@ object CreateEventDocument {
 
     private fun headerFiledSnippet() : Snippet {
         return requestHeaders(
-            headerWithName(HttpHeaders.AUTHORIZATION).description("ClientId:(StringToSign를 ClientSecret으로 Hmac 암호화)"),
+            headerWithName(HttpHeaders.AUTHORIZATION).description("X-Client-Id:(StringToSign를 ClientSecret으로 Hmac 암호화)"),
             headerWithName(HttpHeaders.CONTENT_TYPE).description("요청-Type")
         )
     }
@@ -79,8 +79,8 @@ object CreateEventDocument {
             fieldWithPath("name").type(JsonFieldType.STRING).description("이름"),
             fieldWithPath("description").type(JsonFieldType.STRING).description("설명"),
             fieldWithPath("place").type(JsonFieldType.STRING).description("장소"),
-            fieldWithPath("startTime").type(JsonFieldType.STRING).description("행사 시작 시간"),
-            fieldWithPath("endTime").type(JsonFieldType.STRING).description("행사 마침 시간"),
+            fieldWithPath("startTime").type(JsonFieldType.ARRAY).description("행사 시작 시간"),
+            fieldWithPath("endTime").type(JsonFieldType.ARRAY).description("행사 마침 시간"),
             fieldWithPath("personnel").type(JsonFieldType.NUMBER).description("인원"),
             fieldWithPath("waitQueueStartTime").type(JsonFieldType.ARRAY).description("대기 큐 시작 시간"),
             fieldWithPath("waitQueueEndTime").type(JsonFieldType.ARRAY).description("대기 큐 마침 시간"),

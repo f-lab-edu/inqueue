@@ -2,7 +2,7 @@ package com.flab.inqueue.api
 
 import com.flab.inqueue.AcceptanceTest
 import com.flab.inqueue.REST_DOCS_DOCUMENT_IDENTIFIER
-import com.flab.inqueue.dto.AuthRequest
+import com.flab.inqueue.domain.dto.AuthRequest
 import io.restassured.RestAssured.given
 import org.assertj.core.api.Assertions.*
 import org.hamcrest.Matchers.notNullValue
@@ -29,7 +29,7 @@ class UserTest : AcceptanceTest() {
 
         given(this.spec).log().all()
             .filter(GenerateTokenDocument.FILTER)
-            .header(HttpHeaders.AUTHORIZATION, "ClientId:(StringToSign를 ClientSecret으로 Hmac 암호화)")
+            .header(HttpHeaders.AUTHORIZATION, "X-Client-Id:(StringToSign를 ClientSecret으로 Hmac 암호화)")
             .body(authRequest)
             .contentType(MediaType.APPLICATION_JSON_VALUE).
         `when`()
@@ -47,7 +47,7 @@ class UserTest : AcceptanceTest() {
         given(this.spec).log().all()
             .filter(EnterWaitQueueDocument.FILTER)
             .header(HttpHeaders.AUTHORIZATION, "AccessToken")
-            .header("clientId", "String")
+            .header("X-Client-Id", "String")
             .pathParam("eventId", eventId)
             .contentType(MediaType.APPLICATION_JSON_VALUE).
         `when`()
@@ -68,7 +68,7 @@ class UserTest : AcceptanceTest() {
         given(this.spec).log().all()
             .filter(RetrieveWaitQueueDocument.FILTER)
             .header(HttpHeaders.AUTHORIZATION, "AccessToken")
-            .header("clientId", "String")
+            .header("X-Client-Id", "String")
             .pathParam("eventId", eventId)
             .contentType(MediaType.APPLICATION_JSON_VALUE).
         `when`()
@@ -93,8 +93,7 @@ object GenerateTokenDocument {
     private fun headerFiledSnippet(): Snippet {
         return requestHeaders(
             headerWithName(HttpHeaders.AUTHORIZATION)
-                .description("ClientId:(StringToSign를 ClientSecret으로 Hmac 암호화)"),
-            headerWithName("clientId").description("고객사 식별자"),
+                .description("X-Client-Id:(StringToSign를 ClientSecret으로 Hmac 암호화)"),
             headerWithName(HttpHeaders.CONTENT_TYPE).description("요청-Type"),
         )
     }
@@ -102,13 +101,13 @@ object GenerateTokenDocument {
     private fun requestFieldsSnippet(): Snippet {
         return requestFields(
             fieldWithPath("eventId").type(JsonFieldType.STRING).description("이벤트 식별자"),
-            fieldWithPath("userId").type(JsonFieldType.STRING).description("사용자 식별자"),
+            fieldWithPath("userId").type(JsonFieldType.STRING).type(JsonFieldType.NULL).description("사용자 식별자"),
         )
     }
 
     private fun responseFieldsSnippet(): Snippet {
         return responseFields(
-            fieldWithPath(HttpHeaders.AUTHORIZATION).type(JsonFieldType.STRING).description("JWT 토큰"),
+            fieldWithPath("accessToken").type(JsonFieldType.STRING).description("JWT 토큰"),
         )
     }
 }
@@ -124,8 +123,8 @@ object EnterWaitQueueDocument {
     private fun headerFiledSnippet(): Snippet {
         return requestHeaders(
             headerWithName(HttpHeaders.AUTHORIZATION)
-                .description("ClientId:(StringToSign를 ClientSecret으로 Hmac 암호화)"),
-            headerWithName("clientId").description("고객사 식별자"),
+                .description("X-Client-Id:(StringToSign를 ClientSecret으로 Hmac 암호화)"),
+            headerWithName("X-Client-Id").description("고객사 식별자"),
             headerWithName(HttpHeaders.CONTENT_TYPE).description("요청-Type"),
         )
     }
@@ -156,8 +155,8 @@ object RetrieveWaitQueueDocument {
     private fun headerFiledSnippet(): Snippet {
         return requestHeaders(
             headerWithName(HttpHeaders.AUTHORIZATION)
-                .description("ClientId:(StringToSign를 ClientSecret으로 Hmac 암호화)"),
-            headerWithName("clientId").description("고객사 식별자"),
+                .description("X-Client-Id:(StringToSign를 ClientSecret으로 Hmac 암호화)"),
+            headerWithName("X-Client-Id").description("고객사 식별자"),
             headerWithName(HttpHeaders.CONTENT_TYPE).description("요청-Type"),
         )
     }

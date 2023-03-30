@@ -8,7 +8,6 @@ import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus
-import org.springframework.http.MediaType
 import org.springframework.restdocs.headers.HeaderDocumentation.*
 import org.springframework.restdocs.payload.PayloadDocumentation.*
 import org.springframework.restdocs.request.RequestDocumentation.parameterWithName
@@ -27,12 +26,11 @@ class QueueTest : AcceptanceTest() {
 
         given(this.spec).log().all()
             .filter(ValidateJobQueueDocument.FILTER)
-            .header(HttpHeaders.AUTHORIZATION, "ClientId:(StringToSign를 ClientSecret으로 Hmac 암호화)")
+            .header(HttpHeaders.AUTHORIZATION, "X-Client-Id:(StringToSign를 ClientSecret으로 Hmac 암호화)")
             .pathParam("eventId", eventId)
-            .pathParam("userId", userId)
-            .contentType(MediaType.APPLICATION_JSON_VALUE).
+            .pathParam("userId", userId).
         `when`()
-            .post("v1/event/{eventId}/job-queue-check/{userId}").
+            .post("v1/events/{eventId}/job-queue-check/{userId}").
         then().log().all()
             .statusCode(HttpStatus.OK.value())
     }
@@ -45,12 +43,11 @@ class QueueTest : AcceptanceTest() {
 
         given(this.spec).log().all()
             .filter(CloseJopQueueDocument.FILTER)
-            .header(HttpHeaders.AUTHORIZATION, "ClientId:(StringToSign를 ClientSecret으로 Hmac 암호화)")
+            .header(HttpHeaders.AUTHORIZATION, "X-Client-Id:(StringToSign를 ClientSecret으로 Hmac 암호화)")
             .pathParam("eventId", eventId)
-            .pathParam("userId", userId)
-            .contentType(MediaType.APPLICATION_JSON_VALUE).
+            .pathParam("userId", userId).
         `when`()
-            .post("v1/event/{eventId}/job-queue-finish/{userId}").
+            .post("v1/events/{eventId}/job-queue-finish/{userId}").
         then().log().all()
             .statusCode(HttpStatus.OK.value())
     }
@@ -65,7 +62,7 @@ object ValidateJobQueueDocument {
 
     private fun headerFiledSnippet(): Snippet {
         return requestHeaders(
-            headerWithName(HttpHeaders.AUTHORIZATION).description("ClientId:(StringToSign를 ClientSecret으로 Hmac 암호화)"),
+            headerWithName(HttpHeaders.AUTHORIZATION).description("X-Client-Id:(StringToSign를 ClientSecret으로 Hmac 암호화)"),
             headerWithName(HttpHeaders.CONTENT_TYPE).description("요청-Type")
         )
     }
@@ -87,7 +84,7 @@ object CloseJopQueueDocument {
 
     private fun headerFiledSnippet(): Snippet {
         return requestHeaders(
-            headerWithName(HttpHeaders.AUTHORIZATION).description("ClientId:(StringToSign를 ClientSecret으로 Hmac 암호화)"),
+            headerWithName(HttpHeaders.AUTHORIZATION).description("X-Client-Id:(StringToSign를 ClientSecret으로 Hmac 암호화)"),
             headerWithName(HttpHeaders.CONTENT_TYPE).description("요청-Type")
         )
     }
