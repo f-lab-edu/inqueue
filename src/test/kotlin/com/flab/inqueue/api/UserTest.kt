@@ -3,7 +3,6 @@ package com.flab.inqueue.api
 import com.flab.inqueue.AcceptanceTest
 import com.flab.inqueue.REST_DOCS_DOCUMENT_IDENTIFIER
 import com.flab.inqueue.domain.dto.AuthRequest
-import io.restassured.RestAssured.given
 import org.assertj.core.api.Assertions.*
 import org.hamcrest.Matchers.notNullValue
 import org.junit.jupiter.api.DisplayName
@@ -27,7 +26,7 @@ class UserTest : AcceptanceTest() {
     fun generateToken() {
         val authRequest = AuthRequest("testEvent1")
 
-        given(this.spec).log().all()
+        given.log().all()
             .filter(GenerateTokenDocument.FILTER)
             .header(HttpHeaders.AUTHORIZATION, "X-Client-Id:(StringToSign를 ClientSecret으로 Hmac 암호화)")
             .body(authRequest)
@@ -44,7 +43,7 @@ class UserTest : AcceptanceTest() {
     fun enterWaitQueue() {
         val eventId = "testEvent1"
 
-        given(this.spec).log().all()
+        given.log().all()
             .filter(EnterWaitQueueDocument.FILTER)
             .header(HttpHeaders.AUTHORIZATION, "AccessToken")
             .header("X-Client-Id", "String")
@@ -65,7 +64,7 @@ class UserTest : AcceptanceTest() {
     fun retrieveWaitQueue() {
         val eventId = "testEvent1"
 
-        given(this.spec).log().all()
+        given.log().all()
             .filter(RetrieveWaitQueueDocument.FILTER)
             .header(HttpHeaders.AUTHORIZATION, "AccessToken")
             .header("X-Client-Id", "String")

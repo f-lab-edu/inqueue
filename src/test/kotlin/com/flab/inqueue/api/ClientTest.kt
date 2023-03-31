@@ -3,7 +3,6 @@ package com.flab.inqueue.api
 import com.flab.inqueue.AcceptanceTest
 import com.flab.inqueue.REST_DOCS_DOCUMENT_IDENTIFIER
 import com.flab.inqueue.domain.dto.EventRequest
-import io.restassured.RestAssured.given
 import org.assertj.core.api.Assertions.*
 import org.hamcrest.Matchers.notNullValue
 import org.junit.jupiter.api.DisplayName
@@ -23,10 +22,6 @@ import java.time.LocalDateTime
 class ClientTest : AcceptanceTest() {
 
     @Test
-    fun test() {
-    }
-
-    @Test
     @DisplayName("행사 도메인 CRUD")
     fun createEvent() {
         val eventRequest = EventRequest(
@@ -44,9 +39,8 @@ class ClientTest : AcceptanceTest() {
             "redirectUrl"
         )
 
-        given(this.spec)
+        given.log().all()
             .filter(CreateEventDocument.FILTER)
-            .log().all()
             .header(HttpHeaders.AUTHORIZATION, "X-Client-Id:(StringToSign를 ClientSecret으로 Hmac 암호화)")
             .contentType(MediaType.APPLICATION_JSON_VALUE)
             .body(eventRequest).

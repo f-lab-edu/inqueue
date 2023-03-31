@@ -2,7 +2,6 @@ package com.flab.inqueue.api
 
 import com.flab.inqueue.AcceptanceTest
 import com.flab.inqueue.REST_DOCS_DOCUMENT_IDENTIFIER
-import io.restassured.RestAssured.given
 import org.assertj.core.api.Assertions.*
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
@@ -24,7 +23,7 @@ class QueueTest : AcceptanceTest() {
         val eventId = "testEvent1"
         val userId = "testUser1"
 
-        given(this.spec).log().all()
+        given.log().all()
             .filter(ValidateJobQueueDocument.FILTER)
             .header(HttpHeaders.AUTHORIZATION, "X-Client-Id:(StringToSign를 ClientSecret으로 Hmac 암호화)")
             .pathParam("eventId", eventId)
@@ -41,7 +40,7 @@ class QueueTest : AcceptanceTest() {
         val eventId = "testEvent1"
         val userId = "testUser1"
 
-        given(this.spec).log().all()
+        given.log().all()
             .filter(CloseJopQueueDocument.FILTER)
             .header(HttpHeaders.AUTHORIZATION, "X-Client-Id:(StringToSign를 ClientSecret으로 Hmac 암호화)")
             .pathParam("eventId", eventId)
