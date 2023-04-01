@@ -4,7 +4,6 @@ import com.flab.inqueue.AcceptanceTest
 import com.flab.inqueue.REST_DOCS_DOCUMENT_IDENTIFIER
 import com.flab.inqueue.domain.dto.EventRequest
 import org.assertj.core.api.Assertions.*
-import org.hamcrest.Matchers.notNullValue
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.springframework.http.HttpHeaders
@@ -39,7 +38,7 @@ class ClientTest : AcceptanceTest() {
             "redirectUrl"
         )
 
-        given.log().all()
+        val response = given.log().all()
             .filter(CreateEventDocument.FILTER)
             .header(HttpHeaders.AUTHORIZATION, "X-Client-Id:(StringToSign를 ClientSecret으로 Hmac 암호화)")
             .contentType(MediaType.APPLICATION_JSON_VALUE)
@@ -48,9 +47,14 @@ class ClientTest : AcceptanceTest() {
             .post("v1/events").
         then().log().all()
             .statusCode(HttpStatus.OK.value())
-            .assertThat()
-            .body("eventId", notNullValue())
+            .extract()
+
+        val body = response.body().jsonPath()
+
+        assertThat(body.get<String>("eventId")).isEqualTo("eventId")
     }
+
+
 }
 
 object CreateEventDocument {

@@ -43,7 +43,7 @@ class UserTest : AcceptanceTest() {
     fun enterWaitQueue() {
         val eventId = "testEvent1"
 
-        given.log().all()
+        val response = given.log().all()
             .filter(EnterWaitQueueDocument.FILTER)
             .header(HttpHeaders.AUTHORIZATION, "AccessToken")
             .header("X-Client-Id", "String")
@@ -53,10 +53,13 @@ class UserTest : AcceptanceTest() {
             .post("v1/events/{eventId}/enter").
         then().log().all()
             .statusCode(HttpStatus.OK.value())
-            .assertThat()
-            .body("status", notNullValue())
-            .body("expectedInfo.time", notNullValue())
-            .body("expectedInfo.order", notNullValue())
+            .extract()
+
+        val body = response.body().jsonPath()
+
+        assertThat(listOf("WAIT","ENTER")).contains(body.get("status"))
+        assertThat(body.get<Any>("expectedInfo.time")).isNotNull
+        assertThat(body.get<Any>("expectedInfo.order")).isEqualTo(1)
     }
 
     @Test
@@ -64,7 +67,7 @@ class UserTest : AcceptanceTest() {
     fun retrieveWaitQueue() {
         val eventId = "testEvent1"
 
-        given.log().all()
+        val response = given.log().all()
             .filter(RetrieveWaitQueueDocument.FILTER)
             .header(HttpHeaders.AUTHORIZATION, "AccessToken")
             .header("X-Client-Id", "String")
@@ -74,10 +77,13 @@ class UserTest : AcceptanceTest() {
             .get("v1/events/{eventId}").
         then().log().all()
             .statusCode(HttpStatus.OK.value())
-            .assertThat()
-            .body("status", notNullValue())
-            .body("expectedInfo.time", notNullValue())
-            .body("expectedInfo.order", notNullValue())
+            .extract()
+
+        val body = response.body().jsonPath()
+
+        assertThat(listOf("WAIT","ENTER")).contains(body.get("status"))
+        assertThat(body.get<Any>("expectedInfo.time")).isNotNull
+        assertThat(body.get<Any>("expectedInfo.order")).isEqualTo(1)
     }
 }
 
