@@ -2,7 +2,7 @@ package com.flab.inqueue.api
 
 import com.flab.inqueue.AcceptanceTest
 import com.flab.inqueue.REST_DOCS_DOCUMENT_IDENTIFIER
-import com.flab.inqueue.domain.dto.EventRequest
+import com.flab.inqueue.domain.event.dto.EventRequest
 import org.assertj.core.api.Assertions.*
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
@@ -24,18 +24,13 @@ class ClientTest : AcceptanceTest() {
     @DisplayName("행사 도메인 CRUD")
     fun createEvent() {
         val eventRequest = EventRequest(
-            "name",
-            "description",
-            "place",
+            null,
             LocalDateTime.now(),
             LocalDateTime.now(),
-            10L,
-            LocalDateTime.now(),
-            LocalDateTime.now(),
-            "type",
-            10L,
-            10L,
-            "redirectUrl"
+            1L,
+            1L,
+            null,
+            null
         )
 
         val response = given.log().all()
