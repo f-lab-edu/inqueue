@@ -17,8 +17,7 @@ class EventService(
     fun retriveAll(customId : String) {
         // TODO: 고객사 도메인 미구현 // return eventRepository.findAllByCustomId(customId)
     }
-
-    fun save(event: Event): EventResponse = EventResponse(eventRepository.save(event).eventId)
+    fun save(request: EventRequest): EventResponse = EventResponse(eventRepository.save(request.toEntity()).eventId)
 
     @Transactional
     fun update(request: EventRequest) {

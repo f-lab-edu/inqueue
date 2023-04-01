@@ -1,23 +1,27 @@
 package com.flab.inqueue.application.controller
 
-import com.flab.inqueue.domain.dto.EventRequest
-import com.flab.inqueue.domain.dto.EventResponse
+import com.flab.inqueue.domain.event.dto.EventRequest
+import com.flab.inqueue.domain.event.dto.EventResponse
 import com.flab.inqueue.domain.dto.QueueInfo
 import com.flab.inqueue.domain.dto.QueueResponse
+import com.flab.inqueue.domain.event.service.EventService
+import jakarta.validation.Valid
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 import java.time.LocalTime
 
 @RestController
 @RequestMapping("/v1/events")
-class EventController {
+class EventController(
+    private val eventService: EventService
+) {
 
     @PostMapping
     fun createEvent(
         @RequestHeader("Authorization") accessKey: String,
-        @RequestBody eventRequest: EventRequest
+        @RequestBody @Valid eventRequest: EventRequest
     ): EventResponse {
-        return EventResponse("eventId")
+        return eventService.save(eventRequest)
     }
 
     @PostMapping("/{eventId}/enter")
