@@ -13,11 +13,11 @@ import java.util.NoSuchElementException
 class EventService(
     private val eventRepository: EventRepository
 ) {
-    fun retrive(request: EventRequest): EventResponse = EventResponse(findEvent(request))
+    fun retrive(request: EventRequest) = EventResponse(findEvent(request))
     fun retriveAll(customId : String) {
         // TODO: 고객사 도메인 미구현 // return eventRepository.findAllByCustomId(customId)
     }
-    fun save(request: EventRequest): EventResponse = EventResponse(eventRepository.save(request.toEntity()).eventId)
+    fun save(request: EventRequest) = EventResponse(eventRepository.save(request.toEntity()).eventId)
 
     @Transactional
     fun update(request: EventRequest) {
@@ -28,7 +28,7 @@ class EventService(
 
     fun delete(request: EventRequest) = eventRepository.deleteById(findEvent(request).id)
 
-    private fun validateRequest(request: EventRequest) = require( request.eventId.isNullOrBlank() ) { "eventId를 입력해주세요" }
+    private fun validateRequest(request: EventRequest) = require( !request.eventId.isNullOrBlank() ) { "eventId를 입력해주세요" }
     private fun findEvent(request: EventRequest): Event {
         validateRequest(request)
         return eventRepository.findByEventId(request.eventId!!)

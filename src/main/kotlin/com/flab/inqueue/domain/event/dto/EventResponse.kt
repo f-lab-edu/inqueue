@@ -7,12 +7,12 @@ import java.time.LocalDateTime
 data class EventResponse(
     val eventId: String
 ) {
-    private var waitQueueStartTime: LocalDateTime? = null
-    private var waitQueueEndTime: LocalDateTime? = null
-    private var jobQueueSize: Long? = null
-    private var jobQueueLimitTime: Long? = null
-    private var eventInformation: EventInformation? = null
-    private var redirectUrl : String? = null
+    var waitQueueStartTime: LocalDateTime? = null
+    var waitQueueEndTime: LocalDateTime? = null
+    var jobQueueSize: Long? = null
+    var jobQueueLimitTime: Long? = null
+    var eventInformation: EventInformation? = null
+    var redirectUrl : String? = null
     constructor(event: Event) : this(event.eventId){
         this.waitQueueStartTime = event.period.startDateTime
         this.waitQueueEndTime = event.period.endDateTime

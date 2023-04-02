@@ -13,13 +13,13 @@ import java.time.LocalDateTime
 @Entity
 class Event(
     @Column(nullable = false)
-    val eventId: String,
+    val eventId: String, // 필수이며, 임뮤터블 이라고 생각
 
-    period : WaitQueuePeriod,
+    period : WaitQueuePeriod, // 필수이지만 , 뮤터블 하다고 생각해서 var를 선언, 대신 @Column으로 nullable 처리 토록 작성
     jobQueueSize: Long,
     jobQueueLimitTime: Long,
 
-    eventInfo : EventInformation = EventInformation(),
+    eventInfo : EventInformation = EventInformation(), // 필수가 아니여서 초기화 진행
     redirectUrl: String? = null,
 
     @Column(nullable = false, updatable = false)
