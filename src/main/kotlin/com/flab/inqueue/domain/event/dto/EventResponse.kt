@@ -12,12 +12,14 @@ data class EventResponse(
     var jobQueueLimitTime: Long? = null
     var eventInformation: EventInformation? = null
     var redirectUrl : String? = null
-    constructor(event: Event) : this(event.eventId){
-        this.waitQueueStartTime = event.period.startDateTime
-        this.waitQueueEndTime = event.period.endDateTime
-        this.jobQueueSize = event.jobQueueSize
-        this.jobQueueLimitTime = event.jobQueueLimitTime
-        this.eventInformation = event.eventInfo
-        this.redirectUrl = event.redirectUrl
+    companion object {
+        fun from(event: Event) : EventResponse = EventResponse(event.eventId).apply {
+            this.waitQueueStartTime = event.period.startDateTime
+            this.waitQueueEndTime = event.period.endDateTime
+            this.jobQueueSize = event.jobQueueSize
+            this.jobQueueLimitTime = event.jobQueueLimitTime
+            this.eventInformation = event.eventInfo
+            this.redirectUrl = event.redirectUrl
+        }
     }
 }
