@@ -25,7 +25,7 @@ class EventServiceTest {
     fun successRetrieve(){
         //given
         val createdEvent = createEvent()
-        val requestEvent = createEventRequest()
+        val requestEvent = createEventRequest(createdEvent.eventId)
         every { eventRepository.findByEventId(any()) } returns createdEvent
 
         //when
