@@ -13,7 +13,7 @@ import java.util.NoSuchElementException
 class EventService(
     private val eventRepository: EventRepository
 ) {
-    fun retrive(request: EventRequest) = EventResponse(findEvent(request))
+    fun retrive(request: EventRequest) = EventResponse.from(findEvent(request))
     fun retriveAll(customId : String) {
         // TODO: 고객사 도메인 미구현 // return eventRepository.findAllByCustomId(customId)
     }
