@@ -1,7 +1,6 @@
 package com.flab.inqueue.domain.event.dto
 
 import com.flab.inqueue.domain.event.entity.Event
-import com.flab.inqueue.domain.event.entity.EventInformation
 import java.time.LocalDateTime
 
 data class EventResponse(

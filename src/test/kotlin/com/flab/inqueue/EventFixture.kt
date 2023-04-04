@@ -2,7 +2,7 @@ package com.flab.inqueue
 
 import com.flab.inqueue.domain.event.dto.EventRequest
 import com.flab.inqueue.domain.event.entity.Event
-import com.flab.inqueue.domain.event.entity.EventInformation
+import com.flab.inqueue.domain.event.dto.EventInformation
 import java.time.LocalDateTime
 
 

@@ -1,7 +1,7 @@
 package com.flab.inqueue.domain.event.db
 
 import com.flab.inqueue.createEvent
-import com.flab.inqueue.domain.event.entity.EventInformation
+import com.flab.inqueue.domain.event.dto.EventInformation
 import com.flab.inqueue.domain.event.repository.EventRepository
 import com.flab.inqueue.support.RepositoryTest
 import org.assertj.core.api.Assertions.*

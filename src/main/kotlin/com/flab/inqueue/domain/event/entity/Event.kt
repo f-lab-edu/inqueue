@@ -1,6 +1,7 @@
 package com.flab.inqueue.domain.event.entity
 
 import com.flab.inqueue.common.domain.BaseEntity
+import com.flab.inqueue.domain.event.dto.EventInformation
 import jakarta.persistence.*
 import java.time.LocalDateTime
 
@@ -41,7 +42,6 @@ class Event(
     @Embedded
     var eventInfo : EventInformation = eventInfo
         private set
-    @Column()
     var redirectUrl: String? = redirectUrl
         private set
     @Column(nullable = false)
