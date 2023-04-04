@@ -15,5 +15,5 @@ data class EventRequest(
     val type: String,
     val jobQueueSize: Long,
     val jobQueueLimitTime: Long,
-    val redirectUrl: String
+    val redirectUrl: String,
 )

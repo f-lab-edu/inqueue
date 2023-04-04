@@ -1,5 +1,5 @@
 package com.flab.inqueue.domain.dto
 
 data class EventResponse(
-    val eventId: String
+    val eventId: String,
 )

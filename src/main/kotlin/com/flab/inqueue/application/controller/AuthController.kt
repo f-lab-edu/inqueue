@@ -15,7 +15,7 @@ class AuthController {
     @PostMapping("/token")
     fun generateToken(
         @RequestHeader("Authorization") accessKey: String,
-        @RequestBody authRequest: AuthRequest
+        @RequestBody authRequest: AuthRequest,
     ): AuthResponse {
         return AuthResponse("JWT Token")
     }

@@ -13,10 +13,11 @@ import java.time.LocalDateTime
 
 @RepositoryTest
 class EventRepositoryTest(
-    private val eventRepository: EventRepository
+    private val eventRepository: EventRepository,
 ) {
 
     val firstTestEvent = createEvent()
+
     @BeforeEach
     fun setUp() {
         eventRepository.saveAll(listOf(firstTestEvent, createEvent()))
@@ -24,22 +25,22 @@ class EventRepositoryTest(
 
     @Test
     @DisplayName("eventId retrieve")
-    fun retrieve(){
+    fun retrieve() {
         //when
         val event = eventRepository.findByEventId(firstTestEvent.eventId)
         //then
         assertAll(
-            { assertThat(event).isNotNull},
-            { assertThat(event!!.eventId).isNotNull},
-            { assertThat(event!!.jobQueueSize).isNotNull},
-            { assertThat(event!!.jobQueueLimitTime).isNotNull},
-            { assertThat(event!!.period).isNotNull}
+            { assertThat(event).isNotNull },
+            { assertThat(event!!.eventId).isNotNull },
+            { assertThat(event!!.jobQueueSize).isNotNull },
+            { assertThat(event!!.jobQueueLimitTime).isNotNull },
+            { assertThat(event!!.period).isNotNull }
         )
     }
 
     @Test
     @DisplayName("event retrieveAll")
-    fun retrieveAll(){
+    fun retrieveAll() {
         //given
 
         // when
@@ -51,7 +52,7 @@ class EventRepositoryTest(
 
     @Test
     @DisplayName("event update")
-    fun update(){
+    fun update() {
         //given
         val findEvent = eventRepository.findByEventId(firstTestEvent.eventId)!!
         val testEventInfo = EventInformation(
@@ -79,7 +80,7 @@ class EventRepositoryTest(
 
     @Test
     @DisplayName("event delete")
-    fun delete(){
+    fun delete() {
         //given
         val findEvent = eventRepository.findByEventId(firstTestEvent.eventId)
         findEvent?.id?.let { eventRepository.deleteById(it) }

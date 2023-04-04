@@ -15,5 +15,5 @@ data class EventInformation(
     val description: String? = null,
     val place: String? = null,
     val personnel: Long? = null,
-    val type: String? = null
+    val type: String? = null,
 )

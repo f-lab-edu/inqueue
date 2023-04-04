@@ -13,12 +13,12 @@ import java.time.LocalTime
 @RestController
 @RequestMapping("/v1/events")
 class EventController(
-    private val eventService: EventService
+    private val eventService: EventService,
 ) {
     @PostMapping
     fun createEvent(
         @RequestHeader("Authorization") accessKey: String,
-        @RequestBody @Valid eventRequest: EventRequest
+        @RequestBody @Valid eventRequest: EventRequest,
     ): EventResponse {
         return eventService.save(eventRequest)
     }
@@ -46,7 +46,7 @@ class EventController(
     fun validateJobQueue(
         @RequestHeader("Authorization") accessKey: String,
         @PathVariable eventId: String,
-        @PathVariable userId: String
+        @PathVariable userId: String,
     ): ResponseEntity<Unit> {
         return ResponseEntity.ok().build()
     }
@@ -56,7 +56,7 @@ class EventController(
     fun closeJopQueue(
         @RequestHeader("Authorization") accessKey: String,
         @PathVariable eventId: String,
-        @PathVariable userId: String
+        @PathVariable userId: String,
     ): ResponseEntity<Unit> {
         return ResponseEntity.ok().build()
     }

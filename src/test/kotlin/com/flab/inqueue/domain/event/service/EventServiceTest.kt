@@ -22,7 +22,7 @@ class EventServiceTest {
 
     @Test
     @DisplayName("이벤트 조회 성공")
-    fun successRetrieve(){
+    fun successRetrieve() {
         //given
         val createdEvent = createEvent()
         val requestEvent = createEventRequest(createdEvent.eventId)
@@ -43,7 +43,7 @@ class EventServiceTest {
 
     @Test
     @DisplayName("이벤트 조회 실패 잘못된 eventId")
-    fun failRetrieve(){
+    fun failRetrieve() {
         //given
         val createdEvent = createEvent()
         val requestEvent = createEventRequest(eventId = "testUUID")
@@ -58,7 +58,7 @@ class EventServiceTest {
 
     @Test
     @DisplayName("이벤트 조회 상황에서 eventId가 null 혹은 빈값이 올때")
-    fun isNullOrBlankEventId(){
+    fun isNullOrBlankEventId() {
         //given
         val createdEvent = createEvent()
         val requestEvent = createEventRequest()
@@ -73,7 +73,7 @@ class EventServiceTest {
 
     @Test
     @DisplayName("이벤트 저장 성공")
-    fun successSave(){
+    fun successSave() {
         //given
         val createdEvent = createEvent()
         val requestEvent = createEventRequest()
