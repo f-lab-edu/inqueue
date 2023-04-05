@@ -28,6 +28,12 @@ dependencies {
     runtimeOnly("com.mysql:mysql-connector-j")
     runtimeOnly("com.h2database:h2")
 
+    annotationProcessor("org.springframework.boot:spring-boot-configuration-processor")
+    implementation("org.springframework.boot:spring-boot-starter-data-redis")
+    implementation("it.ozimov:embedded-redis:0.7.3"){
+        this.exclude("org.slf4j", "slf4j-simple")
+    }
+
     testImplementation("org.springframework.boot:spring-boot-starter-test")
 
     /* rest-assured + restdocs */
