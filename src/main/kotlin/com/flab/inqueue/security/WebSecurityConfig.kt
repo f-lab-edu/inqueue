@@ -22,7 +22,8 @@ class WebSecurityConfig(
             .csrf().disable()
             .cors().disable()
             .authorizeHttpRequests()
-            .requestMatchers("/v1/auth/**").authenticated()
+            .requestMatchers("/v1/auth/**")
+            .authenticated()
             .anyRequest().permitAll()
         http
             .sessionManagement()

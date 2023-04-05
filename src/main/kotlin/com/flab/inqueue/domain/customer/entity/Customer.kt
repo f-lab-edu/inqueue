@@ -11,6 +11,7 @@ class Customer(
     name: String,
     val clientId: String,
     val clientSecret: String,
+    val roles: List<Role>
 ) {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -19,9 +20,18 @@ class Customer(
     var name: String = name
         private set
 
-    private var createdAt: LocalDateTime? = null
+    val createdAt: LocalDateTime = LocalDateTime.now()
 
-    init {
-        createdAt = LocalDateTime.now()
+    companion object {
+
+        @JvmStatic
+        fun admin(name: String, clientId: String, clientSecret: String): Customer {
+            return Customer(name, clientId, clientSecret, listOf(Role.USER, Role.ADMIN))
+        }
+
+        @JvmStatic
+        fun user(name: String, clientId: String, clientSecret: String): Customer {
+            return Customer(name, clientId, clientSecret, listOf(Role.USER))
+        }
     }
 }
