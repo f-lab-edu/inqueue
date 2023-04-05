@@ -3,7 +3,7 @@ package com.flab.inqueue.domain.customer.utils
 import java.security.SecureRandom
 import java.util.*
 
-object CustomerIdFactory {
+object CustomerAccountFactory {
 
     private const val DEFAULT_CLIENT_ID_LENGTH = 32
 
@@ -15,7 +15,7 @@ object CustomerIdFactory {
         return Base64.getEncoder().encodeToString(bytes)
     }
 
-    fun generateClientSecret(): String? {
+    fun generateClientSecret(): String {
         val bytes = ByteArray(DEFAULT_CLIENT_SECRET_LENGTH)
         SecureRandom().nextBytes(bytes)
         return Base64.getEncoder().encodeToString(bytes)
