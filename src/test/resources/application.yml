@@ -8,7 +8,10 @@ spring:
     password:
     hikari:
       auto-commit: false
-
   jpa:
     hibernate:
       ddl-auto: create-drop
+  data:
+    redis:
+      host: localhost
+      port: 6379
