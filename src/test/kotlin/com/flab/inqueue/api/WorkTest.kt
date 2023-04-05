@@ -15,7 +15,7 @@ import org.springframework.restdocs.restassured.RestAssuredRestDocumentation
 import org.springframework.restdocs.restassured.RestDocumentationFilter
 import org.springframework.restdocs.snippet.Snippet
 
-class QueueTest : AcceptanceTest() {
+class WorkTest : AcceptanceTest() {
 
     @Test
     @DisplayName("사용자 작업열 검증 기능 api")
