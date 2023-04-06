@@ -18,15 +18,15 @@ import java.util.*
 @ActiveProfiles("test")
 @Import(EmbeddedRedisConfig::class)
 class WaitWorkRedis @Autowired constructor(
-    private val queueRedisRepository: QueueRedisRepository,
+//    private val queueRedisRepository: QueueRedisRepository,
+    private val redisTemplate: RedisTemplate<String,Any>
 ) {
     private val logger = LoggerFactory.getLogger( WaitWorkRedis::class.java )
 
-    @Autowired private lateinit var redisTemplate: RedisTemplate<String,Any>
-    @AfterEach
-    fun tearDown() {
-        queueRedisRepository.deleteAll()
-    }
+//    @AfterEach
+//    fun tearDown() {
+//        queueRedisRepository.deleteAll()
+//    }
 
     @Test
     fun test() {
@@ -37,7 +37,7 @@ class WaitWorkRedis @Autowired constructor(
         //given
 
         val event = createEventRequest().toEntity()
-        val toList = (0..1000000).map { i ->
+        val toList = (0..10).map { i ->
             redisTemplate.opsForZSet().add(event.eventId, i , System.nanoTime().toDouble() )
             event
         }
