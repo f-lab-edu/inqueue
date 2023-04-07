@@ -5,10 +5,12 @@ import io.restassured.specification.RequestSpecification
 import org.junit.jupiter.api.BeforeEach
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.web.server.LocalServerPort
-import org.springframework.context.annotation.Profile
+import org.springframework.test.context.ActiveProfiles
+import org.testcontainers.junit.jupiter.Testcontainers
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-@Profile("security")
+@ActiveProfiles("test")
+@Testcontainers
 abstract class SecurityIntegrationTest {
 
     protected lateinit var given: RequestSpecification
