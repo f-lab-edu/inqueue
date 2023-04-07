@@ -1,4 +1,4 @@
-package com.flab.inqueue.security
+package com.flab.inqueue.security.hmacsinature
 
 import org.springframework.security.core.Authentication
 import org.springframework.security.core.GrantedAuthority
