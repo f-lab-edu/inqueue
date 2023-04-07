@@ -1,4 +1,4 @@
-package com.flab.inqueue.security
+package com.flab.inqueue.security.hmacsinature
 
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
@@ -13,7 +13,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 
 @Configuration
 @EnableWebSecurity
-class WebSecurityConfig(
+class HmacSignatureSecurityConfig(
     private val hmacAuthenticationProvider : AuthenticationProvider
 ) {
     @Bean
