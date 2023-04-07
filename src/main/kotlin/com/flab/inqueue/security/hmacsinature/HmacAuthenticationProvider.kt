@@ -1,10 +1,10 @@
-package com.flab.inqueue.security
+package com.flab.inqueue.security.hmacsinature
 
 import com.flab.inqueue.domain.customer.repository.CustomerRepository
 import org.springframework.security.authentication.AuthenticationProvider
 import org.springframework.security.authentication.BadCredentialsException
 import org.springframework.security.core.Authentication
-import org.springframework.security.core.GrantedAuthority
+import org.springframework.security.core.authority.SimpleGrantedAuthority
 import org.springframework.security.core.userdetails.UsernameNotFoundException
 import org.springframework.stereotype.Component
 
@@ -31,7 +31,7 @@ class HmacAuthenticationProvider(
 
         return HmacAuthenticationToken.authenticatedToken(
             clientId = customer.clientId,
-            authorities = customer.roles.map { GrantedAuthority { "ROLE_$it" } }.toMutableList()
+            authorities = customer.roles.map { SimpleGrantedAuthority("ROLE_$it") }.toMutableList()
         )
     }
 

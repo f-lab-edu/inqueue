@@ -1,4 +1,4 @@
-package com.flab.inqueue.security
+package com.flab.inqueue.security.hmacsinature
 
 import jakarta.servlet.FilterChain
 import jakarta.servlet.http.HttpServletRequest
@@ -21,7 +21,7 @@ class HmacSignatureFilter(
     ) {
         val authorization = request.getHeader(HttpHeaders.AUTHORIZATION)
 
-        if (authorization.isNullOrEmpty() && !authorization.contains(":")) {
+        if (authorization.isNullOrEmpty() || !authorization.contains(":")) {
             filterChain.doFilter(request, response)
             return
         }
