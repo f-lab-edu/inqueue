@@ -1,16 +1,20 @@
 package com.flab.inqueue.domain.customer.entity
 
-import jakarta.persistence.Entity
-import jakarta.persistence.GeneratedValue
-import jakarta.persistence.GenerationType
-import jakarta.persistence.Id
+import jakarta.persistence.*
 import java.time.LocalDateTime
 
-@Entity
+@Entity(name = "CUSTOMER")
 class Customer(
     name: String,
     val clientId: String,
     val clientSecret: String,
+
+    @ElementCollection
+    @CollectionTable(
+        name = "CUSTOMER_ROLE",
+        joinColumns = [JoinColumn(name = "customer_id")]
+    )
+    @Column(name = "role")
     val roles: List<Role>
 ) {
     @Id
