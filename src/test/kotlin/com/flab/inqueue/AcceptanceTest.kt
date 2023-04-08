@@ -21,17 +21,22 @@ import org.testcontainers.junit.jupiter.Testcontainers
 @ExtendWith(RestDocumentationExtension::class)
 abstract class AcceptanceTest {
 
-    protected lateinit var given: RequestSpecification
+    protected lateinit var givenWithDocument: RequestSpecification
+
+    protected lateinit var given :RequestSpecification
 
     @BeforeEach
-    fun setUpRequestSpecification(restDocumentation: RestDocumentationContextProvider, @LocalServerPort port: Int) {
-        given = RestAssured.given(setUpRestDocs(restDocumentation)).port(port)
+    fun setUpRestAssured(restDocumentation: RestDocumentationContextProvider, @LocalServerPort port: Int) {
+        givenWithDocument = RestAssured.given(setUpRestDocs(restDocumentation)).port(port)
+        given = RestAssured.given().port(port)
     }
 
     companion object {
         @JvmStatic
         @Container
         private val mySQLContainer = MySQLContainer("mysql:8.0.23").withDatabaseName("test-db")
+            .withUsername("test")
+            .withPassword("1234")
 //        private val mySQLContainer = DockerComposeContainer(File("src/test/resources/docker-compose.yml"))
     }
 

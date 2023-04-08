@@ -26,7 +26,7 @@ class UserTest : AcceptanceTest() {
     fun generateToken() {
         val authRequest = AuthRequest("testEvent1")
 
-        given.log().all()
+        givenWithDocument.log().all()
             .filter(GenerateTokenDocument.FILTER)
             .header(HttpHeaders.AUTHORIZATION, "X-Client-Id:(StringToSign를 ClientSecret으로 Hmac 암호화)")
             .body(authRequest)
@@ -43,7 +43,7 @@ class UserTest : AcceptanceTest() {
     fun enterWaitQueue() {
         val eventId = "testEvent1"
 
-        val response = given.log().all()
+        val response = givenWithDocument.log().all()
             .filter(EnterWaitQueueDocument.FILTER)
             .header(HttpHeaders.AUTHORIZATION, "AccessToken")
             .header("X-Client-Id", "String")
@@ -67,7 +67,7 @@ class UserTest : AcceptanceTest() {
     fun retrieveWaitQueue() {
         val eventId = "testEvent1"
 
-        val response = given.log().all()
+        val response = givenWithDocument.log().all()
             .filter(RetrieveWaitQueueDocument.FILTER)
             .header(HttpHeaders.AUTHORIZATION, "AccessToken")
             .header("X-Client-Id", "String")
