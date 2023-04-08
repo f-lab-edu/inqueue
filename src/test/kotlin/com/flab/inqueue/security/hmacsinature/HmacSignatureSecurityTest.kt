@@ -25,6 +25,9 @@ class HmacSignatureSecurityTest : SecurityIntegrationTest() {
     @Autowired
     lateinit var customerRepository: CustomerRepository
 
+    @Autowired
+    lateinit var customerAccountFactory: CustomerAccountFactory
+
     lateinit var testClientId: String
 
     lateinit var testClientSecret: String
@@ -33,12 +36,13 @@ class HmacSignatureSecurityTest : SecurityIntegrationTest() {
 
     lateinit var generateTokenURL: String
 
+
     @BeforeEach
     @Transactional
     fun setUp(@LocalServerPort port: Int) {
         generateTokenURL = "http://localhost:${port}/v1/auth/token"
-        testClientId = CustomerAccountFactory.generateClientId()
-        testClientSecret = CustomerAccountFactory.generateClientSecret()
+        testClientId = customerAccountFactory.generateClientId()
+        testClientSecret = customerAccountFactory.generateClientSecret()
         testUser = Customer.user("USER", testClientId, testClientSecret)
         customerRepository.save(testUser)
     }
@@ -73,7 +77,7 @@ class HmacSignatureSecurityTest : SecurityIntegrationTest() {
         val eventId = "estEventId"
         val userId = "testUserId"
 
-        val anotherClientSecret = CustomerAccountFactory.generateClientSecret()
+        val anotherClientSecret = customerAccountFactory.generateClientSecret()
         val authRequest = AuthRequest(eventId, userId)
 
         given.log().all()
@@ -96,13 +100,13 @@ class HmacSignatureSecurityTest : SecurityIntegrationTest() {
         val eventId = "estEventId"
         val userId = "testUserId"
 
-        val anotherClientSecret = CustomerAccountFactory.generateClientSecret()
+        val anotherClientId = customerAccountFactory.generateClientId()
         val authRequest = AuthRequest(eventId, userId)
 
         given.log().all()
             .header(
                 HttpHeaders.AUTHORIZATION,
-                createAuthorization(testClientId, createHmacSignature(generateTokenURL, anotherClientSecret))
+                createAuthorization(anotherClientId, createHmacSignature(generateTokenURL, testClientSecret))
             )
             .body(authRequest)
             .contentType(MediaType.APPLICATION_JSON_VALUE).

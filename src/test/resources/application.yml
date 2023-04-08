@@ -12,3 +12,8 @@ spring:
   jpa:
     hibernate:
       ddl-auto: create-drop
+
+customer:
+  account:
+    client-id-length: 32
+    client-secret-length: 64

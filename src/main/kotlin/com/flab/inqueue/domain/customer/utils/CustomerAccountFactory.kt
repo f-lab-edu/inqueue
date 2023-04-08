@@ -3,21 +3,20 @@ package com.flab.inqueue.domain.customer.utils
 import java.security.SecureRandom
 import java.util.*
 
-object CustomerAccountFactory {
-
-    private const val DEFAULT_CLIENT_ID_LENGTH = 32
-
-    private const val DEFAULT_CLIENT_SECRET_LENGTH = 64
-
+class CustomerAccountFactory(
+    private val secureRandom: SecureRandom,
+    private val clientIdLength: Int,
+    private val clientSecretLength: Int
+) {
     fun generateClientId(): String {
-        val bytes = ByteArray(DEFAULT_CLIENT_ID_LENGTH)
-        SecureRandom().nextBytes(bytes)
+        val bytes = ByteArray(clientIdLength)
+        secureRandom.nextBytes(bytes)
         return Base64.getEncoder().encodeToString(bytes)
     }
 
     fun generateClientSecret(): String {
-        val bytes = ByteArray(DEFAULT_CLIENT_SECRET_LENGTH)
-        SecureRandom().nextBytes(bytes)
+        val bytes = ByteArray(clientSecretLength)
+        secureRandom.nextBytes(bytes)
         return Base64.getEncoder().encodeToString(bytes)
     }
 }
