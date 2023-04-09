@@ -8,7 +8,6 @@ import org.springframework.data.redis.core.index.Indexed
 data class Work(
     @Id
     @Indexed
-    val eventId: String? = null,
-    val score: Long? = null,
-    val time: Long? = null,
+    val eventId: String = "",
+    val userId: String? = null,
 )
