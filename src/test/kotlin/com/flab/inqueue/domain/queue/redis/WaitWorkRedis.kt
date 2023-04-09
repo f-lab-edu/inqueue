@@ -25,17 +25,6 @@ class WaitWorkRedis @Autowired constructor(
     private val logger = LoggerFactory.getLogger(WaitWorkRedis::class.java)
 
 
-    @BeforeEach
-    fun setUp() {
-        val event = createEventRequest().toEntity()
-        val work1 = Work(event.eventId, UUID.randomUUID().toString().take(10))
-        val work2 = Work(event.eventId, UUID.randomUUID().toString().take(10))
-        val work3 = Work(event.eventId, UUID.randomUUID().toString().take(10))
-        redisTemplate.opsForZSet().add(event.eventId, work1, System.nanoTime().toDouble())
-        redisTemplate.opsForZSet().add(event.eventId, work2, System.nanoTime().toDouble())
-        redisTemplate.opsForZSet().add(event.eventId, work3, System.nanoTime().toDouble())
-
-    }
 
     @Test
     fun `등록`() {
