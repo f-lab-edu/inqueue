@@ -30,6 +30,7 @@ class EventService(
         // TODO: 고객사 도메인 미구현 // return eventRepository.findAllByCustomId(customId)
     }
 
+    @Transactional
     fun save(request: EventRequest) = EventResponse(eventRepository.save(request.toEntity()).eventId)
 
     @Transactional
@@ -38,6 +39,7 @@ class EventService(
         findEvent.update(request.toEntity())
     }
 
+    @Transactional
     fun delete(request: EventRequest) = eventRepository.deleteById(findEvent(request).id)
 
     private fun validateRequest(request: EventRequest) = require(!request.eventId.isNullOrBlank()) { "eventId를 입력해주세요" }
