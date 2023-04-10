@@ -1,4 +1,4 @@
-package com.flab.inqueue.security.hmacsinature
+package com.flab.inqueue.security.hmacsinature.utils
 
 import org.springframework.stereotype.Component
 import java.util.*
