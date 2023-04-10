@@ -16,3 +16,4 @@ customer:
   account:
     client-id-length: ${CUSTOMER_ACCOUNT_CLIENT_ID_LENGTH}
     client-secret-length: ${CUSTOMER_ACCOUNT_CLIENT_SECRET_LENGTH}
+    client-secret-salt: ${CUSTOMER_ACCOUNT_CLIENT_SECRET_SALT}

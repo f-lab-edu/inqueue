@@ -14,7 +14,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @Configuration
 @EnableWebSecurity
 class HmacSignatureSecurityConfig(
-    private val hmacAuthenticationProvider : AuthenticationProvider
+    private val hmacAuthenticationProvider: AuthenticationProvider
 ) {
     @Bean
     fun securityFilterChain(http: HttpSecurity): SecurityFilterChain {
@@ -37,7 +37,7 @@ class HmacSignatureSecurityConfig(
     }
 
     @Bean
-    fun hmacSignatureFilter() : HmacSignatureFilter {
+    fun hmacSignatureFilter(): HmacSignatureFilter {
         val authenticationManager = ProviderManager(hmacAuthenticationProvider)
         return HmacSignatureFilter(authenticationManager)
     }
