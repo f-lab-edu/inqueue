@@ -20,11 +20,11 @@ class JwtUtils(
     @Value("\${jwt.expiration-mills}")
     private val expirationMills: Long
 ) {
-    private lateinit var key: Key
+    private lateinit var signingKey: Key
 
     @PostConstruct
     private fun init() {
-        key = Keys.hmacShaKeyFor(Decoders.BASE64.decode(secretKey))
+        signingKey = Keys.hmacShaKeyFor(Decoders.BASE64.decode(secretKey))
     }
 
     fun create() {
@@ -34,7 +34,7 @@ class JwtUtils(
     fun verify(accessToken: String): VerifyJwtResponse {
         try {
             val claims = Jwts.parserBuilder()
-                .setSigningKey(key).build().parseClaimsJws(accessToken).body
+                .setSigningKey(signingKey).build().parseClaimsJws(accessToken).body
             return VerifyJwtResponse(userId = claims.subject, isValid = true)
 
         } catch (ex: Exception) {
