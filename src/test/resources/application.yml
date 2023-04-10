@@ -17,3 +17,4 @@ customer:
   account:
     client-id-length: 32
     client-secret-length: 64
+    client-secret-salt: salt

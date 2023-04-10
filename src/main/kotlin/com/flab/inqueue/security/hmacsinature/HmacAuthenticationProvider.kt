@@ -1,6 +1,7 @@
 package com.flab.inqueue.security.hmacsinature
 
 import com.flab.inqueue.domain.customer.repository.CustomerRepository
+import com.flab.inqueue.security.hmacsinature.utils.SecretKeyCipher
 import org.springframework.security.authentication.AuthenticationProvider
 import org.springframework.security.authentication.BadCredentialsException
 import org.springframework.security.core.Authentication
@@ -11,7 +12,8 @@ import org.springframework.stereotype.Component
 @Component
 class HmacAuthenticationProvider(
     private val hmacSignatureVerifier: HmacSignatureVerifier,
-    private val customerRepository: CustomerRepository
+    private val customerRepository: CustomerRepository,
+    private val secretKeyCipher: SecretKeyCipher
 ) : AuthenticationProvider {
 
     override fun authenticate(authentication: Authentication?): Authentication {
@@ -21,7 +23,7 @@ class HmacAuthenticationProvider(
 
         val isValid = hmacSignatureVerifier.verify(
             signature = hmacAuthentication.signature!!,
-            clientSecret = customer.clientSecret,
+            clientSecret = secretKeyCipher.decrypt(customer.clientSecret),
             payload = hmacAuthentication.payload!!
         )
 
