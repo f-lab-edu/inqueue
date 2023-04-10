@@ -5,6 +5,7 @@ import com.flab.inqueue.domain.customer.entity.Customer
 import com.flab.inqueue.domain.customer.repository.CustomerRepository
 import com.flab.inqueue.domain.customer.utils.CustomerAccountFactory
 import com.flab.inqueue.domain.dto.AuthRequest
+import com.flab.inqueue.security.hmacsinature.utils.SecretKeyCipher
 import com.github.dockerjava.zerodep.shaded.org.apache.commons.codec.binary.Base64
 import jakarta.transaction.Transactional
 import org.hamcrest.Matchers
@@ -26,6 +27,9 @@ class HmacSignatureSecurityTest : AcceptanceTest() {
     lateinit var customerRepository: CustomerRepository
 
     @Autowired
+    lateinit var secretKeyCipher: SecretKeyCipher
+
+    @Autowired
     lateinit var customerAccountFactory: CustomerAccountFactory
 
     lateinit var testClientId: String
@@ -44,6 +48,7 @@ class HmacSignatureSecurityTest : AcceptanceTest() {
         testClientId = customerAccountFactory.generateClientId()
         testClientSecret = customerAccountFactory.generateClientSecret()
         testUser = Customer.user("USER", testClientId, testClientSecret)
+        testUser.encryptClientSecret(secretKeyCipher)
         customerRepository.save(testUser)
     }
 
