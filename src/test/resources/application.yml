@@ -44,3 +44,7 @@ customer:
     client-id-length: 32
     client-secret-length: 64
     client-secret-salt: salt
+
+jwt:
+  secret-key:
+  expiration-mills:

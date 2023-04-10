@@ -7,9 +7,9 @@ spring:
     hikari:
       auto-commit: false
   h2:
-     console:
-       enabled: true
-       path: /h2-console
+    console:
+      enabled: true
+      path: /h2-console
   jpa:
     hibernate:
       ddl-auto: create
@@ -24,3 +24,8 @@ customer:
     client-id-length: 32
     client-secret-length: 64
     client-secret-salt: salt
+
+
+jwt:
+  secret-key:
+  expiration-mills:
