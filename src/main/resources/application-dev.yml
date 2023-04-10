@@ -27,5 +27,5 @@ customer:
 
 
 jwt:
-  secret-key:
-  expiration-mills:
+  secret-key: and0LXNlY3JldC1rZXk= # "jwt-secret-key" 를 base64로 인코딩 값
+  expiration-mills: 3600
