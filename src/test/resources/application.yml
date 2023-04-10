@@ -46,5 +46,5 @@ customer:
     client-secret-salt: salt
 
 jwt:
-  secret-key:
-  expiration-mills:
+  secret-key: and0LXNlY3JldC1rZXk=
+  expiration-mills: 3600
