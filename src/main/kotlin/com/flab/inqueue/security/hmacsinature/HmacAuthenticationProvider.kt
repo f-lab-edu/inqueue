@@ -1,6 +1,7 @@
 package com.flab.inqueue.security.hmacsinature
 
 import com.flab.inqueue.domain.customer.repository.CustomerRepository
+import com.flab.inqueue.security.hmacsinature.utils.HmacSignatureVerifier
 import com.flab.inqueue.security.hmacsinature.utils.SecretKeyCipher
 import org.springframework.security.authentication.AuthenticationProvider
 import org.springframework.security.authentication.BadCredentialsException
@@ -28,7 +29,7 @@ class HmacAuthenticationProvider(
         )
 
         if (!isValid) {
-            throw BadCredentialsException("Invalid hmac authentication")
+            throw BadCredentialsException("Invalid hmac authentication - clientId: ${hmacAuthentication.clientId}")
         }
 
         return HmacAuthenticationToken.authenticatedToken(
