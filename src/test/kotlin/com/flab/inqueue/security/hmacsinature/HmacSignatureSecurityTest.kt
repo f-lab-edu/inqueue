@@ -75,7 +75,6 @@ class HmacSignatureSecurityTest : AcceptanceTest() {
             .body("accessToken", Matchers.notNullValue())
     }
 
-
     @Test
     @DisplayName("clientSecret이 다른 경우, JWT 토큰 발급 실패")
     fun generate_token_fail() {
@@ -95,7 +94,12 @@ class HmacSignatureSecurityTest : AcceptanceTest() {
         `when`()
             .post("/v1/auth/token").
         then().log().all()
-            .statusCode(HttpStatus.FORBIDDEN.value())
+            .statusCode(HttpStatus.UNAUTHORIZED.value())
+            .assertThat()
+            .body("error", Matchers.equalTo("UnAuthorized"))
+            .body("timestamp", Matchers.notNullValue())
+            .body("status", Matchers.notNullValue())
+            .body("path", Matchers.notNullValue())
     }
 
 
@@ -118,11 +122,13 @@ class HmacSignatureSecurityTest : AcceptanceTest() {
         `when`()
             .post("/v1/auth/token").
         then().log().all()
-            .statusCode(HttpStatus.FORBIDDEN.value())
+            .statusCode(HttpStatus.UNAUTHORIZED.value())
             .assertThat()
-            .body("error", Matchers.equalTo("Forbidden"))
+            .body("error", Matchers.equalTo("UnAuthorized"))
+            .body("timestamp", Matchers.notNullValue())
+            .body("status", Matchers.notNullValue())
+            .body("path", Matchers.notNullValue())
     }
-
 
     @Test
     @DisplayName("AUTHORIZATION 헤더가 없는 경우, JWT 토큰 발급 실패")
@@ -134,11 +140,16 @@ class HmacSignatureSecurityTest : AcceptanceTest() {
 
         given.given().log().all()
             .body(authRequest)
-            .contentType(MediaType.APPLICATION_JSON_VALUE).`when`()
-            .post("/v1/auth/token").then().log().all()
-            .statusCode(HttpStatus.FORBIDDEN.value())
+            .contentType(MediaType.APPLICATION_JSON_VALUE).
+        `when`()
+            .post("/v1/auth/token").
+        then().log().all()
+            .statusCode(HttpStatus.UNAUTHORIZED.value())
             .assertThat()
-            .body("error", Matchers.equalTo("Forbidden"))
+            .body("error", Matchers.equalTo("UnAuthorized"))
+            .body("timestamp", Matchers.notNullValue())
+            .body("status", Matchers.notNullValue())
+            .body("path", Matchers.notNullValue())
     }
 
     private fun createHmacSignature(payLoad: String, clientSecret: String): String {

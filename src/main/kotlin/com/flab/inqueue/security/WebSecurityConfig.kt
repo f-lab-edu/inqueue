@@ -1,5 +1,6 @@
-package com.flab.inqueue.security.hmacsinature
+package com.flab.inqueue.security
 
+import com.flab.inqueue.security.hmacsinature.HmacSignatureFilter
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.security.authentication.AuthenticationProvider
@@ -13,8 +14,10 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 
 @Configuration
 @EnableWebSecurity
-class HmacSignatureSecurityConfig(
-    private val hmacAuthenticationProvider: AuthenticationProvider
+class WebSecurityConfig(
+    private val hmacAuthenticationProvider: AuthenticationProvider,
+    private val customAuthenticationEntryPoint: CustomAuthenticationEntryPoint,
+    private val customAccessDenierHandler: CustomAccessDenierHandler
 ) {
     @Bean
     fun securityFilterChain(http: HttpSecurity): SecurityFilterChain {
@@ -22,8 +25,7 @@ class HmacSignatureSecurityConfig(
             .csrf().disable()
             .cors().disable()
             .authorizeHttpRequests()
-            .requestMatchers("/v1/auth/**")
-            .authenticated()
+            .requestMatchers("/v1/auth/**").authenticated()
             .anyRequest().permitAll()
         http
             .sessionManagement()
@@ -33,6 +35,9 @@ class HmacSignatureSecurityConfig(
                 hmacSignatureFilter(),
                 UsernamePasswordAuthenticationFilter::class.java
             )
+        http.exceptionHandling()
+            .authenticationEntryPoint(customAuthenticationEntryPoint)
+            .accessDeniedHandler(customAccessDenierHandler)
         return http.build()
     }
 
