@@ -38,13 +38,16 @@ class HmacSignatureSecurityTest : AcceptanceTest() {
 
     lateinit var testUser: Customer
 
-    lateinit var generateTokenURL: String
+    lateinit var hmacSignaturePayload: String
 
+    companion object {
+        const val GENERATE_TOKEN_URI = "/v1/server/auth/token"
+    }
 
     @BeforeEach
     @Transactional
     fun setUp(@LocalServerPort port: Int) {
-        generateTokenURL = "http://localhost:${port}/v1/auth/token"
+        hmacSignaturePayload = "http://localhost:${port}" + GENERATE_TOKEN_URI
         testClientId = customerAccountFactory.generateClientId()
         testClientSecret = customerAccountFactory.generateClientSecret()
         testUser = Customer.user("USER", testClientId, testClientSecret)
@@ -63,12 +66,12 @@ class HmacSignatureSecurityTest : AcceptanceTest() {
         given.log().all()
             .header(
                 HttpHeaders.AUTHORIZATION,
-                createAuthorization(testClientId, createHmacSignature(generateTokenURL, testClientSecret))
+                createAuthorization(testClientId, createHmacSignature(hmacSignaturePayload, testClientSecret))
             )
             .body(authRequest)
             .contentType(MediaType.APPLICATION_JSON_VALUE).
         `when`()
-            .post("/v1/auth/token").
+            .post(GENERATE_TOKEN_URI).
         then().log().all()
             .statusCode(HttpStatus.OK.value())
             .assertThat()
@@ -87,16 +90,16 @@ class HmacSignatureSecurityTest : AcceptanceTest() {
         given.log().all()
             .header(
                 HttpHeaders.AUTHORIZATION,
-                createAuthorization(testClientId, createHmacSignature(generateTokenURL, anotherClientSecret))
+                createAuthorization(testClientId, createHmacSignature(hmacSignaturePayload, anotherClientSecret))
             )
             .body(authRequest)
             .contentType(MediaType.APPLICATION_JSON_VALUE).
         `when`()
-            .post("/v1/auth/token").
+            .post(GENERATE_TOKEN_URI).
         then().log().all()
             .statusCode(HttpStatus.UNAUTHORIZED.value())
             .assertThat()
-            .body("error", Matchers.equalTo("UnAuthorized"))
+            .body("error", Matchers.equalTo("Unauthorized"))
             .body("timestamp", Matchers.notNullValue())
             .body("status", Matchers.notNullValue())
             .body("path", Matchers.notNullValue())
@@ -115,16 +118,16 @@ class HmacSignatureSecurityTest : AcceptanceTest() {
         given.log().all()
             .header(
                 HttpHeaders.AUTHORIZATION,
-                createAuthorization(anotherClientId, createHmacSignature(generateTokenURL, testClientSecret))
+                createAuthorization(anotherClientId, createHmacSignature(hmacSignaturePayload, testClientSecret))
             )
             .body(authRequest)
             .contentType(MediaType.APPLICATION_JSON_VALUE).
         `when`()
-            .post("/v1/auth/token").
+            .post(GENERATE_TOKEN_URI).
         then().log().all()
             .statusCode(HttpStatus.UNAUTHORIZED.value())
             .assertThat()
-            .body("error", Matchers.equalTo("UnAuthorized"))
+            .body("error", Matchers.equalTo("Unauthorized"))
             .body("timestamp", Matchers.notNullValue())
             .body("status", Matchers.notNullValue())
             .body("path", Matchers.notNullValue())
@@ -142,11 +145,11 @@ class HmacSignatureSecurityTest : AcceptanceTest() {
             .body(authRequest)
             .contentType(MediaType.APPLICATION_JSON_VALUE).
         `when`()
-            .post("/v1/auth/token").
+            .post(GENERATE_TOKEN_URI).
         then().log().all()
             .statusCode(HttpStatus.UNAUTHORIZED.value())
             .assertThat()
-            .body("error", Matchers.equalTo("UnAuthorized"))
+            .body("error", Matchers.equalTo("Unauthorized"))
             .body("timestamp", Matchers.notNullValue())
             .body("status", Matchers.notNullValue())
             .body("path", Matchers.notNullValue())

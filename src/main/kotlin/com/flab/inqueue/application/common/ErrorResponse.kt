@@ -11,7 +11,7 @@ data class ErrorResponse(
     val path: String
 ) {
     companion object {
-        private const val DEFAULT_UNAUTHORIZED_ERROR_MESSAGE = "UnAuthorized"
+        private const val DEFAULT_UNAUTHORIZED_ERROR_MESSAGE = "Unauthorized"
         private const val DEFAULT_FORBIDDEN_ERROR_MESSAGE = "Forbidden"
 
         @JvmStatic
