@@ -1,6 +1,6 @@
 package com.flab.inqueue.security.hmacsinature
 
-import com.flab.inqueue.security.common.CustomAuthentication
+import com.flab.inqueue.security.common.CommonAuthentication
 import org.springframework.security.core.GrantedAuthority
 
 class HmacAuthenticationToken(
@@ -8,7 +8,7 @@ class HmacAuthenticationToken(
     val signature: String? = null,
     val payload: String? = null,
     authorities: MutableCollection<out GrantedAuthority> = mutableListOf()
-) : CustomAuthentication(clientId, clientId, false, authorities) {
+) : CommonAuthentication(clientId, clientId, false, authorities) {
 
     companion object {
         @JvmStatic

@@ -4,7 +4,7 @@ import org.springframework.security.core.Authentication
 import org.springframework.security.core.GrantedAuthority
 
 
-abstract class CustomAuthentication(
+open class CommonAuthentication(
     private val name: String?,
     private val principal : Any?,
     private var isAuthenticated : Boolean,
