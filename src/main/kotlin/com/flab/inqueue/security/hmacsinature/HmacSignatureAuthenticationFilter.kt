@@ -1,4 +1,4 @@
-package com.flab.inqueue.security.jwt
+package com.flab.inqueue.security.hmacsinature
 
 import com.flab.inqueue.security.common.CommonAuthenticationFiller
 import jakarta.servlet.http.HttpServletRequest
@@ -9,28 +9,23 @@ import org.springframework.security.authentication.BadCredentialsException
 import org.springframework.security.core.Authentication
 import org.springframework.security.web.util.matcher.RequestMatcher
 
-class JwtAuthenticationFilter(
+
+class HmacSignatureAuthenticationFilter(
     authenticationManager: AuthenticationManager,
     vararg requestMatcher: RequestMatcher,
 ) : CommonAuthenticationFiller(authenticationManager, *requestMatcher) {
 
-    companion object {
-        private const val JWT_TOKEN_PREFIX = "Bearer "
-    }
 
     override fun attemptAuthentication(request: HttpServletRequest, response: HttpServletResponse): Authentication {
-        val jwtToken = resolveJwtToken(request) ?: throw BadCredentialsException("Invalid JWT authentication")
+        val authorization = request.getHeader(HttpHeaders.AUTHORIZATION)
 
-        val jwtAuthenticationToken = JwtAuthenticationToken(null, jwtToken)
-        return authenticationManager.authenticate(jwtAuthenticationToken)
-    }
-
-    private fun resolveJwtToken(request: HttpServletRequest): String? {
-        val header = request.getHeader(HttpHeaders.AUTHORIZATION)
-        if (!header.isNullOrEmpty() && header.startsWith(JWT_TOKEN_PREFIX)) {
-            return header.substring(7)
+        if (authorization.isNullOrEmpty() || !authorization.contains(":")) {
+            throw BadCredentialsException("Invalid Hmac authentication : $authorization")
         }
 
-        return null
+        val (clientId, signature) = authorization.split(":")
+        val authentication = HmacAuthenticationToken(clientId, signature, request.requestURL.toString())
+        return authenticationManager.authenticate(authentication)
     }
+
 }
