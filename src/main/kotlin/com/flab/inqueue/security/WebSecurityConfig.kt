@@ -1,11 +1,13 @@
 package com.flab.inqueue.security
 
-import com.flab.inqueue.security.hmacsinature.HmacSignatureFilter
+import com.flab.inqueue.security.hmacsinature.HmacAuthenticationProvider
+import com.flab.inqueue.security.hmacsinature.HmacSignatureAuthenticationFilter
+import com.flab.inqueue.security.jwt.JwtAuthenticationFilter
+import com.flab.inqueue.security.jwt.JwtAuthenticationProvider
 import org.springframework.boot.autoconfigure.security.servlet.PathRequest
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.context.annotation.Profile
-import org.springframework.security.authentication.AuthenticationProvider
 import org.springframework.security.authentication.ProviderManager
 import org.springframework.security.config.annotation.web.builders.HttpSecurity
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity
@@ -13,31 +15,43 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.config.http.SessionCreationPolicy
 import org.springframework.security.web.SecurityFilterChain
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter
+import org.springframework.security.web.util.matcher.AntPathRequestMatcher
 
 
 @Configuration
 @EnableWebSecurity
 class WebSecurityConfig(
-    private val hmacAuthenticationProvider: AuthenticationProvider,
+    private val hmacAuthenticationProvider: HmacAuthenticationProvider,
+    private val jwtAuthenticationProvider: JwtAuthenticationProvider,
     private val customAuthenticationEntryPoint: CustomAuthenticationEntryPoint,
     private val customAccessDenierHandler: CustomAccessDenierHandler
 ) {
+    companion object {
+        private val HMAC_AUTHENTICATION_REQUEST_MATCHER = arrayOf(AntPathRequestMatcher("/v1/server/auth/**"))
+        private val JWT_AUTHENTICATION_REQUEST_MATCHER = arrayOf(AntPathRequestMatcher("/v1/client/**"))
+    }
     @Bean
     fun securityFilterChain(http: HttpSecurity): SecurityFilterChain {
         http
             .csrf().disable()
             .cors().disable()
             .authorizeHttpRequests()
-            .requestMatchers("/v1/auth/**").authenticated()
+            .requestMatchers(*HMAC_AUTHENTICATION_REQUEST_MATCHER).authenticated()
+            .requestMatchers(*JWT_AUTHENTICATION_REQUEST_MATCHER).authenticated()
             .anyRequest().permitAll()
         http
             .sessionManagement()
             .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
         http
-            .addFilterAfter(
-                hmacSignatureFilter(),
+            .addFilterBefore(
+                hmacSignatureAuthenticationFilter(),
                 UsernamePasswordAuthenticationFilter::class.java
             )
+            .addFilterAfter(
+                jwtAuthenticationFilter(),
+                UsernamePasswordAuthenticationFilter::class.java
+            )
+
         http.exceptionHandling()
             .authenticationEntryPoint(customAuthenticationEntryPoint)
             .accessDeniedHandler(customAccessDenierHandler)
@@ -45,9 +59,15 @@ class WebSecurityConfig(
     }
 
     @Bean
-    fun hmacSignatureFilter(): HmacSignatureFilter {
+    fun hmacSignatureAuthenticationFilter(): HmacSignatureAuthenticationFilter {
         val authenticationManager = ProviderManager(hmacAuthenticationProvider)
-        return HmacSignatureFilter(authenticationManager)
+        return HmacSignatureAuthenticationFilter(authenticationManager, *HMAC_AUTHENTICATION_REQUEST_MATCHER)
+    }
+
+    @Bean
+    fun jwtAuthenticationFilter() : JwtAuthenticationFilter {
+        val authenticationManager = ProviderManager(jwtAuthenticationProvider)
+        return JwtAuthenticationFilter(authenticationManager, *JWT_AUTHENTICATION_REQUEST_MATCHER)
     }
 
     @Profile("dev")
