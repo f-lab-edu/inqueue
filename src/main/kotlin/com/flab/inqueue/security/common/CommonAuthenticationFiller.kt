@@ -20,7 +20,7 @@ abstract class CommonAuthenticationFiller(
         filterChain: FilterChain
     ) {
         try {
-            if (!requiresAuthentication(request, response)) {
+            if (!isRequestMatched(request)) {
                 filterChain.doFilter(request, response)
                 return
             }
@@ -33,9 +33,10 @@ abstract class CommonAuthenticationFiller(
         filterChain.doFilter(request, response)
     }
 
-    protected open fun requiresAuthentication(request: HttpServletRequest, response: HttpServletResponse): Boolean {
+    private fun isRequestMatched(request: HttpServletRequest): Boolean {
         return requestMatchers.any{ requestMatcher -> requestMatcher.matches(request) }
     }
+
     abstract fun attemptAuthentication(request: HttpServletRequest, response: HttpServletResponse): Authentication
 
 }
