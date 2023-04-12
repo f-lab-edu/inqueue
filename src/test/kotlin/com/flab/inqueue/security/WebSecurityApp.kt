@@ -1,4 +1,4 @@
-package com.flab.inqueue.security.hmacsinature
+package com.flab.inqueue.security
 
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.autoconfigure.domain.EntityScan
@@ -13,5 +13,5 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories
 )
 @EnableJpaRepositories("com.flab.inqueue.domain.customer")
 @EntityScan("com.flab.inqueue.domain.customer")
-class HmacSignatureSecurityApp {
+class WebSecurityApp {
 }
