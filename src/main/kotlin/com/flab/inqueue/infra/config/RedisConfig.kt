@@ -29,8 +29,8 @@ class RedisConfig(
     }
 
     @Bean
-    fun redisTemplate(connectionFactory: RedisConnectionFactory): RedisTemplate<String, Any> {
-        val redisTemplate = RedisTemplate<String, Any>()
+    fun jobRredisTemplate(connectionFactory: RedisConnectionFactory): RedisTemplate<String, Job> {
+        val redisTemplate = RedisTemplate<String, Job>()
         redisTemplate.keySerializer = StringRedisSerializer()
         redisTemplate.valueSerializer = Jackson2JsonRedisSerializer(jacksonObjectMapper(), Job::class.java)
         redisTemplate.setConnectionFactory(connectionFactory)
