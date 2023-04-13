@@ -1,7 +1,7 @@
 package com.flab.inqueue.infra.config
 
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
-import com.flab.inqueue.domain.queue.entity.Work
+import com.flab.inqueue.domain.queue.entity.Job
 import com.flab.inqueue.infra.property.RedisProperty
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
@@ -32,7 +32,7 @@ class RedisConfig(
     fun redisTemplate(connectionFactory: RedisConnectionFactory): RedisTemplate<String, Any> {
         val redisTemplate = RedisTemplate<String, Any>()
         redisTemplate.keySerializer = StringRedisSerializer()
-        redisTemplate.valueSerializer = Jackson2JsonRedisSerializer(jacksonObjectMapper(), Work::class.java)
+        redisTemplate.valueSerializer = Jackson2JsonRedisSerializer(jacksonObjectMapper(), Job::class.java)
         redisTemplate.setConnectionFactory(connectionFactory)
         return redisTemplate
     }

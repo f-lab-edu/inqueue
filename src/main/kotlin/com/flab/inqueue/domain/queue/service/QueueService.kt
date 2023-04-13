@@ -1,6 +1,6 @@
 package com.flab.inqueue.domain.queue.service
 
-import com.flab.inqueue.domain.queue.entity.Work
+import com.flab.inqueue.domain.queue.entity.Job
 import org.springframework.data.redis.core.RedisTemplate
 import org.springframework.stereotype.Service
 
@@ -9,12 +9,12 @@ class QueueService(
     private val redisTemplate: RedisTemplate<String, Any>,
 ) {
 
-    fun register(work: Work): Long? {
+    fun register(work: Job): Long? {
         redisTemplate.opsForZSet().add(work.eventId, work, System.nanoTime().toDouble())
         return getRedisSize(work.eventId)
     }
 
-    fun registerAll(work: Work): Long? {
+    fun registerAll(work: Job): Long? {
         redisTemplate.opsForZSet().add(work.eventId, work, System.nanoTime().toDouble())
         return getRedisSize(work.eventId)
     }
@@ -23,8 +23,8 @@ class QueueService(
         return redisTemplate.opsForZSet().size(key);
     }
 
-    fun getRank(work: Work): Long? {
-        return redisTemplate.opsForZSet().rank(work.eventId, work)
+    fun getRank(job: Job): Long? {
+        return redisTemplate.opsForZSet().rank(job.eventId, job)
     }
 
 }

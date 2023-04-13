@@ -2,7 +2,7 @@ package com.flab.inqueue.domain.queue.redis
 
 import com.flab.inqueue.TestContainer
 import com.flab.inqueue.createEventRequest
-import com.flab.inqueue.domain.queue.entity.Work
+import com.flab.inqueue.domain.queue.entity.Job
 import com.flab.inqueue.support.RedisConfigTest
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Assertions.assertTrue
@@ -35,8 +35,8 @@ class WaitWorkRedis @Autowired constructor(
     fun add() {
         //given
         val event = createEventRequest().toEntity()
-        val work = Work(event.eventId, UUID.randomUUID().toString())
-        zSetOperations.add(event.eventId, work, System.nanoTime().toDouble())
+        val job = Job(event.eventId, UUID.randomUUID().toString())
+        zSetOperations.add(event.eventId, job, System.nanoTime().toDouble())
         //when
         val range = zSetOperations.range(event.eventId, 0, -1)
         //then
@@ -49,13 +49,13 @@ class WaitWorkRedis @Autowired constructor(
         //given
         val event = createEventRequest().toEntity()
         zSetOperations.add(
-            event.eventId, Work(event.eventId, UUID.randomUUID().toString()), System.nanoTime().toDouble()
+            event.eventId,Job(event.eventId, UUID.randomUUID().toString()), System.nanoTime().toDouble()
         )
         zSetOperations.add(
-            event.eventId, Work(event.eventId, UUID.randomUUID().toString()), System.nanoTime().toDouble()
+            event.eventId,Job(event.eventId, UUID.randomUUID().toString()), System.nanoTime().toDouble()
         )
         zSetOperations.add(
-            event.eventId, Work(event.eventId, UUID.randomUUID().toString()), System.nanoTime().toDouble()
+            event.eventId,Job(event.eventId, UUID.randomUUID().toString()), System.nanoTime().toDouble()
         )
         //when
         val long = zSetOperations.size(event.eventId)
@@ -69,19 +69,19 @@ class WaitWorkRedis @Autowired constructor(
     fun getRanksOfKey() {
         //given
         val event = createEventRequest().toEntity()
-        val work1 = Work(event.eventId, UUID.randomUUID().toString())
-        val work2 = Work(event.eventId, UUID.randomUUID().toString())
-        val work3 = Work(event.eventId, UUID.randomUUID().toString())
-        zSetOperations.add(event.eventId, work1, System.nanoTime().toDouble())
-        zSetOperations.add(event.eventId, work2, System.nanoTime().toDouble())
-        zSetOperations.add(event.eventId, work3, System.nanoTime().toDouble())
+        val job1 =Job(event.eventId, UUID.randomUUID().toString())
+        val job2 =Job(event.eventId, UUID.randomUUID().toString())
+        val job3 =Job(event.eventId, UUID.randomUUID().toString())
+        zSetOperations.add(event.eventId, job1, System.nanoTime().toDouble())
+        zSetOperations.add(event.eventId, job2, System.nanoTime().toDouble())
+        zSetOperations.add(event.eventId, job3, System.nanoTime().toDouble())
 
 
         //when
         val totalSize = zSetOperations.size(event.eventId)
-        val rank1 = zSetOperations.rank(event.eventId, work1)
-        val rank2 = zSetOperations.rank(event.eventId, work2)
-        val rank3 = zSetOperations.rank(event.eventId, work3)
+        val rank1 = zSetOperations.rank(event.eventId, job1)
+        val rank2 = zSetOperations.rank(event.eventId, job2)
+        val rank3 = zSetOperations.rank(event.eventId, job3)
 
         //then
         assertThat(rank1).isEqualTo(0)
@@ -94,16 +94,16 @@ class WaitWorkRedis @Autowired constructor(
     fun deleteKey() {
         //given
         val event = createEventRequest().toEntity()
-        val work1 = Work(event.eventId, UUID.randomUUID().toString())
-        val work2 = Work(event.eventId, UUID.randomUUID().toString())
-        val work3 = Work(event.eventId, UUID.randomUUID().toString())
-        zSetOperations.add(event.eventId, work1, System.nanoTime().toDouble())
-        zSetOperations.add(event.eventId, work2, System.nanoTime().toDouble())
-        zSetOperations.add(event.eventId, work3, System.nanoTime().toDouble())
+        val job1 =Job(event.eventId, UUID.randomUUID().toString())
+        val job2 =Job(event.eventId, UUID.randomUUID().toString())
+        val job3 =Job(event.eventId, UUID.randomUUID().toString())
+        zSetOperations.add(event.eventId, job1, System.nanoTime().toDouble())
+        zSetOperations.add(event.eventId, job2, System.nanoTime().toDouble())
+        zSetOperations.add(event.eventId, job3, System.nanoTime().toDouble())
 
 
         //when
-        val remove = zSetOperations.remove(event.eventId, work1)
+        val remove = zSetOperations.remove(event.eventId, job1)
         val totalSize = zSetOperations.size(event.eventId)
 
         //then
@@ -118,7 +118,7 @@ class WaitWorkRedis @Autowired constructor(
         val event = createEventRequest().toEntity()
         repeat(100) {
             zSetOperations.add(
-                event.eventId, Work(event.eventId, UUID.randomUUID().toString()), System.nanoTime().toDouble()
+                event.eventId,Job(event.eventId, UUID.randomUUID().toString()), System.nanoTime().toDouble()
             )
         }
 
@@ -136,7 +136,7 @@ class WaitWorkRedis @Autowired constructor(
         val event = createEventRequest().toEntity()
         repeat(100) {
             zSetOperations.add(
-                event.eventId, Work(event.eventId, UUID.randomUUID().toString()), System.nanoTime().toDouble()
+                event.eventId, Job(event.eventId, UUID.randomUUID().toString()), System.nanoTime().toDouble()
             )
         }
 
