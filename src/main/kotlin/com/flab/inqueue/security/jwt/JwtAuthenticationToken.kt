@@ -22,12 +22,14 @@ class JwtAuthenticationToken(
         @JvmStatic
         fun authenticatedToken(
             clientId: String,
-            userId: String
+            userId: String,
+            authorities: MutableCollection<out GrantedAuthority>
         ): JwtAuthenticationToken {
             return JwtAuthenticationToken(
                 clientId = clientId,
                 userId = userId,
-                isAuthenticated = true
+                isAuthenticated = true,
+                authorities = authorities
             )
         }
     }
