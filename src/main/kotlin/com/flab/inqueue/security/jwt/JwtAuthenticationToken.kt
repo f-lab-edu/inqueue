@@ -13,9 +13,16 @@ class JwtAuthenticationToken(
 
     companion object {
         @JvmStatic
+        fun unauthenticatedToken(
+            jwtToken: String
+        ): JwtAuthenticationToken {
+            return JwtAuthenticationToken(jwtToken = jwtToken)
+        }
+
+        @JvmStatic
         fun authenticatedToken(
-            clientId: String?,
-            userId: String?
+            clientId: String,
+            userId: String
         ): JwtAuthenticationToken {
             return JwtAuthenticationToken(
                 clientId = clientId,

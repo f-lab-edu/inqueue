@@ -24,7 +24,11 @@ class HmacSignatureAuthenticationFilter(
         }
 
         val (clientId, signature) = authorization.split(":")
-        val authentication = HmacAuthenticationToken(clientId, signature, request.requestURL.toString())
+        val authentication = HmacAuthenticationToken.unauthenticatedToken(
+                clientId = clientId,
+                signature = signature,
+                payload = request.requestURL.toString()
+            )
         return authenticationManager.authenticate(authentication)
     }
 

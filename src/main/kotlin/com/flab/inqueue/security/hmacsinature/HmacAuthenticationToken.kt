@@ -12,6 +12,20 @@ class HmacAuthenticationToken(
 ) : CommonAuthentication(clientId, clientId, isAuthenticated, authorities) {
 
     companion object {
+
+        @JvmStatic
+        fun unauthenticatedToken(
+            clientId: String,
+            signature: String,
+            payload: String
+        ): HmacAuthenticationToken {
+            return HmacAuthenticationToken(
+                clientId = clientId,
+                signature = signature,
+                payload = payload
+            )
+        }
+
         @JvmStatic
         fun authenticatedToken(
             clientId: String,
