@@ -6,9 +6,9 @@ import java.time.LocalDateTime
 
 @Entity(name = "CUSTOMER")
 class Customer(
-    name: String,
+    var name: String,
     val clientId: String,
-    clientSecret: String,
+    var clientSecret: String,
     @ElementCollection
     @CollectionTable(
         name = "CUSTOMER_ROLE",
@@ -21,13 +21,7 @@ class Customer(
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     val id: Long? = null
 
-    var name: String = name
-        private set
-
     val createdAt: LocalDateTime = LocalDateTime.now()
-
-    var clientSecret: String = clientSecret
-        private set
 
     companion object {
         @JvmStatic
