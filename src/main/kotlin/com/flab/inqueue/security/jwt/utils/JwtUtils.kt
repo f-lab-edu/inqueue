@@ -3,7 +3,6 @@ package com.flab.inqueue.security.jwt.utils
 import io.jsonwebtoken.*
 import io.jsonwebtoken.io.Decoders
 import io.jsonwebtoken.security.Keys
-import jakarta.annotation.PostConstruct
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Component
 import io.jsonwebtoken.security.SignatureException
@@ -24,13 +23,7 @@ class JwtUtils(
         private const val CLAIM_CLIENT_ID_CODE = "clientId"
         private const val TOKEN_ISSUER = "com.inqueue"
     }
-
-    private lateinit var signingKey: Key
-
-    @PostConstruct
-    private fun init() {
-        signingKey = Keys.hmacShaKeyFor(Decoders.BASE64.decode(secretKey))
-    }
+    private var signingKey: Key = Keys.hmacShaKeyFor(Decoders.BASE64.decode(secretKey))
 
     fun create(clientId: String, userId: String): JwtToken {
         val now = System.currentTimeMillis()
