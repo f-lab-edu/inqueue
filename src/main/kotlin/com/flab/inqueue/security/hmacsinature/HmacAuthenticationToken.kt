@@ -7,8 +7,9 @@ class HmacAuthenticationToken(
     val clientId: String? = null,
     val signature: String? = null,
     val payload: String? = null,
+    isAuthenticated: Boolean = false,
     authorities: MutableCollection<out GrantedAuthority> = mutableListOf()
-) : CommonAuthentication(clientId, clientId, false, authorities) {
+) : CommonAuthentication(clientId, clientId, isAuthenticated, authorities) {
 
     companion object {
         @JvmStatic
@@ -18,8 +19,9 @@ class HmacAuthenticationToken(
         ): HmacAuthenticationToken {
             return HmacAuthenticationToken(
                 clientId = clientId,
-                authorities = authorities
-            ).apply { isAuthenticated = true }
+                authorities = authorities,
+                isAuthenticated = true
+            )
         }
     }
 }
