@@ -32,27 +32,45 @@ class HmacSignatureSecurityTest : AcceptanceTest() {
     @Autowired
     lateinit var customerAccountFactory: CustomerAccountFactory
 
-    lateinit var testClientId: String
+    lateinit var testClientIdWithUser: String
 
-    lateinit var testClientSecret: String
+    lateinit var testClientSecretWithUser: String
 
     lateinit var testUser: Customer
 
-    lateinit var hmacSignaturePayload: String
+    lateinit var hmacSignaturePayloadWithUser: String
+
+    lateinit var testClientIdWithAdmin: String
+
+    lateinit var testClientSecretWithAdmin: String
+
+    lateinit var testAdmin: Customer
+
+    lateinit var hmacSignaturePayloadWithAdmin: String
 
     companion object {
         const val HMAC_SECURITY_TEST_URI = "/server/hmac-security-test"
+        const val HMAC_SECURITY_TEST_WITH_ADMIN_USER_URI = "/server/hmac-security-test-with-admin-role"
     }
 
     @BeforeEach
     @Transactional
     fun setUp(@LocalServerPort port: Int) {
-        hmacSignaturePayload = "http://localhost:${port}" + HMAC_SECURITY_TEST_URI
-        testClientId = customerAccountFactory.generateClientId()
-        testClientSecret = customerAccountFactory.generateClientSecret()
-        testUser = Customer.user("USER", testClientId, testClientSecret)
+        // ROLE_USER
+        hmacSignaturePayloadWithUser = "http://localhost:${port}" + HMAC_SECURITY_TEST_URI
+        testClientIdWithUser = customerAccountFactory.generateClientId()
+        testClientSecretWithUser = customerAccountFactory.generateClientSecret()
+        testUser = Customer.user("USER", testClientIdWithUser, testClientSecretWithUser)
         testUser.encryptClientSecret(secretKeyCipher)
         customerRepository.save(testUser)
+
+        // ROLE_ADMIN
+        hmacSignaturePayloadWithAdmin = "http://localhost:${port}" + HMAC_SECURITY_TEST_WITH_ADMIN_USER_URI
+        testClientIdWithAdmin = customerAccountFactory.generateClientId()
+        testClientSecretWithAdmin = customerAccountFactory.generateClientSecret()
+        testAdmin = Customer.admin("ADMIN", testClientIdWithAdmin, testClientSecretWithAdmin)
+        testAdmin.encryptClientSecret(secretKeyCipher)
+        customerRepository.save(testAdmin)
     }
 
     @Test
@@ -61,7 +79,10 @@ class HmacSignatureSecurityTest : AcceptanceTest() {
         given.log().all()
             .header(
                 HttpHeaders.AUTHORIZATION,
-                createAuthorization(testClientId, createHmacSignature(hmacSignaturePayload, testClientSecret))
+                createAuthorization(
+                    testClientIdWithUser,
+                    createHmacSignature(hmacSignaturePayloadWithUser, testClientSecretWithUser)
+                )
             )
             .contentType(MediaType.APPLICATION_JSON_VALUE).
         `when`()
@@ -70,14 +91,14 @@ class HmacSignatureSecurityTest : AcceptanceTest() {
             .statusCode(HttpStatus.OK.value())
             .assertThat()
             .body("isAuthenticated", Matchers.equalTo(true))
-            .body("clientId", Matchers.equalTo(testClientId))
+            .body("clientId", Matchers.equalTo(testClientIdWithUser))
             .body("signature", Matchers.nullValue())
             .body("payload", Matchers.nullValue())
             .body("credentials", Matchers.nullValue())
             .body("details", Matchers.nullValue())
-            .body("principal", Matchers.equalTo(testClientId))
-            .body("name", Matchers.equalTo(testClientId))
-            .body("authorities.authority", Matchers.hasItem("ROLE_" + testUser.roles[0].name))
+            .body("principal", Matchers.equalTo(testClientIdWithUser))
+            .body("name", Matchers.equalTo(testClientIdWithUser))
+            .body("authorities.authority", Matchers.hasItem("ROLE_USER"))
     }
 
     @Test
@@ -92,7 +113,10 @@ class HmacSignatureSecurityTest : AcceptanceTest() {
         given.log().all()
             .header(
                 HttpHeaders.AUTHORIZATION,
-                createAuthorization(testClientId, createHmacSignature(hmacSignaturePayload, anotherClientSecret))
+                createAuthorization(
+                    testClientIdWithUser,
+                    createHmacSignature(hmacSignaturePayloadWithUser, anotherClientSecret)
+                )
             )
             .body(authRequest)
             .contentType(MediaType.APPLICATION_JSON_VALUE).
@@ -107,7 +131,6 @@ class HmacSignatureSecurityTest : AcceptanceTest() {
             .body("path", Matchers.notNullValue())
     }
 
-
     @Test
     @DisplayName("clientId를 찾을 수 없는 경우, Hmac Authentication 실패")
     fun hmac_authentication_fail2() {
@@ -120,7 +143,10 @@ class HmacSignatureSecurityTest : AcceptanceTest() {
         given.log().all()
             .header(
                 HttpHeaders.AUTHORIZATION,
-                createAuthorization(anotherClientId, createHmacSignature(hmacSignaturePayload, testClientSecret))
+                createAuthorization(
+                    anotherClientId,
+                    createHmacSignature(hmacSignaturePayloadWithUser, testClientSecretWithUser)
+                )
             )
             .body(authRequest)
             .contentType(MediaType.APPLICATION_JSON_VALUE).
@@ -152,6 +178,57 @@ class HmacSignatureSecurityTest : AcceptanceTest() {
             .statusCode(HttpStatus.UNAUTHORIZED.value())
             .assertThat()
             .body("error", Matchers.equalTo("Unauthorized"))
+            .body("timestamp", Matchers.notNullValue())
+            .body("status", Matchers.notNullValue())
+            .body("path", Matchers.notNullValue())
+    }
+
+    @Test
+    @DisplayName("ADMIN권한을 요구하는 API에 ADMIN이 인증 요청했을때, Hmac Authorization 성공")
+    fun hmac_authentication_with_admin_role_success() {
+        given.log().all()
+            .header(
+                HttpHeaders.AUTHORIZATION,
+                createAuthorization(
+                    testClientIdWithAdmin,
+                    createHmacSignature(hmacSignaturePayloadWithAdmin, testClientSecretWithAdmin)
+                )
+            )
+            .contentType(MediaType.APPLICATION_JSON_VALUE).
+        `when`()
+            .get(HMAC_SECURITY_TEST_WITH_ADMIN_USER_URI).
+        then().log().all()
+            .statusCode(HttpStatus.OK.value())
+            .assertThat()
+            .body("isAuthenticated", Matchers.equalTo(true))
+            .body("clientId", Matchers.equalTo(testClientIdWithAdmin))
+            .body("signature", Matchers.nullValue())
+            .body("payload", Matchers.nullValue())
+            .body("credentials", Matchers.nullValue())
+            .body("details", Matchers.nullValue())
+            .body("principal", Matchers.equalTo(testClientIdWithAdmin))
+            .body("name", Matchers.equalTo(testClientIdWithAdmin))
+            .body("authorities.authority", Matchers.hasItems("ROLE_USER", "ROLE_ADMIN"))
+    }
+
+    @Test
+    @DisplayName("ADMIN권한을 요구하는 API에 USER가 인증 요청했을때, Hmac Authorization 실패")
+    fun hmac_authentication_with_admin_role_fail() {
+        given.log().all()
+            .header(
+                HttpHeaders.AUTHORIZATION,
+                createAuthorization(
+                    testClientIdWithUser,
+                    createHmacSignature(hmacSignaturePayloadWithAdmin, testClientSecretWithUser)
+                )
+            )
+            .contentType(MediaType.APPLICATION_JSON_VALUE).
+        `when`()
+            .get(HMAC_SECURITY_TEST_WITH_ADMIN_USER_URI).
+        then().log().all()
+            .statusCode(HttpStatus.FORBIDDEN.value())
+            .assertThat()
+            .body("error", Matchers.equalTo("Forbidden"))
             .body("timestamp", Matchers.notNullValue())
             .body("status", Matchers.notNullValue())
             .body("path", Matchers.notNullValue())

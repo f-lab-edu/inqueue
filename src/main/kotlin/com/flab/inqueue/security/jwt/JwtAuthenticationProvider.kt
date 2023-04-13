@@ -21,7 +21,7 @@ class JwtAuthenticationProvider(
     override fun authenticate(authentication: Authentication?): Authentication {
         val jwtAuthentication = authentication as JwtAuthenticationToken
 
-        var verifyResponse: JwtVerificationResponse? = null
+        val verifyResponse: JwtVerificationResponse
         try {
             verifyResponse = jwtUtils.verify(jwtAuthentication.jwtToken!!)
         } catch (e: JwtException) {
@@ -29,6 +29,7 @@ class JwtAuthenticationProvider(
         }
 
         // TODO: 대기열 유저 검증 구현 - Redis UserList 에서 해당 유저가 있는지 확인
+
         return JwtAuthenticationToken.authenticatedToken(
             clientId = verifyResponse.clientId,
             userId = verifyResponse.userId,
