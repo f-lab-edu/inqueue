@@ -61,7 +61,7 @@ class JwtUtils(
                 is MalformedJwtException,
                 is SignatureException,
                 is ExpiredJwtException -> {
-                    return JwtVerificationResponse(isValid = false, throwable = ex.cause)
+                    return JwtVerificationResponse(isValid = false, throwable = ex)
                 }
 
                 else -> throw ex
