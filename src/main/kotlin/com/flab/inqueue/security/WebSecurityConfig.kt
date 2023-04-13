@@ -27,8 +27,8 @@ class WebSecurityConfig(
     private val customAccessDenierHandler: CustomAccessDenierHandler
 ) {
     companion object {
-        private val HMAC_AUTHENTICATION_REQUEST_MATCHER = arrayOf(AntPathRequestMatcher("/v1/server/auth/**"))
-        private val JWT_AUTHENTICATION_REQUEST_MATCHER = arrayOf(AntPathRequestMatcher("/v1/client/**"))
+        private val HMAC_AUTHENTICATION_REQUEST_MATCHER = AntPathRequestMatcher("/server/**")
+        private val JWT_AUTHENTICATION_REQUEST_MATCHER = AntPathRequestMatcher("/client/**")
     }
     @Bean
     fun securityFilterChain(http: HttpSecurity): SecurityFilterChain {
@@ -36,8 +36,8 @@ class WebSecurityConfig(
             .csrf().disable()
             .cors().disable()
             .authorizeHttpRequests()
-            .requestMatchers(*HMAC_AUTHENTICATION_REQUEST_MATCHER).authenticated()
-            .requestMatchers(*JWT_AUTHENTICATION_REQUEST_MATCHER).authenticated()
+            .requestMatchers(HMAC_AUTHENTICATION_REQUEST_MATCHER).authenticated()
+            .requestMatchers(JWT_AUTHENTICATION_REQUEST_MATCHER).authenticated()
             .anyRequest().permitAll()
         http
             .sessionManagement()
@@ -61,13 +61,13 @@ class WebSecurityConfig(
     @Bean
     fun hmacSignatureAuthenticationFilter(): HmacSignatureAuthenticationFilter {
         val authenticationManager = ProviderManager(hmacAuthenticationProvider)
-        return HmacSignatureAuthenticationFilter(authenticationManager, *HMAC_AUTHENTICATION_REQUEST_MATCHER)
+        return HmacSignatureAuthenticationFilter(authenticationManager, HMAC_AUTHENTICATION_REQUEST_MATCHER)
     }
 
     @Bean
     fun jwtAuthenticationFilter() : JwtAuthenticationFilter {
         val authenticationManager = ProviderManager(jwtAuthenticationProvider)
-        return JwtAuthenticationFilter(authenticationManager, *JWT_AUTHENTICATION_REQUEST_MATCHER)
+        return JwtAuthenticationFilter(authenticationManager, JWT_AUTHENTICATION_REQUEST_MATCHER)
     }
 
     @Profile("dev")
