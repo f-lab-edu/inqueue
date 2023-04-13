@@ -9,6 +9,7 @@ import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.context.annotation.Profile
 import org.springframework.security.authentication.ProviderManager
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity
 import org.springframework.security.config.annotation.web.builders.HttpSecurity
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity
 import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer
@@ -20,6 +21,7 @@ import org.springframework.security.web.util.matcher.AntPathRequestMatcher
 
 @Configuration
 @EnableWebSecurity
+@EnableMethodSecurity(securedEnabled = true)
 class WebSecurityConfig(
     private val hmacAuthenticationProvider: HmacAuthenticationProvider,
     private val jwtAuthenticationProvider: JwtAuthenticationProvider,
@@ -30,6 +32,7 @@ class WebSecurityConfig(
         private val HMAC_AUTHENTICATION_REQUEST_MATCHER = AntPathRequestMatcher("/server/**")
         private val JWT_AUTHENTICATION_REQUEST_MATCHER = AntPathRequestMatcher("/client/**")
     }
+
     @Bean
     fun securityFilterChain(http: HttpSecurity): SecurityFilterChain {
         http
@@ -65,7 +68,7 @@ class WebSecurityConfig(
     }
 
     @Bean
-    fun jwtAuthenticationFilter() : JwtAuthenticationFilter {
+    fun jwtAuthenticationFilter(): JwtAuthenticationFilter {
         val authenticationManager = ProviderManager(jwtAuthenticationProvider)
         return JwtAuthenticationFilter(authenticationManager, JWT_AUTHENTICATION_REQUEST_MATCHER)
     }
