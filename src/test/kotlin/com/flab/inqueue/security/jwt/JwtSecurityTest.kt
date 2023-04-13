@@ -37,8 +37,10 @@ class JwtSecurityTest : AcceptanceTest() {
                 HttpHeaders.AUTHORIZATION,
                 JWT_TOKEN_PREFIX + getJwtToken(TEST_USER_ID, TEST_CLIENT_ID).accessToken
             )
-            .contentType(MediaType.APPLICATION_JSON_VALUE).`when`()
-            .get(JWT_SECURITY_TEST_URI).then().log().all()
+            .contentType(MediaType.APPLICATION_JSON_VALUE).
+        `when`()
+            .get(JWT_SECURITY_TEST_URI).
+        then().log().all()
             .statusCode(HttpStatus.OK.value())
             .assertThat()
             .body("isAuthenticated", Matchers.equalTo(true))
@@ -57,8 +59,10 @@ class JwtSecurityTest : AcceptanceTest() {
     fun jwt_authentication_fail1() {
         given.log().all()
             .header(HttpHeaders.AUTHORIZATION, "")
-            .contentType(MediaType.APPLICATION_JSON_VALUE).`when`()
-            .get(JWT_SECURITY_TEST_URI).then().log().all()
+            .contentType(MediaType.APPLICATION_JSON_VALUE).
+        `when`()
+            .get(JWT_SECURITY_TEST_URI).
+        then().log().all()
             .statusCode(HttpStatus.UNAUTHORIZED.value())
             .assertThat()
             .body("error", Matchers.equalTo("Unauthorized"))
@@ -75,8 +79,10 @@ class JwtSecurityTest : AcceptanceTest() {
                 HttpHeaders.AUTHORIZATION,
                 JWT_TOKEN_PREFIX + getJwtTokenWithAnotherSecretKey(TEST_USER_ID, TEST_CLIENT_ID).accessToken
             )
-            .contentType(MediaType.APPLICATION_JSON_VALUE).`when`()
-            .get(JWT_SECURITY_TEST_URI).then().log().all()
+            .contentType(MediaType.APPLICATION_JSON_VALUE).
+        `when`()
+            .get(JWT_SECURITY_TEST_URI).
+        then().log().all()
             .statusCode(HttpStatus.UNAUTHORIZED.value())
             .assertThat()
             .body("error", Matchers.equalTo("Unauthorized"))
@@ -93,8 +99,10 @@ class JwtSecurityTest : AcceptanceTest() {
                 HttpHeaders.AUTHORIZATION,
                 JWT_TOKEN_PREFIX + getExpiredJwtToken(TEST_USER_ID, TEST_CLIENT_ID).accessToken
             )
-            .contentType(MediaType.APPLICATION_JSON_VALUE).`when`()
-            .get(JWT_SECURITY_TEST_URI).then().log().all()
+            .contentType(MediaType.APPLICATION_JSON_VALUE).
+        `when`()
+            .get(JWT_SECURITY_TEST_URI).
+        then().log().all()
             .statusCode(HttpStatus.UNAUTHORIZED.value())
             .assertThat()
             .body("error", Matchers.equalTo("Unauthorized"))
