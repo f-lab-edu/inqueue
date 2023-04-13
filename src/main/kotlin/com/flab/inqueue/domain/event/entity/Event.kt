@@ -6,74 +6,40 @@ import jakarta.persistence.*
 import java.time.LocalDateTime
 
 @Table(
-    uniqueConstraints = [
-        UniqueConstraint(name = "uk_event", columnNames = ["eventId"])
-    ],
+    uniqueConstraints = [UniqueConstraint(name = "uk_event", columnNames = ["eventId"])],
     indexes = [Index(name = "idx_event_id", columnList = "eventId")]
 )
 @Entity
 class Event(
+    @Column(nullable = false) val eventId: String,
+    @Embedded var period: WaitQueuePeriod,
+    @Column(nullable = false) var jobQueueSize: Long,
+    @Column(nullable = false) var jobQueueLimitTime: Long,
+    @Embedded var eventInfo: EventInformation? = null,
+    var redirectUrl: String?,
+    @Column(nullable = false, updatable = false) val createdDateTime: LocalDateTime = LocalDateTime.now(),
+) : BaseEntity() {
     @Column(nullable = false)
-    val eventId: String,
-
-    period : WaitQueuePeriod,
-    jobQueueSize: Long,
-    jobQueueLimitTime: Long,
-
-    eventInfo : EventInformation = EventInformation(),
-    redirectUrl: String? = null,
-
-    @Column(nullable = false, updatable = false)
-    val createdDateTime: LocalDateTime = LocalDateTime.now(),
-    modifiedDateTime: LocalDateTime = LocalDateTime.now(),
-
-    id:Long
-) : BaseEntity(id){
-
-    @Embedded
-    var period : WaitQueuePeriod = period
-        private set
-    @Column(nullable = false)
-    var jobQueueSize: Long = jobQueueSize
-        private set
-    @Column(nullable = false)
-    var jobQueueLimitTime: Long = jobQueueLimitTime
-        private set
-    @Embedded
-    var eventInfo : EventInformation = eventInfo
-        private set
-    var redirectUrl: String? = redirectUrl
-        private set
-    @Column(nullable = false)
-    var modifiedDateTime: LocalDateTime = modifiedDateTime
+    var modifiedDateTime: LocalDateTime = LocalDateTime.now()
         private set
 
-    constructor(
-        eventId: String,
-        waitQueueStartDateTime: LocalDateTime,
-        waitQueueEndDateTime: LocalDateTime,
-        jobQueueSize: Long,
-        jobQueueLimitTime: Long,
-        eventinfo : EventInformation,
-        redirectUrl: String?
-    ) : this(eventId,WaitQueuePeriod(waitQueueStartDateTime, waitQueueEndDateTime),jobQueueSize,jobQueueLimitTime, id = 0L) {
-        this.eventInfo = eventinfo
-        this.redirectUrl = redirectUrl
+    fun update(event: Event) {
+        this.period = event.period
+        this.jobQueueSize = event.jobQueueSize
+        this.jobQueueLimitTime = event.jobQueueLimitTime
+        this.eventInfo = event.eventInfo
+        this.redirectUrl = event.redirectUrl
+        this.modifiedDateTime = LocalDateTime.now()
     }
 
-    fun update(
-        waitQueueStartDateTime: LocalDateTime,
-        waitQueueEndDateTime: LocalDateTime,
-        jobQueueSize: Long,
-        jobQueueLimitTime: Long,
-        eventInfo : EventInformation,
-        redirectUrl: String?
-    ) {
-        this.period = WaitQueuePeriod(waitQueueStartDateTime,waitQueueEndDateTime)
-        this.jobQueueSize = jobQueueSize
-        this.jobQueueLimitTime = jobQueueLimitTime
-        this.eventInfo = eventInfo
-        this.redirectUrl = redirectUrl
-        this.modifiedDateTime = LocalDateTime.now()
+    companion object {
+        fun from(event: Event) = Event(
+            event.eventId,
+            event.period,
+            event.jobQueueSize,
+            event.jobQueueLimitTime,
+            event.eventInfo,
+            event.redirectUrl,
+        )
     }
 }

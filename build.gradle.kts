@@ -21,6 +21,7 @@ repositories {
 }
 
 dependencies {
+    implementation("org.springframework.boot:spring-boot-starter-validation")
     implementation("org.springframework.boot:spring-boot-starter-data-jpa")
     implementation("org.springframework.boot:spring-boot-starter-web")
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
@@ -35,6 +36,10 @@ dependencies {
     }
 
     testImplementation("org.springframework.boot:spring-boot-starter-test")
+
+    //mockk
+    testImplementation("io.mockk:mockk:1.13.2")
+    testImplementation("com.ninja-squad:springmockk:3.1.1")
 
     /* rest-assured + restdocs */
     testImplementation("io.rest-assured:rest-assured:5.3.0")

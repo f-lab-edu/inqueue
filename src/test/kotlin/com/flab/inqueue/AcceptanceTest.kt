@@ -1,5 +1,6 @@
 package com.flab.inqueue
 
+import com.flab.inqueue.support.IntegrationTest
 import io.restassured.RestAssured
 import io.restassured.builder.RequestSpecBuilder
 import io.restassured.specification.RequestSpecification
@@ -15,13 +16,12 @@ import org.testcontainers.containers.MySQLContainer
 import org.testcontainers.junit.jupiter.Container
 import org.testcontainers.junit.jupiter.Testcontainers
 
-@ActiveProfiles("test")
 @Testcontainers
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-@ExtendWith(RestDocumentationExtension::class)
+@IntegrationTest
 abstract class AcceptanceTest {
 
     protected lateinit var given: RequestSpecification
+
 
     @BeforeEach
     fun setUpRequestSpecification(restDocumentation: RestDocumentationContextProvider, @LocalServerPort port: Int) {
