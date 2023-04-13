@@ -5,11 +5,9 @@ import io.jsonwebtoken.io.Decoders
 import io.jsonwebtoken.security.Keys
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Component
-import io.jsonwebtoken.security.SignatureException
 import java.security.Key
 import java.time.ZoneId
 import java.util.*
-import kotlin.jvm.Throws
 
 @Component
 class JwtUtils(
@@ -47,10 +45,7 @@ class JwtUtils(
     }
 
     @Throws(
-        UnsupportedJwtException::class,
-        MalformedJwtException::class,
-        SignatureException::class,
-        ExpiredJwtException::class
+       JwtException::class
     )
     fun verify(accessToken: String): JwtVerificationResponse {
         val claims = Jwts.parserBuilder()
