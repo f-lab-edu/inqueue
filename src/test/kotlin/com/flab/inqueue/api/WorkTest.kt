@@ -23,7 +23,7 @@ class WorkTest : AcceptanceTest() {
         val eventId = "testEvent1"
         val userId = "testUser1"
 
-        given.log().all()
+        givenWithDocument.log().all()
             .filter(ValidateJobQueueDocument.FILTER)
             .header(HttpHeaders.AUTHORIZATION, "X-Client-Id:(StringToSign를 ClientSecret으로 Hmac 암호화)")
             .pathParam("eventId", eventId)
@@ -40,7 +40,7 @@ class WorkTest : AcceptanceTest() {
         val eventId = "testEvent1"
         val userId = "testUser1"
 
-        given.log().all()
+        givenWithDocument.log().all()
             .filter(CloseJopQueueDocument.FILTER)
             .header(HttpHeaders.AUTHORIZATION, "X-Client-Id:(StringToSign를 ClientSecret으로 Hmac 암호화)")
             .pathParam("eventId", eventId)
