@@ -9,6 +9,7 @@ import io.jsonwebtoken.security.SignatureException
 import java.security.Key
 import java.time.ZoneId
 import java.util.*
+import kotlin.jvm.Throws
 
 @Component
 class JwtUtils(
@@ -23,6 +24,7 @@ class JwtUtils(
         private const val CLAIM_CLIENT_ID_CODE = "clientId"
         private const val TOKEN_ISSUER = "com.inqueue"
     }
+
     private var signingKey: Key = Keys.hmacShaKeyFor(Decoders.BASE64.decode(secretKey))
 
     fun create(clientId: String, userId: String): JwtToken {
@@ -44,28 +46,19 @@ class JwtUtils(
         return JwtToken(accessToken, expiryDate.toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime())
     }
 
+    @Throws(
+        UnsupportedJwtException::class,
+        MalformedJwtException::class,
+        SignatureException::class,
+        ExpiredJwtException::class
+    )
     fun verify(accessToken: String): JwtVerificationResponse {
-        try {
-            val claims = Jwts.parserBuilder()
-                .setSigningKey(signingKey).build().parseClaimsJws(accessToken).body
+        val claims = Jwts.parserBuilder()
+            .setSigningKey(signingKey).build().parseClaimsJws(accessToken).body
 
-            return JwtVerificationResponse(
-                clientId = claims[CLAIM_CLIENT_ID_CODE] as String,
-                userId = claims[CLAIM_USER_ID_CODE] as String,
-                isValid = true
-            )
-
-        } catch (ex: Exception) {
-            when (ex) {
-                is UnsupportedJwtException,
-                is MalformedJwtException,
-                is SignatureException,
-                is ExpiredJwtException -> {
-                    return JwtVerificationResponse(isValid = false, throwable = ex)
-                }
-
-                else -> throw ex
-            }
-        }
+        return JwtVerificationResponse(
+            clientId = claims[CLAIM_CLIENT_ID_CODE] as String,
+            userId = claims[CLAIM_USER_ID_CODE] as String,
+        )
     }
 }

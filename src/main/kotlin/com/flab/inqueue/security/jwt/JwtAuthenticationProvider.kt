@@ -1,6 +1,8 @@
 package com.flab.inqueue.security.jwt
 
 import com.flab.inqueue.security.jwt.utils.JwtUtils
+import com.flab.inqueue.security.jwt.utils.JwtVerificationResponse
+import io.jsonwebtoken.JwtException
 import org.springframework.security.authentication.AuthenticationProvider
 import org.springframework.security.authentication.BadCredentialsException
 import org.springframework.security.core.Authentication
@@ -18,20 +20,18 @@ class JwtAuthenticationProvider(
 
     override fun authenticate(authentication: Authentication?): Authentication {
         val jwtAuthentication = authentication as JwtAuthenticationToken
-        val verifyResponse = jwtUtils.verify(jwtAuthentication.jwtToken!!)
 
-        if (!verifyResponse.isValid) {
-            throw BadCredentialsException(
-                "Invalid jwtToken - accessToken: ${authentication.jwtToken}",
-                verifyResponse.throwable
-            )
+        var verifyResponse: JwtVerificationResponse? = null
+        try {
+            verifyResponse = jwtUtils.verify(jwtAuthentication.jwtToken!!)
+        } catch (e: JwtException) {
+            throw BadCredentialsException("Invalid jwtToken - accessToken: ${authentication.jwtToken}", e)
         }
 
         // TODO: 대기열 유저 검증 구현 - Redis UserList 에서 해당 유저가 있는지 확인
-
         return JwtAuthenticationToken.authenticatedToken(
-            clientId = verifyResponse.clientId!!,
-            userId = verifyResponse.userId!!,
+            clientId = verifyResponse.clientId,
+            userId = verifyResponse.userId,
             authorities = mutableListOf(SimpleGrantedAuthority(DEFAULT_USER_ROLE))
         )
     }
