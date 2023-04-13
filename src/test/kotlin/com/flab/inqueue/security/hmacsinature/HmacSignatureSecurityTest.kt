@@ -41,13 +41,13 @@ class HmacSignatureSecurityTest : AcceptanceTest() {
     lateinit var hmacSignaturePayload: String
 
     companion object {
-        const val GENERATE_TOKEN_URI = "/v1/server/auth/token"
+        const val HMAC_SECURITY_TEST_URI = "/server/hmac-security-test"
     }
 
     @BeforeEach
     @Transactional
     fun setUp(@LocalServerPort port: Int) {
-        hmacSignaturePayload = "http://localhost:${port}" + GENERATE_TOKEN_URI
+        hmacSignaturePayload = "http://localhost:${port}" + HMAC_SECURITY_TEST_URI
         testClientId = customerAccountFactory.generateClientId()
         testClientSecret = customerAccountFactory.generateClientSecret()
         testUser = Customer.user("USER", testClientId, testClientSecret)
@@ -56,31 +56,33 @@ class HmacSignatureSecurityTest : AcceptanceTest() {
     }
 
     @Test
-    @DisplayName("JWT 토큰 발급 성공")
-    fun generate_token_success() {
-        val eventId = "estEventId"
-        val userId = "testUserId"
-
-        val authRequest = AuthRequest(eventId, userId)
-
+    @DisplayName("Hmac Authentication 성공")
+    fun hmac_authentication_success() {
         given.log().all()
             .header(
                 HttpHeaders.AUTHORIZATION,
                 createAuthorization(testClientId, createHmacSignature(hmacSignaturePayload, testClientSecret))
             )
-            .body(authRequest)
             .contentType(MediaType.APPLICATION_JSON_VALUE).
         `when`()
-            .post(GENERATE_TOKEN_URI).
+            .get(HMAC_SECURITY_TEST_URI).
         then().log().all()
             .statusCode(HttpStatus.OK.value())
             .assertThat()
-            .body("accessToken", Matchers.notNullValue())
+            .body("isAuthenticated", Matchers.equalTo(true))
+            .body("clientId", Matchers.equalTo(testClientId))
+            .body("signature", Matchers.nullValue())
+            .body("payload", Matchers.nullValue())
+            .body("credentials", Matchers.nullValue())
+            .body("details", Matchers.nullValue())
+            .body("principal", Matchers.equalTo(testClientId))
+            .body("name", Matchers.equalTo(testClientId))
+            .body("authorities.authority", Matchers.hasItem("ROLE_" + testUser.roles[0].name))
     }
 
     @Test
-    @DisplayName("clientSecret이 다른 경우, JWT 토큰 발급 실패")
-    fun generate_token_fail() {
+    @DisplayName("clientSecret이 다른 경우, Hmac Authentication 실패")
+    fun hmac_authentication_fail1() {
         val eventId = "estEventId"
         val userId = "testUserId"
 
@@ -95,7 +97,7 @@ class HmacSignatureSecurityTest : AcceptanceTest() {
             .body(authRequest)
             .contentType(MediaType.APPLICATION_JSON_VALUE).
         `when`()
-            .post(GENERATE_TOKEN_URI).
+            .post(HMAC_SECURITY_TEST_URI).
         then().log().all()
             .statusCode(HttpStatus.UNAUTHORIZED.value())
             .assertThat()
@@ -107,8 +109,8 @@ class HmacSignatureSecurityTest : AcceptanceTest() {
 
 
     @Test
-    @DisplayName("clientId를 찾을 수 없는 경우, JWT 토큰 발급 실패")
-    fun generate_token_fail2() {
+    @DisplayName("clientId를 찾을 수 없는 경우, Hmac Authentication 실패")
+    fun hmac_authentication_fail2() {
         val eventId = "estEventId"
         val userId = "testUserId"
 
@@ -123,7 +125,7 @@ class HmacSignatureSecurityTest : AcceptanceTest() {
             .body(authRequest)
             .contentType(MediaType.APPLICATION_JSON_VALUE).
         `when`()
-            .post(GENERATE_TOKEN_URI).
+            .post(HMAC_SECURITY_TEST_URI).
         then().log().all()
             .statusCode(HttpStatus.UNAUTHORIZED.value())
             .assertThat()
@@ -134,8 +136,8 @@ class HmacSignatureSecurityTest : AcceptanceTest() {
     }
 
     @Test
-    @DisplayName("AUTHORIZATION 헤더가 없는 경우, JWT 토큰 발급 실패")
-    fun generate_token_fail3() {
+    @DisplayName("AUTHORIZATION 헤더가 없는 경우, Hmac Authentication 실패")
+    fun hmac_authentication_fail3() {
         val eventId = "estEventId"
         val userId = "testUserId"
 
@@ -145,7 +147,7 @@ class HmacSignatureSecurityTest : AcceptanceTest() {
             .body(authRequest)
             .contentType(MediaType.APPLICATION_JSON_VALUE).
         `when`()
-            .post(GENERATE_TOKEN_URI).
+            .post(HMAC_SECURITY_TEST_URI).
         then().log().all()
             .statusCode(HttpStatus.UNAUTHORIZED.value())
             .assertThat()
