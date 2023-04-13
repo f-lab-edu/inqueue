@@ -13,15 +13,16 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.data.redis.DataRedisTest
 import org.springframework.context.annotation.Import
 import org.springframework.data.redis.core.RedisTemplate
+import org.springframework.data.redis.core.ScanOptions
 import java.util.*
 
 
 @DataRedisTest
 @Import(RedisConfigTest::class)
-class WaitWorkRedis @Autowired constructor(
+class WaitJobRedis @Autowired constructor(
     private val redisTemplate: RedisTemplate<String, Any>,
 ) : TestContainer() {
-    private val logger = LoggerFactory.getLogger(WaitWorkRedis::class.java)
+    private val logger = LoggerFactory.getLogger(WaitJobRedis::class.java)
     private val zSetOperations = redisTemplate.opsForZSet();
 
     @Test
@@ -49,13 +50,13 @@ class WaitWorkRedis @Autowired constructor(
         //given
         val event = createEventRequest().toEntity()
         zSetOperations.add(
-            event.eventId,Job(event.eventId, UUID.randomUUID().toString()), System.nanoTime().toDouble()
+            event.eventId, Job(event.eventId, UUID.randomUUID().toString()), System.nanoTime().toDouble()
         )
         zSetOperations.add(
-            event.eventId,Job(event.eventId, UUID.randomUUID().toString()), System.nanoTime().toDouble()
+            event.eventId, Job(event.eventId, UUID.randomUUID().toString()), System.nanoTime().toDouble()
         )
         zSetOperations.add(
-            event.eventId,Job(event.eventId, UUID.randomUUID().toString()), System.nanoTime().toDouble()
+            event.eventId, Job(event.eventId, UUID.randomUUID().toString()), System.nanoTime().toDouble()
         )
         //when
         val long = zSetOperations.size(event.eventId)
@@ -69,9 +70,9 @@ class WaitWorkRedis @Autowired constructor(
     fun getRanksOfKey() {
         //given
         val event = createEventRequest().toEntity()
-        val job1 =Job(event.eventId, UUID.randomUUID().toString())
-        val job2 =Job(event.eventId, UUID.randomUUID().toString())
-        val job3 =Job(event.eventId, UUID.randomUUID().toString())
+        val job1 = Job(event.eventId, UUID.randomUUID().toString())
+        val job2 = Job(event.eventId, UUID.randomUUID().toString())
+        val job3 = Job(event.eventId, UUID.randomUUID().toString())
         zSetOperations.add(event.eventId, job1, System.nanoTime().toDouble())
         zSetOperations.add(event.eventId, job2, System.nanoTime().toDouble())
         zSetOperations.add(event.eventId, job3, System.nanoTime().toDouble())
@@ -94,9 +95,9 @@ class WaitWorkRedis @Autowired constructor(
     fun deleteKey() {
         //given
         val event = createEventRequest().toEntity()
-        val job1 =Job(event.eventId, UUID.randomUUID().toString())
-        val job2 =Job(event.eventId, UUID.randomUUID().toString())
-        val job3 =Job(event.eventId, UUID.randomUUID().toString())
+        val job1 = Job(event.eventId, UUID.randomUUID().toString())
+        val job2 = Job(event.eventId, UUID.randomUUID().toString())
+        val job3 = Job(event.eventId, UUID.randomUUID().toString())
         zSetOperations.add(event.eventId, job1, System.nanoTime().toDouble())
         zSetOperations.add(event.eventId, job2, System.nanoTime().toDouble())
         zSetOperations.add(event.eventId, job3, System.nanoTime().toDouble())
@@ -118,7 +119,7 @@ class WaitWorkRedis @Autowired constructor(
         val event = createEventRequest().toEntity()
         repeat(100) {
             zSetOperations.add(
-                event.eventId,Job(event.eventId, UUID.randomUUID().toString()), System.nanoTime().toDouble()
+                event.eventId, Job(event.eventId, UUID.randomUUID().toString()), System.nanoTime().toDouble()
             )
         }
 
