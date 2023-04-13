@@ -4,7 +4,7 @@ import java.time.LocalTime
 
 data class QueueResponse(
     val status: String,
-    val expectedInfo: QueueInfo,
+    val expectedInfo: QueueInfo? = null,
 )
 
 data class QueueInfo(val time: LocalTime, var order: Int)
