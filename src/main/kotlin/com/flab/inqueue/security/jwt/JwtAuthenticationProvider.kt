@@ -25,7 +25,7 @@ class JwtAuthenticationProvider(
         // TODO: 고객 검증 구현 - RDB 에 고객이 있는지 확인
         // TODO: 대기열 유저 검증 구현 - Redis UserList 에서 해당 유저가 있는지 확인
 
-        return JwtAuthenticationToken.authenticatedToken(verifyResponse.userId)
+        return JwtAuthenticationToken.authenticatedToken(verifyResponse.clientId, verifyResponse.userId)
     }
 
     override fun supports(authentication: Class<*>): Boolean {
