@@ -14,7 +14,7 @@ class AES256EncryptionUtilTest {
     fun initialize_fail() {
         val secretKey = "abc"
         assertThatThrownBy { AES256EncryptionUtil(secretKey) }.isInstanceOf(IllegalArgumentException::class.java)
-            .hasMessage("Secret key byte size of aes256 is not 32 bytes")
+            .hasMessage("The secret key for aes256 is not 32 bytes.")
     }
 
     @Test
