@@ -1,20 +1,23 @@
 package com.flab.inqueue.security.hmacsinature
 
 import com.flab.inqueue.security.common.CommonAuthentication
+import com.flab.inqueue.security.common.CommonPrincipal
+import com.flab.inqueue.security.common.Role
 import org.springframework.security.core.GrantedAuthority
+import org.springframework.security.core.authority.SimpleGrantedAuthority
 
 class HmacAuthenticationToken(
     val clientId: String? = null,
     val signature: String? = null,
     val payload: String? = null,
+    principal: CommonPrincipal? = null,
     isAuthenticated: Boolean = false,
     authorities: MutableCollection<out GrantedAuthority> = mutableListOf()
-) : CommonAuthentication(clientId, clientId, isAuthenticated, authorities) {
+) : CommonAuthentication(clientId, principal, isAuthenticated, authorities) {
 
     companion object {
-
         @JvmStatic
-        fun unauthenticatedToken(
+        fun unauthenticated(
             clientId: String,
             signature: String,
             payload: String
@@ -27,14 +30,16 @@ class HmacAuthenticationToken(
         }
 
         @JvmStatic
-        fun authenticatedToken(
+        fun authenticated(
             clientId: String,
-            authorities: MutableCollection<out GrantedAuthority>
+            roles: List<Role>
         ): HmacAuthenticationToken {
+            val principal = CommonPrincipal(clientId = clientId, roles = roles)
             return HmacAuthenticationToken(
                 clientId = clientId,
-                authorities = authorities,
-                isAuthenticated = true
+                authorities = roles.map { SimpleGrantedAuthority("ROLE_$it") }.toMutableList(),
+                isAuthenticated = true,
+                principal = principal
             )
         }
     }

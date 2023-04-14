@@ -96,7 +96,9 @@ class HmacSignatureSecurityTest : AcceptanceTest() {
             .body("payload", Matchers.nullValue())
             .body("credentials", Matchers.nullValue())
             .body("details", Matchers.nullValue())
-            .body("principal", Matchers.equalTo(testClientIdWithUser))
+            .body("principal.clientId", Matchers.equalTo(testClientIdWithUser))
+            .body("principal.userId", Matchers.nullValue())
+            .body("principal.roles", Matchers.hasItem("USER"))
             .body("name", Matchers.equalTo(testClientIdWithUser))
             .body("authorities.authority", Matchers.hasItem("ROLE_USER"))
     }
@@ -206,7 +208,9 @@ class HmacSignatureSecurityTest : AcceptanceTest() {
             .body("payload", Matchers.nullValue())
             .body("credentials", Matchers.nullValue())
             .body("details", Matchers.nullValue())
-            .body("principal", Matchers.equalTo(testClientIdWithAdmin))
+            .body("principal.clientId", Matchers.equalTo(testClientIdWithAdmin))
+            .body("principal.userId", Matchers.nullValue())
+            .body("principal.roles", Matchers.hasItems("USER", "ADMIN"))
             .body("name", Matchers.equalTo(testClientIdWithAdmin))
             .body("authorities.authority", Matchers.hasItems("ROLE_USER", "ROLE_ADMIN"))
     }

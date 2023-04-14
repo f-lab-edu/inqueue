@@ -1,35 +1,41 @@
 package com.flab.inqueue.security.jwt
 
 import com.flab.inqueue.security.common.CommonAuthentication
+import com.flab.inqueue.security.common.CommonPrincipal
+import com.flab.inqueue.security.common.Role
 import org.springframework.security.core.GrantedAuthority
+import org.springframework.security.core.authority.SimpleGrantedAuthority
 
 class JwtAuthenticationToken(
     val clientId: String? = null,
     val userId: String? = null,
     val jwtToken: String? = null,
+    principal: CommonPrincipal? = null,
     isAuthenticated: Boolean = false,
     authorities: MutableCollection<out GrantedAuthority> = mutableListOf()
-) : CommonAuthentication(userId, userId, isAuthenticated, authorities) {
+) : CommonAuthentication(userId, principal, isAuthenticated, authorities) {
 
     companion object {
         @JvmStatic
-        fun unauthenticatedToken(
+        fun unauthenticated(
             jwtToken: String
         ): JwtAuthenticationToken {
             return JwtAuthenticationToken(jwtToken = jwtToken)
         }
 
         @JvmStatic
-        fun authenticatedToken(
+        fun authenticated(
             clientId: String,
             userId: String,
-            authorities: MutableCollection<out GrantedAuthority>
+            roles: List<Role>,
         ): JwtAuthenticationToken {
+            val principal = CommonPrincipal(clientId = clientId, userId = userId, roles = roles)
             return JwtAuthenticationToken(
                 clientId = clientId,
                 userId = userId,
                 isAuthenticated = true,
-                authorities = authorities
+                authorities = roles.map { SimpleGrantedAuthority("ROLE_$it") }.toMutableList(),
+                principal = principal
             )
         }
     }

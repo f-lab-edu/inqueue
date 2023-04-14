@@ -1,5 +1,6 @@
 package com.flab.inqueue.domain.customer.entity
 
+import com.flab.inqueue.security.common.Role
 import com.flab.inqueue.security.hmacsinature.utils.EncryptionUtil
 import jakarta.persistence.*
 import java.time.LocalDateTime

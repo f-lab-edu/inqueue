@@ -6,7 +6,7 @@ import org.springframework.security.core.GrantedAuthority
 
 open class CommonAuthentication(
     private val name: String?,
-    private val principal : Any?,
+    private val principal : CommonPrincipal?,
     private var isAuthenticated : Boolean,
     private val authorities: MutableCollection<out GrantedAuthority> = mutableListOf()
 ) : Authentication {
@@ -27,7 +27,7 @@ open class CommonAuthentication(
         return null
     }
 
-    override fun getPrincipal(): Any? {
+    override fun getPrincipal(): CommonPrincipal? {
         return this.principal
     }
 
