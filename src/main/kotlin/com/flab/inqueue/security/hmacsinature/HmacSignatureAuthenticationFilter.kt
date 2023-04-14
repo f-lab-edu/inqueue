@@ -15,7 +15,6 @@ class HmacSignatureAuthenticationFilter(
     vararg requestMatcher: RequestMatcher,
 ) : CommonAuthenticationFiller(authenticationManager, *requestMatcher) {
 
-
     override fun attemptAuthentication(request: HttpServletRequest, response: HttpServletResponse): Authentication {
         val authorization = request.getHeader(HttpHeaders.AUTHORIZATION)
 
@@ -29,7 +28,7 @@ class HmacSignatureAuthenticationFilter(
                 signature = signature,
                 payload = request.requestURL.toString()
             )
+
         return authenticationManager.authenticate(authentication)
     }
-
 }

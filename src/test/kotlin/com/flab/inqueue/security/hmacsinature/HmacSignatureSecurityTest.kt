@@ -5,7 +5,7 @@ import com.flab.inqueue.domain.customer.entity.Customer
 import com.flab.inqueue.domain.customer.repository.CustomerRepository
 import com.flab.inqueue.domain.customer.utils.CustomerAccountFactory
 import com.flab.inqueue.domain.dto.AuthRequest
-import com.flab.inqueue.security.hmacsinature.utils.SecretKeyCipher
+import com.flab.inqueue.security.hmacsinature.utils.EncryptionUtil
 import com.github.dockerjava.zerodep.shaded.org.apache.commons.codec.binary.Base64
 import jakarta.transaction.Transactional
 import org.hamcrest.Matchers
@@ -27,7 +27,7 @@ class HmacSignatureSecurityTest : AcceptanceTest() {
     lateinit var customerRepository: CustomerRepository
 
     @Autowired
-    lateinit var secretKeyCipher: SecretKeyCipher
+    lateinit var encryptionUtil: EncryptionUtil
 
     @Autowired
     lateinit var customerAccountFactory: CustomerAccountFactory
@@ -61,7 +61,7 @@ class HmacSignatureSecurityTest : AcceptanceTest() {
         testClientIdWithUser = customerAccountFactory.generateClientId()
         testClientSecretWithUser = customerAccountFactory.generateClientSecret()
         testUser = Customer.user("USER", testClientIdWithUser, testClientSecretWithUser)
-        testUser.encryptClientSecret(secretKeyCipher)
+        testUser.encryptClientSecret(encryptionUtil)
         customerRepository.save(testUser)
 
         // ROLE_ADMIN
@@ -69,7 +69,7 @@ class HmacSignatureSecurityTest : AcceptanceTest() {
         testClientIdWithAdmin = customerAccountFactory.generateClientId()
         testClientSecretWithAdmin = customerAccountFactory.generateClientSecret()
         testAdmin = Customer.admin("ADMIN", testClientIdWithAdmin, testClientSecretWithAdmin)
-        testAdmin.encryptClientSecret(secretKeyCipher)
+        testAdmin.encryptClientSecret(encryptionUtil)
         customerRepository.save(testAdmin)
     }
 
