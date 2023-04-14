@@ -24,7 +24,7 @@ class AES256EncryptionUtil(
 
     init {
         if (secretKey.toByteArray().size != AES256_SECRET_KEY_BYTE_SIZE) {
-            throw IllegalArgumentException("Secret key byte size of aes256 is not $AES256_SECRET_KEY_BYTE_SIZE bytes")
+            throw IllegalArgumentException("The secret key for aes256 is not $AES256_SECRET_KEY_BYTE_SIZE bytes.")
         }
         secretKeySpec = SecretKeySpec(secretKey.toByteArray(), ENCRYPTION_ALGORITHM)
         ivParamSpec = IvParameterSpec(secretKey.substring(0, 16).toByteArray())
