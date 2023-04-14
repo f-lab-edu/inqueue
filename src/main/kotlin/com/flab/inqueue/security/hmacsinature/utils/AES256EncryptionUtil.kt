@@ -30,19 +30,19 @@ class AES256EncryptionUtil(
         ivParamSpec = IvParameterSpec(secretKey.substring(0, 16).toByteArray())
     }
 
-    override fun encrypt(stringToEncrypt: String): String {
+    override fun encrypt(messageToEncrypt: String): String {
         val cipher = Cipher.getInstance(ENCRYPTION_TRANSFORMATION)
 
         cipher.init(Cipher.ENCRYPT_MODE, secretKeySpec, ivParamSpec)
-        val encrypted = cipher.doFinal(stringToEncrypt.toByteArray())
+        val encrypted = cipher.doFinal(messageToEncrypt.toByteArray())
         return Base64.getEncoder().encodeToString(encrypted)
     }
 
-    override fun decrypt(stringToDecrypt: String): String {
+    override fun decrypt(messageToDecrypt: String): String {
         val cipher = Cipher.getInstance(ENCRYPTION_TRANSFORMATION)
         cipher.init(Cipher.DECRYPT_MODE, secretKeySpec, ivParamSpec);
 
-        val decodedBytes = Base64.getDecoder().decode(stringToDecrypt)
+        val decodedBytes = Base64.getDecoder().decode(messageToDecrypt)
         val decrypted = cipher.doFinal(decodedBytes)
         return String(decrypted)
     }

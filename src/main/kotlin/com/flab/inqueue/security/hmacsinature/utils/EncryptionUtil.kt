@@ -2,8 +2,8 @@ package com.flab.inqueue.security.hmacsinature.utils
 
 interface EncryptionUtil {
 
-    fun encrypt(stringToEncrypt: String): String
+    fun encrypt(messageToEncrypt: String): String
 
-    fun decrypt(stringToDecrypt: String): String
+    fun decrypt(messageToDecrypt: String): String
 
 }
