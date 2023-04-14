@@ -21,7 +21,7 @@ class JwtAuthenticationFilter(
     override fun attemptAuthentication(request: HttpServletRequest, response: HttpServletResponse): Authentication {
         val jwtToken = resolveJwtToken(request) ?: throw BadCredentialsException("Invalid JWT authentication")
 
-        val jwtAuthenticationToken = JwtAuthenticationToken.unauthenticatedToken(jwtToken)
+        val jwtAuthenticationToken = JwtAuthenticationToken.unauthenticated(jwtToken)
         return authenticationManager.authenticate(jwtAuthenticationToken)
     }
 
