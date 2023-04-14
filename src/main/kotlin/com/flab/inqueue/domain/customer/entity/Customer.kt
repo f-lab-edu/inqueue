@@ -1,6 +1,6 @@
 package com.flab.inqueue.domain.customer.entity
 
-import com.flab.inqueue.security.hmacsinature.utils.SecretKeyCipher
+import com.flab.inqueue.security.hmacsinature.utils.EncryptionUtil
 import jakarta.persistence.*
 import java.time.LocalDateTime
 
@@ -35,7 +35,7 @@ class Customer(
         }
     }
 
-    fun encryptClientSecret(secretKeyCipher: SecretKeyCipher) {
-        this.clientSecret = secretKeyCipher.encrypt(clientSecret)
+    fun encryptClientSecret(encryptionUtil: EncryptionUtil) {
+        this.clientSecret = encryptionUtil.encrypt(clientSecret)
     }
 }
