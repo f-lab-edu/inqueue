@@ -12,8 +12,8 @@ import org.springframework.security.web.util.matcher.RequestMatcher
 
 class HmacSignatureAuthenticationFilter(
     authenticationManager: AuthenticationManager,
-    vararg requestMatcher: RequestMatcher,
-) : CommonAuthenticationFiller(authenticationManager, *requestMatcher) {
+    requestMatcher: RequestMatcher,
+) : CommonAuthenticationFiller(authenticationManager, requestMatcher) {
 
     override fun attemptAuthentication(request: HttpServletRequest, response: HttpServletResponse): Authentication {
         val authorization = request.getHeader(HttpHeaders.AUTHORIZATION)
@@ -24,10 +24,10 @@ class HmacSignatureAuthenticationFilter(
 
         val (clientId, signature) = authorization.split(":")
         val authentication = HmacAuthenticationToken.unauthenticated(
-                clientId = clientId,
-                signature = signature,
-                payload = request.requestURL.toString()
-            )
+            clientId = clientId,
+            signature = signature,
+            payload = request.requestURL.toString()
+        )
 
         return authenticationManager.authenticate(authentication)
     }

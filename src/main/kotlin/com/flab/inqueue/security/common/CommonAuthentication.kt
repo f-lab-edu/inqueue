@@ -6,8 +6,8 @@ import org.springframework.security.core.GrantedAuthority
 
 open class CommonAuthentication(
     private val name: String?,
-    private val principal : CommonPrincipal?,
-    private var isAuthenticated : Boolean,
+    private val principal: CommonPrincipal?,
+    private var isAuthenticated: Boolean,
     private val authorities: MutableCollection<out GrantedAuthority> = mutableListOf()
 ) : Authentication {
 

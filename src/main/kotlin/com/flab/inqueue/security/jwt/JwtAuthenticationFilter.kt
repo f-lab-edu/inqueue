@@ -11,8 +11,8 @@ import org.springframework.security.web.util.matcher.RequestMatcher
 
 class JwtAuthenticationFilter(
     authenticationManager: AuthenticationManager,
-    vararg requestMatcher: RequestMatcher,
-) : CommonAuthenticationFiller(authenticationManager, *requestMatcher) {
+    requestMatcher: RequestMatcher,
+) : CommonAuthenticationFiller(authenticationManager, requestMatcher) {
 
     companion object {
         private const val JWT_TOKEN_PREFIX = "Bearer "
