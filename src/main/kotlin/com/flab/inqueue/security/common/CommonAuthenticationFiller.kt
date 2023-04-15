@@ -7,16 +7,13 @@ import org.springframework.security.authentication.AuthenticationManager
 import org.springframework.security.core.Authentication
 import org.springframework.security.core.AuthenticationException
 import org.springframework.security.core.context.SecurityContextHolder
-import org.springframework.security.web.util.matcher.OrRequestMatcher
 import org.springframework.security.web.util.matcher.RequestMatcher
 import org.springframework.web.filter.OncePerRequestFilter
 
 abstract class CommonAuthenticationFiller(
     protected val authenticationManager: AuthenticationManager,
-    vararg requestMatchers: RequestMatcher
+    private val requestMatcher: RequestMatcher
 ) : OncePerRequestFilter() {
-
-    private val orRequestMatcher: OrRequestMatcher = OrRequestMatcher(*requestMatchers)
 
     override fun doFilterInternal(
         request: HttpServletRequest,
@@ -38,7 +35,7 @@ abstract class CommonAuthenticationFiller(
     }
 
     private fun isRequestMatched(request: HttpServletRequest): Boolean {
-        return orRequestMatcher.matches(request)
+        return requestMatcher.matches(request)
     }
 
     abstract fun attemptAuthentication(request: HttpServletRequest, response: HttpServletResponse): Authentication
