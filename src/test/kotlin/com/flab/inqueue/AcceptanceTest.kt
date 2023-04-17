@@ -8,6 +8,7 @@ import org.junit.jupiter.api.BeforeEach
 import org.springframework.boot.test.web.server.LocalServerPort
 import org.springframework.restdocs.RestDocumentationContextProvider
 import org.springframework.restdocs.restassured.RestAssuredRestDocumentation.documentationConfiguration
+import org.testcontainers.containers.MySQLContainer
 
 @IntegrationTest
 abstract class AcceptanceTest : TestContainer() {
@@ -18,15 +19,8 @@ abstract class AcceptanceTest : TestContainer() {
 
     @BeforeEach
     fun setUpRequestSpecification(restDocumentation: RestDocumentationContextProvider, @LocalServerPort port: Int) {
-        given = RestAssured.given(setUpRestDocs(restDocumentation)).port(port)
-    }
-
-    companion object {
-        @JvmStatic
-        private val mySQLContainer = MySQLContainer("mysql:8.0.23").withDatabaseName("test-db")
-        init {
-            mySQLContainer.start()
-        }
+        givenWithDocument = RestAssured.given(setUpRestDocs(restDocumentation)).port(port)
+        given = RestAssured.given().port(port)
     }
 
     private fun setUpRestDocs(restDocumentation: RestDocumentationContextProvider): RequestSpecification? {
