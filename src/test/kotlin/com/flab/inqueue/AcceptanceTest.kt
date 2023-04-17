@@ -17,9 +17,16 @@ abstract class AcceptanceTest : TestContainer() {
 
 
     @BeforeEach
-    fun setUpRestAssured(restDocumentation: RestDocumentationContextProvider, @LocalServerPort port: Int) {
-        givenWithDocument = RestAssured.given(setUpRestDocs(restDocumentation)).port(port)
-        given = RestAssured.given().port(port)
+    fun setUpRequestSpecification(restDocumentation: RestDocumentationContextProvider, @LocalServerPort port: Int) {
+        given = RestAssured.given(setUpRestDocs(restDocumentation)).port(port)
+    }
+
+    companion object {
+        @JvmStatic
+        private val mySQLContainer = MySQLContainer("mysql:8.0.23").withDatabaseName("test-db")
+        init {
+            mySQLContainer.start()
+        }
     }
 
     private fun setUpRestDocs(restDocumentation: RestDocumentationContextProvider): RequestSpecification? {
