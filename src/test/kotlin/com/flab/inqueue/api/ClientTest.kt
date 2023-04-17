@@ -42,7 +42,7 @@ class ClientTest : AcceptanceTest() {
             "https://test"
         )
 
-        val response = given.log().all()
+        val response = givenWithDocument.log().all()
             .filter(CreateEventDocument.FILTER)
             .header(HttpHeaders.AUTHORIZATION, "X-Client-Id:(StringToSign를 ClientSecret으로 Hmac 암호화)")
             .contentType(MediaType.APPLICATION_JSON_VALUE)

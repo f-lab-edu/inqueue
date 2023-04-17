@@ -15,7 +15,7 @@ import org.springframework.restdocs.restassured.RestAssuredRestDocumentation
 import org.springframework.restdocs.restassured.RestDocumentationFilter
 import org.springframework.restdocs.snippet.Snippet
 
-class QueueTest : AcceptanceTest() {
+class JobTest : AcceptanceTest() {
 
     @Test
     @DisplayName("사용자 작업열 검증 기능 api")
@@ -23,7 +23,7 @@ class QueueTest : AcceptanceTest() {
         val eventId = "testEvent1"
         val userId = "testUser1"
 
-        given.log().all()
+        givenWithDocument.log().all()
             .filter(ValidateJobQueueDocument.FILTER)
             .header(HttpHeaders.AUTHORIZATION, "X-Client-Id:(StringToSign를 ClientSecret으로 Hmac 암호화)")
             .pathParam("eventId", eventId)
@@ -40,7 +40,7 @@ class QueueTest : AcceptanceTest() {
         val eventId = "testEvent1"
         val userId = "testUser1"
 
-        given.log().all()
+        givenWithDocument.log().all()
             .filter(CloseJopQueueDocument.FILTER)
             .header(HttpHeaders.AUTHORIZATION, "X-Client-Id:(StringToSign를 ClientSecret으로 Hmac 암호화)")
             .pathParam("eventId", eventId)
