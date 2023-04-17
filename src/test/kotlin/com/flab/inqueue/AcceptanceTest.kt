@@ -30,9 +30,10 @@ abstract class AcceptanceTest {
 
     companion object {
         @JvmStatic
-        @Container
         private val mySQLContainer = MySQLContainer("mysql:8.0.23").withDatabaseName("test-db")
-//        private val mySQLContainer = DockerComposeContainer(File("src/test/resources/docker-compose.yml"))
+        init {
+            mySQLContainer.start()
+        }
     }
 
     private fun setUpRestDocs(restDocumentation: RestDocumentationContextProvider): RequestSpecification? {
