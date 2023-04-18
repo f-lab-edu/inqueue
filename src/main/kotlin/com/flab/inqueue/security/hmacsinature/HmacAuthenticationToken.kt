@@ -1,19 +1,21 @@
 package com.flab.inqueue.security.hmacsinature
 
-import com.flab.inqueue.security.common.CommonAuthentication
 import com.flab.inqueue.security.common.CommonPrincipal
-import com.flab.inqueue.security.common.Role
+import org.springframework.security.authentication.AbstractAuthenticationToken
 import org.springframework.security.core.GrantedAuthority
-import org.springframework.security.core.authority.SimpleGrantedAuthority
 
 class HmacAuthenticationToken(
     val clientId: String? = null,
     val signature: String? = null,
     val payload: String? = null,
-    principal: CommonPrincipal? = null,
-    isAuthenticated: Boolean = false,
+    val principal: CommonPrincipal? = null,
+    authenticated: Boolean = false,
     authorities: MutableCollection<out GrantedAuthority> = mutableListOf()
-) : CommonAuthentication(clientId, principal, isAuthenticated, authorities) {
+) : AbstractAuthenticationToken(authorities) {
+
+    init {
+        isAuthenticated = authenticated
+    }
 
     companion object {
         @JvmStatic
@@ -31,16 +33,23 @@ class HmacAuthenticationToken(
 
         @JvmStatic
         fun authenticated(
-            clientId: String,
-            roles: List<Role>
+            principal: CommonPrincipal,
+            authorities: MutableCollection<out GrantedAuthority> = mutableListOf()
         ): HmacAuthenticationToken {
-            val principal = CommonPrincipal(clientId = clientId, roles = roles)
             return HmacAuthenticationToken(
-                clientId = clientId,
-                authorities = roles.map { SimpleGrantedAuthority("ROLE_$it") }.toMutableList(),
-                isAuthenticated = true,
-                principal = principal
+                clientId = principal.clientId,
+                authenticated = true,
+                principal = principal,
+                authorities = authorities
             )
         }
+    }
+
+    override fun getCredentials(): Any? {
+        return null
+    }
+
+    override fun getPrincipal(): Any? {
+        return this.principal
     }
 }

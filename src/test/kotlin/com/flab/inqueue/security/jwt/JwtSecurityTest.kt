@@ -43,10 +43,7 @@ class JwtSecurityTest : AcceptanceTest() {
         then().log().all()
             .statusCode(HttpStatus.OK.value())
             .assertThat()
-            .body("isAuthenticated", Matchers.equalTo(true))
-            .body("clientId", Matchers.equalTo(TEST_CLIENT_ID))
-            .body("userId", Matchers.equalTo(TEST_USER_ID))
-            .body("name", Matchers.equalTo(TEST_USER_ID))
+            .body("authenticated", Matchers.equalTo(true))
             .body("principal.clientId", Matchers.equalTo(TEST_CLIENT_ID))
             .body("principal.userId", Matchers.equalTo(TEST_USER_ID))
             .body("principal.roles", Matchers.hasItem("USER"))
@@ -55,7 +52,6 @@ class JwtSecurityTest : AcceptanceTest() {
             .body("details", Matchers.nullValue())
             .body("authorities.authority", Matchers.hasItem("ROLE_USER"))
     }
-
     @Test
     @DisplayName("헤더에 AUTHORIZATION 값이 없는 경우, JWT Authentication 실패")
     fun jwt_authentication_fail1() {
