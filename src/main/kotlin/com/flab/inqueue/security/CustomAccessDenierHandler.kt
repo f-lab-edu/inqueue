@@ -13,15 +13,24 @@ import org.springframework.stereotype.Component
 class CustomAccessDenierHandler(
     private val objectMapper: ObjectMapper
 ) : AccessDeniedHandler {
+
+    companion object {
+        private const val DEFAULT_FORBIDDEN_ERROR_MESSAGE = "Forbidden"
+    }
+
     override fun handle(
         request: HttpServletRequest,
         response: HttpServletResponse,
         accessDeniedException: AccessDeniedException
     ) {
         response.status = HttpServletResponse.SC_FORBIDDEN
-        val jsonResponse = ErrorResponse.forbidden(request)
-
         response.contentType = MediaType.APPLICATION_JSON_VALUE
+
+        val jsonResponse = ErrorResponse(
+            error = DEFAULT_FORBIDDEN_ERROR_MESSAGE,
+            status = HttpServletResponse.SC_FORBIDDEN,
+            path = request.requestURI
+        )
         response.writer.write(objectMapper.writeValueAsString(jsonResponse))
     }
 }
