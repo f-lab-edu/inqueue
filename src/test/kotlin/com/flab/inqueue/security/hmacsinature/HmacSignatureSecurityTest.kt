@@ -5,6 +5,7 @@ import com.flab.inqueue.domain.customer.entity.Customer
 import com.flab.inqueue.domain.customer.repository.CustomerRepository
 import com.flab.inqueue.domain.customer.utils.CustomerAccountFactory
 import com.flab.inqueue.domain.dto.AuthRequest
+import com.flab.inqueue.security.common.Role
 import com.flab.inqueue.security.hmacsinature.utils.EncryptionUtil
 import com.github.dockerjava.zerodep.shaded.org.apache.commons.codec.binary.Base64
 import jakarta.transaction.Transactional
@@ -60,7 +61,7 @@ class HmacSignatureSecurityTest : AcceptanceTest() {
         hmacSignaturePayloadWithUser = "http://localhost:${port}" + HMAC_SECURITY_TEST_URI
         testClientIdWithUser = customerAccountFactory.generateClientId()
         testClientSecretWithUser = customerAccountFactory.generateClientSecret()
-        testUser = Customer.user("USER", testClientIdWithUser, testClientSecretWithUser)
+        testUser = Customer("USER", testClientIdWithUser, testClientSecretWithUser)
         testUser.encryptClientSecret(encryptionUtil)
         customerRepository.save(testUser)
 
@@ -68,7 +69,7 @@ class HmacSignatureSecurityTest : AcceptanceTest() {
         hmacSignaturePayloadWithAdmin = "http://localhost:${port}" + HMAC_SECURITY_TEST_WITH_ADMIN_USER_URI
         testClientIdWithAdmin = customerAccountFactory.generateClientId()
         testClientSecretWithAdmin = customerAccountFactory.generateClientSecret()
-        testAdmin = Customer.admin("ADMIN", testClientIdWithAdmin, testClientSecretWithAdmin)
+        testAdmin = Customer("ADMIN", testClientIdWithAdmin, testClientSecretWithAdmin, listOf(Role.USER, Role.ADMIN))
         testAdmin.encryptClientSecret(encryptionUtil)
         customerRepository.save(testAdmin)
     }

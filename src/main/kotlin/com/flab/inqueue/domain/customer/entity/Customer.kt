@@ -16,25 +16,13 @@ class Customer(
         joinColumns = [JoinColumn(name = "customer_id")]
     )
     @Column(name = "role")
-    val roles: List<Role>
+    val roles: List<Role> = listOf(Role.USER)
 ) {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     val id: Long? = null
 
     val createdAt: LocalDateTime = LocalDateTime.now()
-
-    companion object {
-        @JvmStatic
-        fun admin(name: String, clientId: String, clientSecret: String): Customer {
-            return Customer(name, clientId, clientSecret, listOf(Role.USER, Role.ADMIN))
-        }
-
-        @JvmStatic
-        fun user(name: String, clientId: String, clientSecret: String): Customer {
-            return Customer(name, clientId, clientSecret, listOf(Role.USER))
-        }
-    }
 
     fun encryptClientSecret(encryptionUtil: EncryptionUtil) {
         this.clientSecret = encryptionUtil.encrypt(clientSecret)
