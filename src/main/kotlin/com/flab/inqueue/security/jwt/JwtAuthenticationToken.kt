@@ -1,19 +1,19 @@
 package com.flab.inqueue.security.jwt
 
-import com.flab.inqueue.security.common.CommonAuthentication
 import com.flab.inqueue.security.common.CommonPrincipal
-import com.flab.inqueue.security.common.Role
+import org.springframework.security.authentication.AbstractAuthenticationToken
 import org.springframework.security.core.GrantedAuthority
-import org.springframework.security.core.authority.SimpleGrantedAuthority
 
 class JwtAuthenticationToken(
-    val clientId: String? = null,
-    val userId: String? = null,
     val jwtToken: String? = null,
-    principal: CommonPrincipal? = null,
-    isAuthenticated: Boolean = false,
+    val principal: CommonPrincipal? = null,
+    authenticated: Boolean = false,
     authorities: MutableCollection<out GrantedAuthority> = mutableListOf()
-) : CommonAuthentication(userId, principal, isAuthenticated, authorities) {
+) : AbstractAuthenticationToken(authorities) {
+
+    init {
+        isAuthenticated = authenticated
+    }
 
     companion object {
         @JvmStatic
@@ -25,18 +25,22 @@ class JwtAuthenticationToken(
 
         @JvmStatic
         fun authenticated(
-            clientId: String,
-            userId: String,
-            roles: List<Role>,
+            principal: CommonPrincipal?,
+            authorities: MutableCollection<out GrantedAuthority> = mutableListOf()
         ): JwtAuthenticationToken {
-            val principal = CommonPrincipal(clientId = clientId, userId = userId, roles = roles)
             return JwtAuthenticationToken(
-                clientId = clientId,
-                userId = userId,
-                isAuthenticated = true,
-                authorities = roles.map { SimpleGrantedAuthority("ROLE_$it") }.toMutableList(),
-                principal = principal
+                authenticated = true,
+                authorities = authorities,
+                principal = principal,
             )
         }
+    }
+
+    override fun getCredentials(): Any? {
+        return null
+    }
+
+    override fun getPrincipal(): Any? {
+        return this.principal
     }
 }

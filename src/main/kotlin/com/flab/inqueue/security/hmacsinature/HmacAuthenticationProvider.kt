@@ -1,11 +1,13 @@
 package com.flab.inqueue.security.hmacsinature
 
 import com.flab.inqueue.domain.customer.repository.CustomerRepository
+import com.flab.inqueue.security.common.CommonPrincipal
 import com.flab.inqueue.security.hmacsinature.utils.EncryptionUtil
 import com.flab.inqueue.security.hmacsinature.utils.HmacSignatureVerifier
 import org.springframework.security.authentication.AuthenticationProvider
 import org.springframework.security.authentication.BadCredentialsException
 import org.springframework.security.core.Authentication
+import org.springframework.security.core.authority.SimpleGrantedAuthority
 import org.springframework.security.core.userdetails.UsernameNotFoundException
 import org.springframework.stereotype.Component
 
@@ -31,9 +33,11 @@ class HmacAuthenticationProvider(
             throw BadCredentialsException("Invalid hmac authentication - clientId: ${hmacAuthentication.clientId}")
         }
 
+        val principal = CommonPrincipal(clientId = customer.clientId, roles = customer.roles)
+
         return HmacAuthenticationToken.authenticated(
-            clientId = customer.clientId,
-            roles = customer.roles
+            principal = principal,
+            authorities = customer.roles.map { SimpleGrantedAuthority("ROLE_$it") }.toMutableList()
         )
     }
 
