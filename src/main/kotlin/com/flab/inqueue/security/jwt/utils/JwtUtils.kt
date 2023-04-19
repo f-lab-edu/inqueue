@@ -11,11 +11,7 @@ import java.util.*
 
 @Component
 class JwtUtils(
-    @Value("\${jwt.secret-key}")
-    private val secretKey: String,
-
-    @Value("\${jwt.expiration-mills}")
-    private val expirationMills: Long
+    val properties: JwtProperties
 ) {
     companion object {
         private const val CLAIM_USER_ID_CODE = "userId"
@@ -23,11 +19,11 @@ class JwtUtils(
         private const val TOKEN_ISSUER = "com.inqueue"
     }
 
-    private var signingKey: Key = Keys.hmacShaKeyFor(Decoders.BASE64.decode(secretKey))
+    private var signingKey: Key = Keys.hmacShaKeyFor(Decoders.BASE64.decode(properties.secretKey))
 
     fun create(clientId: String, userId: String): JwtToken {
         val now = System.currentTimeMillis()
-        val expiryDate = Date(now + expirationMills)
+        val expiryDate = Date(now + properties.expirationMills)
 
         val claimsMap = mutableMapOf<String, String>()
         claimsMap[CLAIM_CLIENT_ID_CODE] = clientId
