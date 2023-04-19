@@ -19,7 +19,7 @@ class JobService(
             val enterJob = Job.enterJobFrom(waitJob)
             queueService.register(enterJob)
 
-            return QueueResponse("ENTIER",null)
+            return QueueResponse( "ENTER",null)
         }
         //대기열 진입
         queueService.register(waitJob)
@@ -44,7 +44,7 @@ class JobService(
     private fun queueResponse(job : Job): QueueResponse {
         //대기열 진입
         val rank = (queueService.rank(job) ?: 0) + 1
-        val waitMin = rank * 3 * 60
+        val waitMin = rank * 3 * 10
         val waitTime = LocalTime.now().plusMinutes(waitMin)
         return QueueResponse("WAIT",QueueInfo(waitTime, rank.toInt()))
     }
