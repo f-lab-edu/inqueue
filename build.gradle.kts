@@ -32,6 +32,9 @@ dependencies {
     /* spring security */
     implementation("org.springframework.boot:spring-boot-starter-security")
 
+    /* jwt */
+    implementation ("io.jsonwebtoken:jjwt-api:0.11.5")
+
     annotationProcessor("org.springframework.boot:spring-boot-configuration-processor")
     implementation("org.springframework.boot:spring-boot-starter-data-redis")
     implementation("it.ozimov:embedded-redis:0.7.3"){
