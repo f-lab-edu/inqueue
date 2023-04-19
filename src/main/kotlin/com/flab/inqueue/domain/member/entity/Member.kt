@@ -24,7 +24,7 @@ class Member(
 
     val createdAt: LocalDateTime = LocalDateTime.now()
 
-    fun encryptClientSecret(encryptionUtil: EncryptionUtil) {
+    fun encryptMemberKey(encryptionUtil: EncryptionUtil) {
         key.encryptClientSecret(encryptionUtil)
     }
 }

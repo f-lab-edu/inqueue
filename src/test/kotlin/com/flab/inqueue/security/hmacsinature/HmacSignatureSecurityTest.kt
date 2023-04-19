@@ -57,7 +57,7 @@ class HmacSignatureSecurityTest : AcceptanceTest() {
             "USER",
             MemberKey(notEncryptedUserMemberKey.clientId, notEncryptedUserMemberKey.clientSecret)
         )
-        testUser.encryptClientSecret(encryptionUtil)
+        testUser.encryptMemberKey(encryptionUtil)
         memberRepository.save(testUser)
 
         // ROLE_ADMIN
@@ -68,7 +68,7 @@ class HmacSignatureSecurityTest : AcceptanceTest() {
             MemberKey(notEncryptedAdminMemberKey.clientId, notEncryptedAdminMemberKey.clientSecret),
             listOf(Role.USER, Role.ADMIN)
         )
-        testAdmin.encryptClientSecret(encryptionUtil)
+        testAdmin.encryptMemberKey(encryptionUtil)
         memberRepository.save(testAdmin)
     }
 
