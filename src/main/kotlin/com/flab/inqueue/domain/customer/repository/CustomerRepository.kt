@@ -7,6 +7,6 @@ import org.springframework.data.jpa.repository.JpaRepository
 interface CustomerRepository : JpaRepository<Customer, Long> {
 
     @EntityGraph(attributePaths = ["roles"])
-    fun findByClientId(clientId: String): Customer?
+    fun findByKeyClientId(clientId: String): Customer?
 
 }

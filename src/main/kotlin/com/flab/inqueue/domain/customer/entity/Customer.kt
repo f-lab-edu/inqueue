@@ -8,8 +8,8 @@ import java.time.LocalDateTime
 @Entity(name = "CUSTOMER")
 class Customer(
     var name: String,
-    val clientId: String,
-    var clientSecret: String,
+    @Embedded
+    val key: CustomerKey,
     @ElementCollection
     @CollectionTable(
         name = "CUSTOMER_ROLE",
@@ -25,6 +25,6 @@ class Customer(
     val createdAt: LocalDateTime = LocalDateTime.now()
 
     fun encryptClientSecret(encryptionUtil: EncryptionUtil) {
-        this.clientSecret = encryptionUtil.encrypt(clientSecret)
+        key.encryptClientSecret(encryptionUtil)
     }
 }
