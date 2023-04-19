@@ -2,10 +2,10 @@ package com.flab.inqueue.security.hmacsinature
 
 import com.flab.inqueue.AcceptanceTest
 import com.flab.inqueue.domain.member.entity.Member
-import com.flab.inqueue.domain.member.entity.MemberKey
 import com.flab.inqueue.domain.member.repository.MemberRepository
-import com.flab.inqueue.domain.member.utils.MemberKeyFactory
+import com.flab.inqueue.domain.member.utils.memberkeygenrator.MemberKeyGenerator
 import com.flab.inqueue.domain.dto.AuthRequest
+import com.flab.inqueue.domain.member.entity.MemberKey
 import com.flab.inqueue.security.common.Role
 import com.flab.inqueue.security.hmacsinature.utils.EncryptionUtil
 import com.github.dockerjava.zerodep.shaded.org.apache.commons.codec.binary.Base64
@@ -27,27 +27,19 @@ class HmacSignatureSecurityTest : AcceptanceTest() {
 
     @Autowired
     lateinit var memberRepository: MemberRepository
-
     @Autowired
     lateinit var encryptionUtil: EncryptionUtil
-
     @Autowired
-    lateinit var memberKeyFactory: MemberKeyFactory
+    lateinit var memberKeyGenerator: MemberKeyGenerator
 
-    lateinit var testClientIdWithUser: String
-
-    lateinit var testClientSecretWithUser: String
-
+    // ROLE_USER
     lateinit var testUser: Member
-
+    lateinit var notEncryptedUserMemberKey: MemberKey
     lateinit var hmacSignaturePayloadWithUser: String
 
-    lateinit var testClientIdWithAdmin: String
-
-    lateinit var testClientSecretWithAdmin: String
-
+    // ROLE_ADMIN
     lateinit var testAdmin: Member
-
+    lateinit var notEncryptedAdminMemberKey: MemberKey
     lateinit var hmacSignaturePayloadWithAdmin: String
 
     companion object {
@@ -60,18 +52,22 @@ class HmacSignatureSecurityTest : AcceptanceTest() {
     fun setUp(@LocalServerPort port: Int) {
         // ROLE_USER
         hmacSignaturePayloadWithUser = "http://localhost:${port}" + HMAC_SECURITY_TEST_URI
-        testClientIdWithUser = memberKeyFactory.generateClientId()
-        testClientSecretWithUser = memberKeyFactory.generateClientSecret()
-
-        testUser = Member("USER", MemberKey(testClientIdWithUser, testClientSecretWithUser))
+        notEncryptedUserMemberKey = memberKeyGenerator.generate()
+        testUser = Member(
+            "USER",
+            MemberKey(notEncryptedUserMemberKey.clientId, notEncryptedUserMemberKey.clientSecret)
+        )
         testUser.encryptClientSecret(encryptionUtil)
         memberRepository.save(testUser)
 
         // ROLE_ADMIN
         hmacSignaturePayloadWithAdmin = "http://localhost:${port}" + HMAC_SECURITY_TEST_WITH_ADMIN_USER_URI
-        testClientIdWithAdmin = memberKeyFactory.generateClientId()
-        testClientSecretWithAdmin = memberKeyFactory.generateClientSecret()
-        testAdmin = Member("ADMIN", MemberKey(testClientIdWithAdmin, testClientSecretWithAdmin), listOf(Role.USER, Role.ADMIN))
+        notEncryptedAdminMemberKey = memberKeyGenerator.generate()
+        testAdmin = Member(
+            "ADMIN",
+            MemberKey(notEncryptedAdminMemberKey.clientId, notEncryptedAdminMemberKey.clientSecret),
+            listOf(Role.USER, Role.ADMIN)
+        )
         testAdmin.encryptClientSecret(encryptionUtil)
         memberRepository.save(testAdmin)
     }
@@ -83,8 +79,8 @@ class HmacSignatureSecurityTest : AcceptanceTest() {
             .header(
                 HttpHeaders.AUTHORIZATION,
                 createAuthorization(
-                    testClientIdWithUser,
-                    createHmacSignature(hmacSignaturePayloadWithUser, testClientSecretWithUser)
+                    notEncryptedUserMemberKey.clientId,
+                    createHmacSignature(hmacSignaturePayloadWithUser, notEncryptedUserMemberKey.clientSecret)
                 )
             )
             .contentType(MediaType.APPLICATION_JSON_VALUE).
@@ -94,12 +90,12 @@ class HmacSignatureSecurityTest : AcceptanceTest() {
             .statusCode(HttpStatus.OK.value())
             .assertThat()
             .body("authenticated", Matchers.equalTo(true))
-            .body("clientId", Matchers.equalTo(testClientIdWithUser))
+            .body("clientId", Matchers.equalTo(notEncryptedUserMemberKey.clientId))
             .body("signature", Matchers.nullValue())
             .body("payload", Matchers.nullValue())
             .body("credentials", Matchers.nullValue())
             .body("details", Matchers.nullValue())
-            .body("principal.clientId", Matchers.equalTo(testClientIdWithUser))
+            .body("principal.clientId", Matchers.equalTo(notEncryptedUserMemberKey.clientId))
             .body("principal.userId", Matchers.nullValue())
             .body("principal.roles", Matchers.hasItem("USER"))
             .body("authorities.authority", Matchers.hasItem("ROLE_USER"))
@@ -111,15 +107,15 @@ class HmacSignatureSecurityTest : AcceptanceTest() {
         val eventId = "estEventId"
         val userId = "testUserId"
 
-        val anotherClientSecret = memberKeyFactory.generateClientSecret()
+        val anotherMemberKey = memberKeyGenerator.generate()
         val authRequest = AuthRequest(eventId, userId)
 
         given.log().all()
             .header(
                 HttpHeaders.AUTHORIZATION,
                 createAuthorization(
-                    testClientIdWithUser,
-                    createHmacSignature(hmacSignaturePayloadWithUser, anotherClientSecret)
+                    notEncryptedUserMemberKey.clientId,
+                    createHmacSignature(hmacSignaturePayloadWithUser, anotherMemberKey.clientSecret)
                 )
             )
             .body(authRequest)
@@ -141,15 +137,15 @@ class HmacSignatureSecurityTest : AcceptanceTest() {
         val eventId = "estEventId"
         val userId = "testUserId"
 
-        val anotherClientId = memberKeyFactory.generateClientId()
+        val anotherMemberKey = memberKeyGenerator.generate()
         val authRequest = AuthRequest(eventId, userId)
 
         given.log().all()
             .header(
                 HttpHeaders.AUTHORIZATION,
                 createAuthorization(
-                    anotherClientId,
-                    createHmacSignature(hmacSignaturePayloadWithUser, testClientSecretWithUser)
+                    anotherMemberKey.clientId,
+                    createHmacSignature(hmacSignaturePayloadWithUser, anotherMemberKey.clientSecret)
                 )
             )
             .body(authRequest)
@@ -194,8 +190,8 @@ class HmacSignatureSecurityTest : AcceptanceTest() {
             .header(
                 HttpHeaders.AUTHORIZATION,
                 createAuthorization(
-                    testClientIdWithAdmin,
-                    createHmacSignature(hmacSignaturePayloadWithAdmin, testClientSecretWithAdmin)
+                    notEncryptedAdminMemberKey.clientId,
+                    createHmacSignature(hmacSignaturePayloadWithAdmin, notEncryptedAdminMemberKey.clientSecret)
                 )
             )
             .contentType(MediaType.APPLICATION_JSON_VALUE).
@@ -205,12 +201,12 @@ class HmacSignatureSecurityTest : AcceptanceTest() {
             .statusCode(HttpStatus.OK.value())
             .assertThat()
             .body("authenticated", Matchers.equalTo(true))
-            .body("clientId", Matchers.equalTo(testClientIdWithAdmin))
+            .body("clientId", Matchers.equalTo(notEncryptedAdminMemberKey.clientId))
             .body("signature", Matchers.nullValue())
             .body("payload", Matchers.nullValue())
             .body("credentials", Matchers.nullValue())
             .body("details", Matchers.nullValue())
-            .body("principal.clientId", Matchers.equalTo(testClientIdWithAdmin))
+            .body("principal.clientId", Matchers.equalTo(notEncryptedAdminMemberKey.clientId))
             .body("principal.userId", Matchers.nullValue())
             .body("principal.roles", Matchers.hasItems("USER", "ADMIN"))
             .body("authorities.authority", Matchers.hasItems("ROLE_USER", "ROLE_ADMIN"))
@@ -223,8 +219,8 @@ class HmacSignatureSecurityTest : AcceptanceTest() {
             .header(
                 HttpHeaders.AUTHORIZATION,
                 createAuthorization(
-                    testClientIdWithUser,
-                    createHmacSignature(hmacSignaturePayloadWithAdmin, testClientSecretWithUser)
+                    notEncryptedUserMemberKey.clientId,
+                    createHmacSignature(hmacSignaturePayloadWithAdmin, notEncryptedUserMemberKey.clientSecret)
                 )
             )
             .contentType(MediaType.APPLICATION_JSON_VALUE).
