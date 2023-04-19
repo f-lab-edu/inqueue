@@ -18,3 +18,8 @@ spring:
         show_sql: true
         format_sql: ture
     open-in-view: false
+
+customer:
+  account:
+    client-id-length: 32
+    client-secret-length: 64

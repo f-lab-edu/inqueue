@@ -5,6 +5,7 @@ import com.github.dockerjava.zerodep.shaded.org.apache.commons.codec.binary.Base
 import org.assertj.core.api.Assertions
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
+import java.security.SecureRandom
 import javax.crypto.Mac
 import javax.crypto.spec.SecretKeySpec
 
@@ -13,9 +14,11 @@ class HmacSignatureVerifierTest {
 
     private val hmacSignatureVerifier: HmacSignatureVerifier = HmacSignatureVerifier()
 
-    private val clientSecret1 = CustomerAccountFactory.generateClientSecret()
+    private val customerAccountFactory: CustomerAccountFactory = CustomerAccountFactory(SecureRandom(), 32, 64)
 
-    private val clientSecret2 = CustomerAccountFactory.generateClientSecret()
+    private val clientSecret1 = customerAccountFactory.generateClientSecret()
+
+    private val clientSecret2 = customerAccountFactory.generateClientSecret()
     
     @Test
     @DisplayName("전달받은 hmacSignature 검증 성공")
