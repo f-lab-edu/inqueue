@@ -1,12 +1,10 @@
 package com.flab.inqueue.security.hmacsinature
 
-import com.flab.inqueue.domain.member.utils.MemberKeyFactory
 import com.flab.inqueue.security.hmacsinature.utils.HmacSignatureVerifier
 import com.github.dockerjava.zerodep.shaded.org.apache.commons.codec.binary.Base64
 import org.assertj.core.api.Assertions
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
-import java.security.SecureRandom
 import javax.crypto.Mac
 import javax.crypto.spec.SecretKeySpec
 
@@ -15,11 +13,9 @@ class HmacSignatureVerifierTest {
 
     private val hmacSignatureVerifier: HmacSignatureVerifier = HmacSignatureVerifier()
 
-    private val memberKeyFactory: MemberKeyFactory = MemberKeyFactory(SecureRandom(), 32, 64)
+    private val clientSecret1 = "clientSecret1"
 
-    private val clientSecret1 = memberKeyFactory.generateClientSecret()
-
-    private val clientSecret2 = memberKeyFactory.generateClientSecret()
+    private val clientSecret2 = "clientSecret2"
     
     @Test
     @DisplayName("전달받은 hmacSignature 검증 성공")
