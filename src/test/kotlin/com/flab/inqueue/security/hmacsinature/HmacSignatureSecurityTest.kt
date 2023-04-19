@@ -1,10 +1,10 @@
 package com.flab.inqueue.security.hmacsinature
 
 import com.flab.inqueue.AcceptanceTest
-import com.flab.inqueue.domain.customer.entity.Customer
-import com.flab.inqueue.domain.customer.entity.CustomerKey
-import com.flab.inqueue.domain.customer.repository.CustomerRepository
-import com.flab.inqueue.domain.customer.utils.CustomerAccountFactory
+import com.flab.inqueue.domain.member.entity.Member
+import com.flab.inqueue.domain.member.entity.MemberKey
+import com.flab.inqueue.domain.member.repository.MemberRepository
+import com.flab.inqueue.domain.member.utils.MemberKeyFactory
 import com.flab.inqueue.domain.dto.AuthRequest
 import com.flab.inqueue.security.common.Role
 import com.flab.inqueue.security.hmacsinature.utils.EncryptionUtil
@@ -26,19 +26,19 @@ import javax.crypto.spec.SecretKeySpec
 class HmacSignatureSecurityTest : AcceptanceTest() {
 
     @Autowired
-    lateinit var customerRepository: CustomerRepository
+    lateinit var memberRepository: MemberRepository
 
     @Autowired
     lateinit var encryptionUtil: EncryptionUtil
 
     @Autowired
-    lateinit var customerAccountFactory: CustomerAccountFactory
+    lateinit var memberKeyFactory: MemberKeyFactory
 
     lateinit var testClientIdWithUser: String
 
     lateinit var testClientSecretWithUser: String
 
-    lateinit var testUser: Customer
+    lateinit var testUser: Member
 
     lateinit var hmacSignaturePayloadWithUser: String
 
@@ -46,7 +46,7 @@ class HmacSignatureSecurityTest : AcceptanceTest() {
 
     lateinit var testClientSecretWithAdmin: String
 
-    lateinit var testAdmin: Customer
+    lateinit var testAdmin: Member
 
     lateinit var hmacSignaturePayloadWithAdmin: String
 
@@ -60,20 +60,20 @@ class HmacSignatureSecurityTest : AcceptanceTest() {
     fun setUp(@LocalServerPort port: Int) {
         // ROLE_USER
         hmacSignaturePayloadWithUser = "http://localhost:${port}" + HMAC_SECURITY_TEST_URI
-        testClientIdWithUser = customerAccountFactory.generateClientId()
-        testClientSecretWithUser = customerAccountFactory.generateClientSecret()
+        testClientIdWithUser = memberKeyFactory.generateClientId()
+        testClientSecretWithUser = memberKeyFactory.generateClientSecret()
 
-        testUser = Customer("USER", CustomerKey(testClientIdWithUser, testClientSecretWithUser))
+        testUser = Member("USER", MemberKey(testClientIdWithUser, testClientSecretWithUser))
         testUser.encryptClientSecret(encryptionUtil)
-        customerRepository.save(testUser)
+        memberRepository.save(testUser)
 
         // ROLE_ADMIN
         hmacSignaturePayloadWithAdmin = "http://localhost:${port}" + HMAC_SECURITY_TEST_WITH_ADMIN_USER_URI
-        testClientIdWithAdmin = customerAccountFactory.generateClientId()
-        testClientSecretWithAdmin = customerAccountFactory.generateClientSecret()
-        testAdmin = Customer("ADMIN", CustomerKey(testClientIdWithAdmin, testClientSecretWithAdmin), listOf(Role.USER, Role.ADMIN))
+        testClientIdWithAdmin = memberKeyFactory.generateClientId()
+        testClientSecretWithAdmin = memberKeyFactory.generateClientSecret()
+        testAdmin = Member("ADMIN", MemberKey(testClientIdWithAdmin, testClientSecretWithAdmin), listOf(Role.USER, Role.ADMIN))
         testAdmin.encryptClientSecret(encryptionUtil)
-        customerRepository.save(testAdmin)
+        memberRepository.save(testAdmin)
     }
 
     @Test
@@ -111,7 +111,7 @@ class HmacSignatureSecurityTest : AcceptanceTest() {
         val eventId = "estEventId"
         val userId = "testUserId"
 
-        val anotherClientSecret = customerAccountFactory.generateClientSecret()
+        val anotherClientSecret = memberKeyFactory.generateClientSecret()
         val authRequest = AuthRequest(eventId, userId)
 
         given.log().all()
@@ -141,7 +141,7 @@ class HmacSignatureSecurityTest : AcceptanceTest() {
         val eventId = "estEventId"
         val userId = "testUserId"
 
-        val anotherClientId = customerAccountFactory.generateClientId()
+        val anotherClientId = memberKeyFactory.generateClientId()
         val authRequest = AuthRequest(eventId, userId)
 
         given.log().all()

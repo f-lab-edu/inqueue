@@ -1,5 +1,5 @@
-package com.flab.inqueue.domain.customer.exception
+package com.flab.inqueue.domain.member.exception
 
-class CustomerNotFoundException(
+class MemberNotFoundException(
     clientId: String
 ) : RuntimeException("Customer(clientId=${clientId}) not Found")

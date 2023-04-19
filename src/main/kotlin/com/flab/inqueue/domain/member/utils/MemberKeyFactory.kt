@@ -1,9 +1,9 @@
-package com.flab.inqueue.domain.customer.utils
+package com.flab.inqueue.domain.member.utils
 
 import java.security.SecureRandom
 import java.util.*
 
-class CustomerAccountFactory(
+class MemberKeyFactory(
     private val secureRandom: SecureRandom,
     private val clientIdLength: Int,
     private val clientSecretLength: Int

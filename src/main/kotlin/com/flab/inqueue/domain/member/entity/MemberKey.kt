@@ -1,10 +1,10 @@
-package com.flab.inqueue.domain.customer.entity
+package com.flab.inqueue.domain.member.entity
 
 import com.flab.inqueue.security.hmacsinature.utils.EncryptionUtil
 import jakarta.persistence.Embeddable
 
 @Embeddable
-class CustomerKey(
+class MemberKey(
     var clientId: String,
     var clientSecret: String,
 ) {
