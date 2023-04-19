@@ -62,3 +62,4 @@ class EventController(
         return ResponseEntity.ok().build()
     }
 }
+

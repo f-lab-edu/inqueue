@@ -1,4 +1,8 @@
 spring:
+  data:
+    redis:
+      host: ${SPRING_DATA_REDIS_HOST}
+      port: 6379
   datasource:
     url: jdbc:mysql://${SPRING_DATASOURCE_HOST}:3306/inqueue?characterEncoding=utf8
     username: ${SPRING_DATASOURCE_USERNAME}

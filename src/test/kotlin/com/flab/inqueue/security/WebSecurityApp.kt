@@ -10,7 +10,6 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories
     scanBasePackages = [
         "com.flab.inqueue.security",
         "com.flab.inqueue.domain.member",
-        "com.flab.inqueue.application",
     ]
 )
 @EnableJpaRepositories("com.flab.inqueue.domain.member")
