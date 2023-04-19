@@ -14,8 +14,8 @@ spring:
 
 member:
   key:
-    client-id-length: ${CUSTOMER_ACCOUNT_CLIENT_ID_LENGTH}
-    client-secret-length: ${CUSTOMER_ACCOUNT_CLIENT_SECRET_LENGTH}
+    client-id-size: ${CUSTOMER_ACCOUNT_CLIENT_ID_size}
+    client-secret-size: ${CUSTOMER_ACCOUNT_CLIENT_SECRET_size}
 
 jwt:
   secret-key: ${JWT_TOKEN_SECRET_KEY}
