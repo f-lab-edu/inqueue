@@ -10,3 +10,9 @@ spring:
     hibernate:
       ddl-auto: none
     open-in-view: false
+
+
+customer:
+  account:
+    client-id-length: ${CUSTOMER_ACCOUNT_CLIENT_ID_LENGTH}
+    client-secret-length: ${CUSTOMER_ACCOUNT_CLIENT_SECRET_LENGTH}
