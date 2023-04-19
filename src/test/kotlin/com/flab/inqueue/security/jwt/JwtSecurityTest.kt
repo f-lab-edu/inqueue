@@ -1,13 +1,13 @@
 package com.flab.inqueue.security.jwt
 
 import com.flab.inqueue.AcceptanceTest
+import com.flab.inqueue.security.jwt.utils.JwtProperties
 import com.flab.inqueue.security.jwt.utils.JwtToken
 import com.flab.inqueue.security.jwt.utils.JwtUtils
 import org.hamcrest.Matchers
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.beans.factory.annotation.Value
 import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
@@ -19,8 +19,8 @@ class JwtSecurityTest : AcceptanceTest() {
     @Autowired
     lateinit var jwtUtils: JwtUtils
 
-    @Value("\${jwt.secret-key}")
-    private lateinit var jwtSecretKey: String
+    @Autowired
+    private lateinit var jwtProperties: JwtProperties
 
     companion object {
         private const val JWT_TOKEN_PREFIX = "Bearer "
@@ -52,6 +52,7 @@ class JwtSecurityTest : AcceptanceTest() {
             .body("details", Matchers.nullValue())
             .body("authorities.authority", Matchers.hasItem("ROLE_USER"))
     }
+
     @Test
     @DisplayName("헤더에 AUTHORIZATION 값이 없는 경우, JWT Authentication 실패")
     fun jwt_authentication_fail1() {
@@ -114,12 +115,14 @@ class JwtSecurityTest : AcceptanceTest() {
     }
 
     private fun getJwtTokenWithAnotherSecretKey(clientId: String, userId: String): JwtToken {
-        val jwtUtils = JwtUtils(createSecretKey(), 3600)
+        val newProperties = JwtProperties(createSecretKey(), 3600)
+        val jwtUtils = JwtUtils(newProperties)
         return jwtUtils.create(clientId, userId)
     }
 
     private fun getExpiredJwtToken(clientId: String, userId: String): JwtToken {
-        val jwtUtils = JwtUtils(jwtSecretKey, 10)
+        val newProperties = JwtProperties(jwtProperties.secretKey, 10)
+        val jwtUtils = JwtUtils(newProperties)
         val jwtToken = jwtUtils.create(clientId, userId)
         Thread.sleep(100)
         return jwtToken

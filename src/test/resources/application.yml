@@ -43,7 +43,6 @@ customer:
   account:
     client-id-length: 32
     client-secret-length: 64
-    client-secret-salt: salt
 
 jwt:
   secret-key: 7nD+tPZb3K1hxywtaIE5oURk7D10KsOrtNBo5P7+uCiSrVUnwNDAo9NQG9A/e3DA9Z/uhrx8qJu1g3YAr8EiTQ==
