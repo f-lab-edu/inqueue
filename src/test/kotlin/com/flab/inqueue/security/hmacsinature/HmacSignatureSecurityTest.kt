@@ -1,11 +1,11 @@
 package com.flab.inqueue.security.hmacsinature
 
 import com.flab.inqueue.AcceptanceTest
+import com.flab.inqueue.domain.dto.AuthRequest
 import com.flab.inqueue.domain.member.entity.Member
+import com.flab.inqueue.domain.member.entity.MemberKey
 import com.flab.inqueue.domain.member.repository.MemberRepository
 import com.flab.inqueue.domain.member.utils.memberkeygenrator.MemberKeyGenerator
-import com.flab.inqueue.domain.dto.AuthRequest
-import com.flab.inqueue.domain.member.entity.MemberKey
 import com.flab.inqueue.security.common.Role
 import com.flab.inqueue.security.hmacsinature.utils.EncryptionUtil
 import com.github.dockerjava.zerodep.shaded.org.apache.commons.codec.binary.Base64
@@ -104,11 +104,7 @@ class HmacSignatureSecurityTest : AcceptanceTest() {
     @Test
     @DisplayName("clientSecret이 다른 경우, Hmac Authentication 실패")
     fun hmac_authentication_fail1() {
-        val eventId = "estEventId"
-        val userId = "testUserId"
-
         val anotherMemberKey = memberKeyGenerator.generate()
-        val authRequest = AuthRequest(eventId, userId)
 
         given.log().all()
             .header(
@@ -118,7 +114,6 @@ class HmacSignatureSecurityTest : AcceptanceTest() {
                     createHmacSignature(hmacSignaturePayloadWithUser, anotherMemberKey.clientSecret)
                 )
             )
-            .body(authRequest)
             .contentType(MediaType.APPLICATION_JSON_VALUE).
         `when`()
             .post(HMAC_SECURITY_TEST_URI).
