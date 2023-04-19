@@ -1,18 +1,18 @@
-package com.flab.inqueue.domain.customer.entity
+package com.flab.inqueue.domain.member.entity
 
 import com.flab.inqueue.security.common.Role
 import com.flab.inqueue.security.hmacsinature.utils.EncryptionUtil
 import jakarta.persistence.*
 import java.time.LocalDateTime
 
-@Entity(name = "CUSTOMER")
-class Customer(
+@Entity(name = "MEMBER")
+class Member(
     var name: String,
     @Embedded
-    val key: CustomerKey,
+    val key: MemberKey,
     @ElementCollection
     @CollectionTable(
-        name = "CUSTOMER_ROLE",
+        name = "MEMBER_ROLE",
         joinColumns = [JoinColumn(name = "customer_id")]
     )
     @Column(name = "role")

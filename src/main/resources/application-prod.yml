@@ -12,8 +12,8 @@ spring:
     open-in-view: false
 
 
-customer:
-  account:
+member:
+  key:
     client-id-length: ${CUSTOMER_ACCOUNT_CLIENT_ID_LENGTH}
     client-secret-length: ${CUSTOMER_ACCOUNT_CLIENT_SECRET_LENGTH}
 

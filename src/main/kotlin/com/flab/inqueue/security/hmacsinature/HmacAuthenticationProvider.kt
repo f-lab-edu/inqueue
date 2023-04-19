@@ -1,6 +1,6 @@
 package com.flab.inqueue.security.hmacsinature
 
-import com.flab.inqueue.domain.customer.repository.CustomerRepository
+import com.flab.inqueue.domain.member.repository.MemberRepository
 import com.flab.inqueue.security.common.CommonPrincipal
 import com.flab.inqueue.security.hmacsinature.utils.EncryptionUtil
 import com.flab.inqueue.security.hmacsinature.utils.HmacSignatureVerifier
@@ -14,13 +14,13 @@ import org.springframework.stereotype.Component
 @Component
 class HmacAuthenticationProvider(
     private val hmacSignatureVerifier: HmacSignatureVerifier,
-    private val customerRepository: CustomerRepository,
+    private val memberRepository: MemberRepository,
     private val encryptionUtil: EncryptionUtil
 ) : AuthenticationProvider {
 
     override fun authenticate(authentication: Authentication?): Authentication {
         val hmacAuthentication = authentication as HmacAuthenticationToken
-        val customer = customerRepository.findByKeyClientId(authentication.clientId!!)
+        val customer = memberRepository.findByKeyClientId(authentication.clientId!!)
             ?: throw UsernameNotFoundException("Customer(clientId=${authentication.clientId}) not found")
 
         val customerKey = customer.key

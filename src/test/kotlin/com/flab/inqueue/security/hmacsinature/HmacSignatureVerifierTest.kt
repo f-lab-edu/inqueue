@@ -1,6 +1,6 @@
 package com.flab.inqueue.security.hmacsinature
 
-import com.flab.inqueue.domain.customer.utils.CustomerAccountFactory
+import com.flab.inqueue.domain.member.utils.MemberKeyFactory
 import com.flab.inqueue.security.hmacsinature.utils.HmacSignatureVerifier
 import com.github.dockerjava.zerodep.shaded.org.apache.commons.codec.binary.Base64
 import org.assertj.core.api.Assertions
@@ -15,11 +15,11 @@ class HmacSignatureVerifierTest {
 
     private val hmacSignatureVerifier: HmacSignatureVerifier = HmacSignatureVerifier()
 
-    private val customerAccountFactory: CustomerAccountFactory = CustomerAccountFactory(SecureRandom(), 32, 64)
+    private val memberKeyFactory: MemberKeyFactory = MemberKeyFactory(SecureRandom(), 32, 64)
 
-    private val clientSecret1 = customerAccountFactory.generateClientSecret()
+    private val clientSecret1 = memberKeyFactory.generateClientSecret()
 
-    private val clientSecret2 = customerAccountFactory.generateClientSecret()
+    private val clientSecret2 = memberKeyFactory.generateClientSecret()
     
     @Test
     @DisplayName("전달받은 hmacSignature 검증 성공")

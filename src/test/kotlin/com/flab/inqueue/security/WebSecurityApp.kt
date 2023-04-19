@@ -9,11 +9,11 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories
 @SpringBootApplication(
     scanBasePackages = [
         "com.flab.inqueue.security",
-        "com.flab.inqueue.domain.customer",
+        "com.flab.inqueue.domain.member",
         "com.flab.inqueue.application",
     ]
 )
-@EnableJpaRepositories("com.flab.inqueue.domain.customer")
-@EntityScan("com.flab.inqueue.domain.customer")
+@EnableJpaRepositories("com.flab.inqueue.domain.member")
+@EntityScan("com.flab.inqueue.domain.member")
 class WebSecurityApp {
 }
