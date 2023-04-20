@@ -19,7 +19,7 @@ class AuthController(
     @PostMapping("/token")
     fun issueToken(
         @RequestBody request: TokenRequest
-    ): JwtToken? {
+    ): JwtToken {
         val principal = SecurityContextHolder.getContext().authentication.principal as CommonPrincipal
         return tokenService.generateToken(TokenRequest(principal.clientId, request.userId))
     }
