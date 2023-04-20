@@ -2,7 +2,7 @@ spring:
   profiles:
     active: test
   datasource:
-    url:  jdbc:tc:mysql:8:///test-db
+    url: jdbc:tc:mysql:8:///test-db
     driver-class-name: org.testcontainers.jdbc.ContainerDatabaseDriver
     username:
     password:
@@ -15,3 +15,38 @@ spring:
     redis:
       host: localhost
       port: 6379
+---
+
+spring:
+  profiles:
+    active: security
+  datasource:
+    url: jdbc:h2:mem:testdb;MODE=MySQL
+    username: sa
+    password:
+    driver-class-name: org.h2.Driver
+  h2:
+    console:
+      enabled: true
+      path: /h2-console
+  jpa:
+    hibernate:
+      ddl-auto: create
+    properties:
+      hibernate:
+        show_sql: true
+        format_sql: ture
+    open-in-view: false
+
+
+member:
+  key:
+    client-id-size: 32
+    client-secret-size: 64
+
+jwt:
+  secret-key: 7nD+tPZb3K1hxywtaIE5oURk7D10KsOrtNBo5P7+uCiSrVUnwNDAo9NQG9A/e3DA9Z/uhrx8qJu1g3YAr8EiTQ==
+  expiration-mills: 7200000 # 2시간
+
+aes256:
+  secret-key: ae19150aebb744d0931c64acc0db53ae

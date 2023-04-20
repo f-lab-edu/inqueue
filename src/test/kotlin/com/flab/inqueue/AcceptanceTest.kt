@@ -8,7 +8,6 @@ import org.junit.jupiter.api.BeforeEach
 import org.springframework.boot.test.web.server.LocalServerPort
 import org.springframework.restdocs.RestDocumentationContextProvider
 import org.springframework.restdocs.restassured.RestAssuredRestDocumentation.documentationConfiguration
-import org.testcontainers.containers.MySQLContainer
 
 @IntegrationTest
 abstract class AcceptanceTest : TestContainer() {

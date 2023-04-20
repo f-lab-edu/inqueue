@@ -1,4 +1,8 @@
 spring:
+  data:
+    redis:
+      host: localhost
+      port: 6379
   datasource:
     url: jdbc:h2:mem:testdb;MODE=MySQL
     username: sa
@@ -7,9 +11,9 @@ spring:
     hikari:
       auto-commit: false
   h2:
-     console:
-       enabled: true
-       path: /h2-console
+    console:
+      enabled: true
+      path: /h2-console
   jpa:
     hibernate:
       ddl-auto: create
@@ -18,3 +22,15 @@ spring:
         show_sql: true
         format_sql: ture
     open-in-view: false
+
+member:
+  key:
+    client-id-size: 32
+    client-secret-size: 64
+
+jwt:
+  secret-key: 7nD+tPZb3K1hxywtaIE5oURk7D10KsOrtNBo5P7+uCiSrVUnwNDAo9NQG9A/e3DA9Z/uhrx8qJu1g3YAr8EiTQ==
+  expiration-mills: 7200000 # 2시간
+
+aes256:
+  secret-key: ae19150aebb744d0931c64acc0db53ae
