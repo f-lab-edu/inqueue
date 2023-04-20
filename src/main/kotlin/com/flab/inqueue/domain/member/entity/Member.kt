@@ -14,7 +14,7 @@ class Member(
     @ElementCollection
     @CollectionTable(
         name = "MEMBER_ROLE",
-        joinColumns = [JoinColumn(name = "customer_id")]
+        joinColumns = [JoinColumn(name = "member_id")]
     )
     @Column(name = "role")
     val roles: List<Role> = listOf(Role.USER)
