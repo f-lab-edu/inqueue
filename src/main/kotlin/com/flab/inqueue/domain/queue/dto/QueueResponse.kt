@@ -1,9 +1,10 @@
-package com.flab.inqueue.domain.dto
+package com.flab.inqueue.domain.queue.dto
 
+import com.flab.inqueue.domain.queue.entity.JobStatus
 import java.time.LocalTime
 
 data class QueueResponse(
-    val status: String,
+    val status: JobStatus,
     val expectedInfo: QueueInfo? = null,
 )
 

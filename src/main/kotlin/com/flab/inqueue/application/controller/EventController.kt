@@ -1,10 +1,11 @@
 package com.flab.inqueue.application.controller
 
-import com.flab.inqueue.domain.dto.QueueInfo
-import com.flab.inqueue.domain.dto.QueueResponse
+import com.flab.inqueue.domain.queue.dto.QueueInfo
+import com.flab.inqueue.domain.queue.dto.QueueResponse
 import com.flab.inqueue.domain.event.dto.EventRequest
 import com.flab.inqueue.domain.event.dto.EventResponse
 import com.flab.inqueue.domain.event.service.EventService
+import com.flab.inqueue.domain.queue.entity.JobStatus
 import jakarta.validation.Valid
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
@@ -28,7 +29,7 @@ class EventController(
         @RequestHeader("Authorization") accessToken: String,
         @PathVariable("eventId") eventId: String,
     ): QueueResponse {
-        return QueueResponse("WAIT", QueueInfo(LocalTime.now(), 1))
+        return QueueResponse(JobStatus.WAIT, QueueInfo(LocalTime.now(), 1))
     }
 
 
@@ -38,7 +39,7 @@ class EventController(
         @RequestHeader("X-Client-Id") clientId: String,
         @PathVariable eventId: String,
     ): QueueResponse {
-        return QueueResponse("WAIT", QueueInfo(LocalTime.now(), 1))
+        return QueueResponse(JobStatus.WAIT, QueueInfo(LocalTime.now(), 1))
     }
 
 
