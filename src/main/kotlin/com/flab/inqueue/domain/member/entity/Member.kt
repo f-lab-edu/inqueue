@@ -1,5 +1,6 @@
 package com.flab.inqueue.domain.member.entity
 
+import com.flab.inqueue.common.domain.BaseEntity
 import com.flab.inqueue.security.common.Role
 import com.flab.inqueue.security.hmacsinature.utils.EncryptionUtil
 import jakarta.persistence.*
@@ -17,11 +18,7 @@ class Member(
     )
     @Column(name = "role")
     val roles: List<Role> = listOf(Role.USER)
-) {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    val id: Long? = null
-
+) : BaseEntity() {
     val createdAt: LocalDateTime = LocalDateTime.now()
 
     fun encryptMemberKey(encryptionUtil: EncryptionUtil) {
