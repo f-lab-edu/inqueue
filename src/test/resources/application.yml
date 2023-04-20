@@ -15,29 +15,6 @@ spring:
     redis:
       host: localhost
       port: 6379
----
-
-spring:
-  profiles:
-    active: security
-  datasource:
-    url: jdbc:h2:mem:testdb;MODE=MySQL
-    username: sa
-    password:
-    driver-class-name: org.h2.Driver
-  h2:
-    console:
-      enabled: true
-      path: /h2-console
-  jpa:
-    hibernate:
-      ddl-auto: create
-    properties:
-      hibernate:
-        show_sql: true
-        format_sql: ture
-    open-in-view: false
-
 
 member:
   key:
