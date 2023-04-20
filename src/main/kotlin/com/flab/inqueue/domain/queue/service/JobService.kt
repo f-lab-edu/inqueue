@@ -13,40 +13,40 @@ class JobService(
     private val queueService: QueueService,
 ) {
 
-    fun enter(eventId : String,userId : String): QueueResponse {
+    fun enter(eventId: String, userId: String): QueueResponse {
         val waitJob = Job(eventId, userId)
-        if(isEnterJob(eventId)){
+        if (isEnterJob(eventId)) {
             val enterJob = Job.enterJobFrom(waitJob)
             queueService.register(enterJob)
 
-            return QueueResponse( "ENTER",null)
+            return QueueResponse("ENTER")
         }
         //대기열 진입
         queueService.register(waitJob)
         return queueResponse(waitJob)
     }
 
-    fun retrieve(eventId : String,userId : String): QueueResponse {
+    fun retrieve(eventId: String, userId: String): QueueResponse {
         val waitJob = Job(eventId, userId)
         return queueResponse(waitJob)
     }
 
-    private fun isEnterJob(eventId : String): Boolean {
+    private fun isEnterJob(eventId: String): Boolean {
         val event = eventRepository.findByEventId(eventId) ?: throw NoSuchElementException("행사를 찾을 수 없습니다. $eventId")
         val size = queueService.size(event.eventId) ?: 0
 
-        if( event.jobQueueLimitTime > size ) {
+        if (event.jobQueueLimitTime > size) {
             return true
         }
         return false;
     }
 
-    private fun queueResponse(job : Job): QueueResponse {
+    private fun queueResponse(job: Job): QueueResponse {
         //대기열 진입
         val rank = (queueService.rank(job) ?: 0) + 1
-        val waitMin = rank * 3 * 10
-        val waitTime = LocalTime.now().plusMinutes(waitMin)
-        return QueueResponse("WAIT",QueueInfo(waitTime, rank.toInt()))
+        val waitTime = rank * 10
+        val calculatedWaitTime = LocalTime.now().plusMinutes(waitTime)
+        return QueueResponse("WAIT", QueueInfo(calculatedWaitTime, rank.toInt()))
     }
 
 
