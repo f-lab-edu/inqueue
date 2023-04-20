@@ -12,7 +12,7 @@ class QueueRedisPository(
     private val jobRedisTemplate: RedisTemplate<String, Job>,
 ) {
     fun register(job: Job) {
-        jobRedisTemplate.opsForZSet().add(job.eventId, job, System.nanoTime().toDouble())
+        jobRedisTemplate.opsForZSet().add(job.redisKey(), job, System.nanoTime().toDouble())
     }
 
     fun size(key: String): Long? {
@@ -29,15 +29,15 @@ class QueueRedisPository(
 
     fun rank(job: Job): Long? {
         return jobRedisTemplate.opsForZSet()
-            .rank(job.eventId, job)
+            .rank(job.redisKey(), job)
     }
 
     fun remove(job: Job): Long? {
-        return jobRedisTemplate.opsForZSet().remove(job.eventId, job)
+        return jobRedisTemplate.opsForZSet().remove(job.redisKey(), job)
     }
 
     fun findMe(job: Job): Cursor<ZSetOperations.TypedTuple<Job>> {
-        return jobRedisTemplate.opsForZSet().scan(job.eventId, ScanOptions.NONE)
+        return jobRedisTemplate.opsForZSet().scan(job.redisKey(), ScanOptions.NONE)
     }
 
 }
