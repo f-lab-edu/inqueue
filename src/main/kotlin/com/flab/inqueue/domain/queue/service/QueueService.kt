@@ -28,8 +28,7 @@ class QueueService(
     fun retrieve(job: Job): QueueResponse {
         val rank = (queueRedisPository.rank(job) ?: 0) + 1
         val waitSecond = rank * 10
-        val waitTime = LocalTime.now().plusSeconds(waitSecond)
-        return QueueResponse( JobStatus.WAIT, QueueInfo(waitTime, rank.toInt()))
+        return QueueResponse( JobStatus.WAIT, QueueInfo(waitSecond, rank.toInt()))
     }
 
     fun range(key: String, start: Long, end: Long): MutableSet<Job>? {
