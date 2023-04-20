@@ -12,7 +12,7 @@ class Job(
         fun enterJobFrom(job : Job): Job {
             val stringBuffer = StringBuilder()
             stringBuffer.append(job.eventId)
-            stringBuffer.append("JOB_QUEUE")
+            stringBuffer.append(":JOB_QUEUE")
             return Job(stringBuffer.toString(),job.userId)
         }
     }
