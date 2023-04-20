@@ -1,13 +1,9 @@
 package com.flab.inqueue.domain.queue.entity
 
 class Job(
-    var eventId: String,
+    val eventId: String,
     val userId: String,
-    var status : JobStatus = JobStatus.WAIT
+    var status: JobStatus = JobStatus.WAIT,
 ) {
-    init {
-        val stringBuffer = StringBuilder(status.prefix)
-        stringBuffer.append(eventId)
-        this.eventId = stringBuffer.toString()
-    }
+    fun redisKey(): String = status.makeRedisKey(this.eventId)
 }

@@ -6,7 +6,6 @@ import com.flab.inqueue.domain.queue.entity.Job
 import com.flab.inqueue.domain.queue.entity.JobStatus
 import com.flab.inqueue.domain.queue.repository.QueueRedisPository
 import org.springframework.stereotype.Service
-import java.time.LocalTime
 
 @Service
 class QueueService(
