@@ -2,7 +2,6 @@ package com.flab.inqueue.api
 
 import com.flab.inqueue.AcceptanceTest
 import com.flab.inqueue.REST_DOCS_DOCUMENT_IDENTIFIER
-import com.flab.inqueue.domain.auth.dto.TokenRequest
 import com.flab.inqueue.domain.member.entity.Member
 import com.flab.inqueue.domain.member.entity.MemberKey
 import com.flab.inqueue.domain.member.repository.MemberRepository
@@ -62,9 +61,6 @@ class UserTest : AcceptanceTest() {
     @Test
     @DisplayName("토큰 발급 api")
     fun issueToken() {
-        val tokenUserId = "testUserId"
-        val tokenRequest = TokenRequest(null, tokenUserId)
-
         givenWithDocument.log().all()
             .filter(IssueTokenDocument.FILTER)
             .header(
@@ -74,14 +70,14 @@ class UserTest : AcceptanceTest() {
                     createHmacSignature(hmacSignaturePayload, notEncryptedUserMemberKey.clientSecret)
                 )
             )
-            .body(tokenRequest)
             .contentType(MediaType.APPLICATION_JSON_VALUE).
         `when`()
             .post(ISSUE_TOKEN_URL).
         then().log().all()
             .statusCode(HttpStatus.OK.value())
-            .body("accessToken", notNullValue())
-            .body("expiration", notNullValue())
+            .body("userId", notNullValue())
+            .body("token.accessToken", notNullValue())
+            .body("token.expiration", notNullValue())
     }
 
     @Test
@@ -137,7 +133,6 @@ object IssueTokenDocument {
     val FILTER: RestDocumentationFilter = RestAssuredRestDocumentation.document(
         REST_DOCS_DOCUMENT_IDENTIFIER,
         headerFiledSnippet(),
-        requestFieldsSnippet(),
         responseFieldsSnippet()
     )
 
@@ -149,17 +144,11 @@ object IssueTokenDocument {
         )
     }
 
-    private fun requestFieldsSnippet(): Snippet {
-        return requestFields(
-            fieldWithPath("clientId").type(JsonFieldType.STRING).description("고객사 식별자").optional(),
-            fieldWithPath("userId").type(JsonFieldType.STRING).description("사용자 식별자"),
-        )
-    }
-
     private fun responseFieldsSnippet(): Snippet {
         return responseFields(
-            fieldWithPath("accessToken").type(JsonFieldType.STRING).description("JWT 토큰"),
-            fieldWithPath("expiration").type(JsonFieldType.STRING).description("토큰 만료 일시")
+            fieldWithPath("userId").type(JsonFieldType.STRING).description("대기열 유저 식별자"),
+            fieldWithPath("token.accessToken").type(JsonFieldType.STRING).description("JWT 토큰"),
+            fieldWithPath("token.expiration").type(JsonFieldType.STRING).description("토큰 만료 일시")
         )
     }
 }
