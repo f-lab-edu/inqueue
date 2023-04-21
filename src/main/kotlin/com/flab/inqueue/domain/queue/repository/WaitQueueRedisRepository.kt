@@ -8,7 +8,7 @@ import org.springframework.data.redis.core.ZSetOperations
 import org.springframework.stereotype.Repository
 
 @Repository
-class QueueRedisPository(
+class WaitQueueRedisRepository(
     private val jobRedisTemplate: RedisTemplate<String, Job>,
 ) {
     fun register(job: Job) {
