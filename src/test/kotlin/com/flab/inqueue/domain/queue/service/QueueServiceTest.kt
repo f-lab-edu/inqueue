@@ -2,7 +2,7 @@ package com.flab.inqueue.domain.queue.service
 
 import com.flab.inqueue.domain.queue.entity.Job
 import com.flab.inqueue.domain.queue.entity.JobStatus
-import com.flab.inqueue.domain.queue.repository.QueueRedisPository
+import com.flab.inqueue.domain.queue.repository.WaitQueueRedisRepository
 import com.flab.inqueue.support.UnitTest
 import io.mockk.every
 import io.mockk.impl.annotations.InjectMockKs
@@ -12,14 +12,13 @@ import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.EnumSource
-import java.time.LocalTime
 import java.util.*
 
 @UnitTest
 class QueueServiceTest {
 
     @MockK
-    lateinit var queueRedisPository: QueueRedisPository
+    lateinit var waitQueueRedisRepository: WaitQueueRedisRepository
 
     @InjectMockKs
     lateinit var queueService: QueueService
@@ -34,8 +33,8 @@ class QueueServiceTest {
         val userId = UUID.randomUUID().toString()
 
         //given
-        every { queueRedisPository.register(any()) } returns Unit
-        every { queueRedisPository.rank(any()) } returns 1
+        every { waitQueueRedisRepository.register(any()) } returns Unit
+        every { waitQueueRedisRepository.rank(any()) } returns 1
 
         val queueResponse = queueService.register(Job(eventId, userId, jobStatus))
 
@@ -57,7 +56,7 @@ class QueueServiceTest {
         val eventId = "TestEventId"
         val userId = UUID.randomUUID().toString()
 
-        every { queueRedisPository.rank(any()) } returns 1
+        every { waitQueueRedisRepository.rank(any()) } returns 1
 
         //given
         val queueResponse = queueService.retrieve(Job(eventId, userId))
