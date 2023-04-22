@@ -20,7 +20,7 @@ import java.util.*
 @DataRedisTest
 @Import(RedisConfigTest::class)
 class WaitJobRedis @Autowired constructor(
-    private val redisTemplate: RedisTemplate<String, Any>,
+    private val redisTemplate: RedisTemplate<String, Job>,
 ) : TestContainer() {
     private val logger = LoggerFactory.getLogger(WaitJobRedis::class.java)
     private val zSetOperations = redisTemplate.opsForZSet();

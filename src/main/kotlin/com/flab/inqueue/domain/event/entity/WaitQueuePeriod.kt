@@ -2,7 +2,9 @@ package com.flab.inqueue.domain.event.entity
 
 import jakarta.persistence.Column
 import jakarta.persistence.Embeddable
+import java.time.Instant
 import java.time.LocalDateTime
+import java.time.ZoneOffset
 
 @Embeddable
 data class WaitQueuePeriod(
@@ -15,4 +17,8 @@ data class WaitQueuePeriod(
     }
 
     fun contains(value: LocalDateTime): Boolean = (startDateTime..endDateTime).contains(value)
+
+    fun convertInstant(): Instant {
+        return this.endDateTime.toInstant(ZoneOffset.ofHours(9))
+    }
 }
