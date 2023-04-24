@@ -13,17 +13,16 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.data.redis.DataRedisTest
 import org.springframework.context.annotation.Import
 import org.springframework.data.redis.core.RedisTemplate
-import org.springframework.data.redis.core.ScanOptions
 import java.util.*
 
 
 @DataRedisTest
 @Import(RedisConfigTest::class)
 class WaitJobRedis @Autowired constructor(
-    private val redisTemplate: RedisTemplate<String, Job>,
+    private val jobRedisTemplate: RedisTemplate<String, Job>,
 ) : TestContainer() {
     private val logger = LoggerFactory.getLogger(WaitJobRedis::class.java)
-    private val zSetOperations = redisTemplate.opsForZSet();
+    private val zSetOperations = jobRedisTemplate.opsForZSet();
 
     @Test
     @DisplayName("레디스 실행 테스트")
