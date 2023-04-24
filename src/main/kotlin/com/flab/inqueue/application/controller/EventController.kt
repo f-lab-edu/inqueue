@@ -29,7 +29,7 @@ class EventController(
         @RequestHeader("Authorization") accessToken: String,
         @PathVariable("eventId") eventId: String,
     ): QueueResponse {
-        return QueueResponse(JobStatus.WAIT, QueueInfo(LocalTime.now(), 1))
+        return QueueResponse(JobStatus.WAIT, QueueInfo(1L, 1))
     }
 
 
@@ -39,7 +39,7 @@ class EventController(
         @RequestHeader("X-Client-Id") clientId: String,
         @PathVariable eventId: String,
     ): QueueResponse {
-        return QueueResponse(JobStatus.WAIT, QueueInfo(LocalTime.now(), 1))
+        return QueueResponse(JobStatus.WAIT, QueueInfo(1L, 1))
     }
 
 
