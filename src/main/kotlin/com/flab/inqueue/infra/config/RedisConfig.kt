@@ -36,6 +36,7 @@ class RedisConfig(
     @Bean(name = ["jobRedisTemplate"])
     fun jobRedisTemplate(connectionFactory: RedisConnectionFactory): RedisTemplate<String, Job> {
         val redisTemplate = RedisTemplate<String, Job>()
+        redisTemplate.setEnableTransactionSupport(true)
         redisTemplate.keySerializer = StringRedisSerializer()
         redisTemplate.valueSerializer = Jackson2JsonRedisSerializer(jacksonObjectMapper(), Job::class.java)
         redisTemplate.setConnectionFactory(connectionFactory)
@@ -45,6 +46,7 @@ class RedisConfig(
     @Bean
     fun redisTemplate(): RedisTemplate<*, *> {
         val redisTemplate: RedisTemplate<*, *> = RedisTemplate<Any, Any>()
+        redisTemplate.setEnableTransactionSupport(true)
         redisTemplate.setConnectionFactory(redisConnectionFactory()!!)
         return redisTemplate
     }
