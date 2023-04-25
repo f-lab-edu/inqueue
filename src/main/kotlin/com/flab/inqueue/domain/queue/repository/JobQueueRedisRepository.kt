@@ -1,6 +1,7 @@
 package com.flab.inqueue.domain.queue.repository
 
 import com.flab.inqueue.domain.queue.entity.Job
+import io.lettuce.core.RedisException
 import org.springframework.data.redis.core.RedisTemplate
 import org.springframework.stereotype.Repository
 import org.springframework.transaction.annotation.Transactional
@@ -13,27 +14,29 @@ class JobQueueRedisRepository(
 
     @Transactional
     fun register(job: Job) {
-        redisTemplate.opsForSet().add(job.redisKey(), job.redisValue() )
+        redisTemplate.opsForSet().add(job.redisKey(), job.redisValue())
         job.redisKeySecTTL?.let { redisTemplate.expireAt(job.redisKey(), it) }
-        redisTemplate.opsForSet().add(job.redisValue() ,job.redisValue() )
+        redisTemplate.opsForSet().add(job.redisValue(), job.redisValue())
         redisTemplate.expire(job.redisValue(), 1L, TimeUnit.SECONDS)
     }
 
     @Transactional
-    fun remove(job: Job): Boolean {
-        redisTemplate.opsForSet().remove(job.redisValue(), job.redisValue()) ?: return false
-        redisTemplate.opsForSet().remove(job.redisKey(), job.redisValue()) ?: return false
-        return true
+    fun remove(job: Job) {
+        redisTemplate.opsForSet().remove(job.redisValue(), job.redisValue())
+            ?: throw RedisException("데이터에 접근 할 수 없습니다.")
+        redisTemplate.opsForSet().remove(job.redisKey(), job.redisValue()) ?: throw RedisException("데이터에 접근 할 수 없습니다.")
     }
-    fun size(key: String): Long? {
-        return redisTemplate.opsForSet().size(key);
+
+    fun size(key: String): Long {
+        return redisTemplate.opsForSet().size(key) ?: throw RedisException("데이터에 접근 할 수 없습니다.")
     }
 
     @Transactional
     fun isMember(job: Job): Boolean {
-        val isRedisValue = redisTemplate.opsForSet().isMember(job.redisValue(), job.redisValue()) ?: throw NoSuchElementException("데이터가 존재하지 않습니다.")
-        if(isRedisValue) return true
+        val isRedisValue = redisTemplate.opsForSet().isMember(job.redisValue(), job.redisValue())
+            ?: throw RedisException("데이터에 접근 할 수 없습니다.")
+        if (isRedisValue) return true
         redisTemplate.opsForSet().remove(job.redisKey(), job.redisValue())
-        return false;
+        return false
     }
 }
