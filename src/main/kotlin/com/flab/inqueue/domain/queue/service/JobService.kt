@@ -20,6 +20,11 @@ class JobService(
         return JobValidationResponse(result)
     }
 
+    fun finish(eventId: String, userId: String) {
+        val job = Job(eventId, userId, JobStatus.ENTER)
+        jobQueueService.finish(job)
+    }
+
     fun enter(eventId: String, userId: String): QueueResponse {
         val event = findEvent(eventId)
 

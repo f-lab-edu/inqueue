@@ -21,7 +21,7 @@ class JobQueueService(
     }
 
     @Throws(RedisException::class)
-    fun close(job: Job) {
+    fun finish(job: Job) {
         jobQueueRedisRepository.remove(job)
     }
 }
