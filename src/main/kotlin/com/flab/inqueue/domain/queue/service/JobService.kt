@@ -10,7 +10,8 @@ import org.springframework.stereotype.Service
 @Service
 class JobService(
     private val eventRepository: EventRepository,
-    private val queueService: QueueService,
+    private val waitQueueService: WaitQueueService,
+    private val jobQueueService: JobQueueService
 ) {
 
     fun enter(eventId: String, userId: String): QueueResponse {
@@ -20,13 +21,13 @@ class JobService(
             if (isEnterJob(event)) Job(eventId, userId, JobStatus.ENTER, event.period.convertInstant())
             else Job(eventId, userId, JobStatus.WAIT, event.period.convertInstant())
 
-        return queueService.waitQueueRegister(job)
+        return waitQueueService.waitQueueRegister(job)
     }
 
 
     fun retrieve(eventId: String, userId: String): QueueResponse {
         val waitJob = Job(eventId, userId, JobStatus.WAIT)
-        return queueService.waitQueueRetrieve(waitJob)
+        return waitQueueService.waitQueueRetrieve(waitJob)
     }
 
     private fun findEvent(eventId: String): Event {
@@ -36,8 +37,8 @@ class JobService(
     private fun isEnterJob(event: Event): Boolean {
 
         // 에서 조회를 해야함
-        val enterQueueSize = queueService.size(JobStatus.ENTER.makeRedisKey(event.eventId)) ?: 0
-        val waitQueueSize = queueService.size(JobStatus.WAIT.makeRedisKey(event.eventId)) ?: 0
+        val enterQueueSize = jobQueueService.size(JobStatus.ENTER.makeRedisKey(event.eventId)) ?: 0
+        val waitQueueSize = waitQueueService.size(JobStatus.WAIT.makeRedisKey(event.eventId)) ?: 0
 
         if (waitQueueSize > 0) return false
         if (enterQueueSize > event.jobQueueLimitTime) return false

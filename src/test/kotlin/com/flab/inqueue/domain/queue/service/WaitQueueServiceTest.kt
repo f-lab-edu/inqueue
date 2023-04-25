@@ -15,13 +15,13 @@ import org.junit.jupiter.params.provider.EnumSource
 import java.util.*
 
 @UnitTest
-class QueueServiceTest {
+class WaitQueueServiceTest {
 
     @MockK
     lateinit var waitQueueRedisRepository: WaitQueueRedisRepository
 
     @InjectMockKs
-    lateinit var queueService: QueueService
+    lateinit var waitQueueService: WaitQueueService
 
 
     @DisplayName("대기열 및 작업열 진입")
@@ -36,7 +36,7 @@ class QueueServiceTest {
         every { waitQueueRedisRepository.register(any()) } returns Unit
         every { waitQueueRedisRepository.rank(any()) } returns 1
 
-        val queueResponse = queueService.waitQueueRegister(Job(eventId, userId, jobStatus))
+        val queueResponse = waitQueueService.waitQueueRegister(Job(eventId, userId, jobStatus))
 
         //then
         assertThat(queueResponse.status).isEqualTo(jobStatus)
@@ -59,7 +59,7 @@ class QueueServiceTest {
         every { waitQueueRedisRepository.rank(any()) } returns 1
 
         //given
-        val queueResponse = queueService.waitQueueRetrieve(Job(eventId, userId))
+        val queueResponse = waitQueueService.waitQueueRetrieve(Job(eventId, userId))
 
         //then
         assertThat(queueResponse.status).isEqualTo(JobStatus.WAIT)

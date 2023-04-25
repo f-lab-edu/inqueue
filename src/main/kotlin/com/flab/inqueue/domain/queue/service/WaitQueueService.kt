@@ -9,7 +9,7 @@ import com.flab.inqueue.domain.queue.repository.WaitQueueRedisRepository
 import org.springframework.stereotype.Service
 
 @Service
-class QueueService(
+class WaitQueueService(
     private val waitQueueRedisRepository: WaitQueueRedisRepository,
     private val jobQueueRedisRepository: JobQueueRedisRepository,
 ) {
@@ -31,7 +31,7 @@ class QueueService(
     }
 
     fun size(key: String): Long? {
-        return jobQueueRedisRepository.size(key)
+        return waitQueueRedisRepository.size(key)
     }
 
     fun isMember(job: Job): Boolean {
