@@ -2,6 +2,7 @@ package com.flab.inqueue.domain.queue.service
 
 import com.flab.inqueue.domain.event.entity.Event
 import com.flab.inqueue.domain.event.repository.EventRepository
+import com.flab.inqueue.domain.queue.dto.JobValidationResponse
 import com.flab.inqueue.domain.queue.dto.QueueResponse
 import com.flab.inqueue.domain.queue.entity.Job
 import com.flab.inqueue.domain.queue.entity.JobStatus
@@ -13,6 +14,11 @@ class JobService(
     private val waitQueueService: WaitQueueService,
     private val jobQueueService: JobQueueService
 ) {
+    fun verify(eventId: String, userId: String) : JobValidationResponse {
+        val job = Job(eventId, userId, JobStatus.ENTER)
+        val result = jobQueueService.isMember(job)
+        return JobValidationResponse(result)
+    }
 
     fun enter(eventId: String, userId: String): QueueResponse {
         val event = findEvent(eventId)
