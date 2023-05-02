@@ -2,19 +2,17 @@ package com.flab.inqueue.domain.queue.service
 
 import com.flab.inqueue.domain.event.entity.Event
 import com.flab.inqueue.domain.event.repository.EventRepository
-import com.flab.inqueue.domain.queue.dto.QueueInfo
 import com.flab.inqueue.domain.queue.dto.JobResponse
 import com.flab.inqueue.domain.queue.entity.Job
 import com.flab.inqueue.domain.queue.entity.JobStatus
 import com.flab.inqueue.domain.queue.repository.JobRedisRepository
-import com.flab.inqueue.domain.queue.repository.WaitQueueRedisRepository
 import org.springframework.stereotype.Service
 
 @Service
 class JobService(
+    private val jobRedisRepository: JobRedisRepository,
     private val eventRepository: EventRepository,
-    private val waitQueueRedisRepository: WaitQueueRedisRepository,
-    private val jobRedisRepository: JobRedisRepository
+    private val waitQueueService: WaitQueueService,
 ) {
 
     fun enter(eventId: String, userId: String): JobResponse {
@@ -26,9 +24,13 @@ class JobService(
             return JobResponse(job.status)
         }
 
-        val job = Job(eventId, userId, JobStatus.WAIT)
-        waitQueueRedisRepository.register(job)
-        return waitQueueRetrieve(event, job)
+        val waitJob = Job(
+            eventId = eventId,
+            userId = userId,
+            jobQueueSize = event.jobQueueSize,
+            jobQueueLimitTime = event.jobQueueLimitTime
+        )
+        return waitQueueService.register(waitJob)
     }
 
     fun retrieve(eventId: String, userId: String): JobResponse {
@@ -38,8 +40,16 @@ class JobService(
         }
 
         val event = findEvent(eventId)
-        val waitJob = Job(eventId, userId, JobStatus.WAIT)
-        return waitQueueRetrieve(event, waitJob)
+        val waitJob = Job(
+            eventId = eventId,
+            userId = userId,
+            jobQueueSize = event.jobQueueSize,
+            jobQueueLimitTime = event.jobQueueLimitTime
+        )
+        if (!waitQueueService.isMember(job)) {
+            return JobResponse(JobStatus.TIMEOUT)
+        }
+        return waitQueueService.retrieve(waitJob)
     }
 
     private fun findEvent(eventId: String): Event {
@@ -47,17 +57,9 @@ class JobService(
     }
 
     private fun isEnterJob(event: Event): Boolean {
+        val waitQueueSize = waitQueueService.size(JobStatus.WAIT.makeRedisKey(event.eventId))
         val jobQueueSize = jobRedisRepository.size(JobStatus.ENTER.makeRedisKey(event.eventId))
-        val waitQueueSize = waitQueueRedisRepository.size(JobStatus.WAIT.makeRedisKey(event.eventId))
 
         return waitQueueSize == 0L && jobQueueSize < event.jobQueueLimitTime
-    }
-
-    fun waitQueueRetrieve(event: Event, job: Job): JobResponse {
-        if (!waitQueueRedisRepository.isMember(job)) return JobResponse(JobStatus.TIMEOUT)
-        val rank = (waitQueueRedisRepository.rank(job)) + 1
-        val waitTimePerPerson = event.jobQueueLimitTime / event.jobQueueSize
-        val waitSecond = rank * waitTimePerPerson
-        return JobResponse(JobStatus.WAIT, QueueInfo(waitSecond, rank.toInt()))
     }
 }

@@ -3,6 +3,7 @@ package com.flab.inqueue.domain.queue.repository
 import com.flab.inqueue.domain.queue.entity.Job
 import io.lettuce.core.RedisException
 import jakarta.transaction.Transactional
+import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.data.redis.core.Cursor
 import org.springframework.data.redis.core.RedisTemplate
 import org.springframework.data.redis.core.ScanOptions
@@ -12,13 +13,14 @@ import java.util.concurrent.TimeUnit
 
 @Repository
 class WaitQueueRedisRepository(
+    @Qualifier("jobRedisTemplate")
     private val waitQueueRedisTemplate: RedisTemplate<String, Job>,
     private val userRedisTemplate: RedisTemplate<String, String>,
 ) {
     @Transactional
     fun register(job: Job) {
         waitQueueRedisTemplate.opsForZSet().add(job.redisKey, job, System.nanoTime().toDouble())
-        userRedisTemplate.opsForValue().set(job.redisValue, job.redisValue, job.workingTimeSec, TimeUnit.SECONDS)
+        userRedisTemplate.opsForValue().set(job.redisValue, job.redisValue, job.jobQueueLimitTime, TimeUnit.SECONDS)
     }
 
     fun size(key: String): Long {
@@ -45,14 +47,14 @@ class WaitQueueRedisRepository(
 
     @Transactional
     fun isMember(job: Job): Boolean {
-        val isRedisValue = userRedisTemplate.opsForValue().get(job.redisValue)
-        if (isRedisValue != null) {
-            userRedisTemplate.opsForValue().set(job.redisValue, job.redisValue, job.workingTimeSec, TimeUnit.SECONDS)
+        val hasUser = userRedisTemplate.opsForValue().get(job.redisValue)
+        if (hasUser != null) {
+            userRedisTemplate.opsForValue().set(job.redisValue, job.redisValue, job.jobQueueLimitTime, TimeUnit.SECONDS)
             return true
         }
 
         userRedisTemplate.opsForValue().getAndDelete(job.redisValue) ?: throw RedisException("데이터에 접근 할 수 없습니다.")
-        waitQueueRedisTemplate.opsForZSet().remove(job.redisKey, job.redisValue)
+        waitQueueRedisTemplate.opsForZSet().remove(job.redisKey, job)
             ?: throw RedisException("데이터에 접근 할 수 없습니다.")
         return false
     }
