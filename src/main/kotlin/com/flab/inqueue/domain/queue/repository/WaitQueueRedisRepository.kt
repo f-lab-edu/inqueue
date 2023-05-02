@@ -1,6 +1,7 @@
 package com.flab.inqueue.domain.queue.repository
 
 import com.flab.inqueue.domain.queue.entity.Job
+import io.lettuce.core.RedisException
 import jakarta.transaction.Transactional
 import org.springframework.data.redis.core.Cursor
 import org.springframework.data.redis.core.RedisTemplate
@@ -20,22 +21,22 @@ class WaitQueueRedisRepository(
         userRedisTemplate.opsForValue().set(job.redisValue, job.redisValue, job.workingTimeSec, TimeUnit.SECONDS)
     }
 
-    fun size(key: String): Long? {
-        return waitQueueRedisTemplate.opsForZSet().size(key)
+    fun size(key: String): Long {
+        return waitQueueRedisTemplate.opsForZSet().size(key) ?: throw RedisException("데이터에 접근 할 수 없습니다.")
     }
 
-    fun range(key: String, start: Long, end: Long): MutableSet<Job>? {
-        return waitQueueRedisTemplate.opsForZSet().range(key, start, end)
+    fun range(key: String, start: Long, end: Long): MutableSet<Job> {
+        return waitQueueRedisTemplate.opsForZSet().range(key, start, end) ?: throw RedisException("데이터에 접근 할 수 없습니다.")
     }
 
-    fun rank(job: Job): Long? {
-        return waitQueueRedisTemplate.opsForZSet().rank(job.redisKey, job)
+    fun rank(job: Job): Long {
+        return waitQueueRedisTemplate.opsForZSet().rank(job.redisKey, job) ?: throw RedisException("데이터에 접근 할 수 없습니다.")
     }
 
     @Transactional
     fun remove(job: Job) {
-        waitQueueRedisTemplate.opsForZSet().remove(job.redisKey, job)
-        userRedisTemplate.opsForValue().getAndDelete(job.redisValue)
+        waitQueueRedisTemplate.opsForZSet().remove(job.redisKey, job) ?: throw RedisException("데이터에 접근 할 수 없습니다.")
+        userRedisTemplate.opsForValue().getAndDelete(job.redisValue) ?: throw RedisException("데이터에 접근 할 수 없습니다.")
     }
 
     fun findMe(job: Job): Cursor<ZSetOperations.TypedTuple<Job>> {
@@ -50,8 +51,9 @@ class WaitQueueRedisRepository(
             return true
         }
 
-        userRedisTemplate.opsForValue().getAndDelete(job.redisValue)
+        userRedisTemplate.opsForValue().getAndDelete(job.redisValue) ?: throw RedisException("데이터에 접근 할 수 없습니다.")
         waitQueueRedisTemplate.opsForZSet().remove(job.redisKey, job.redisValue)
+            ?: throw RedisException("데이터에 접근 할 수 없습니다.")
         return false
     }
 }

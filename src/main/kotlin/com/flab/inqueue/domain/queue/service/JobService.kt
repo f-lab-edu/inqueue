@@ -47,15 +47,15 @@ class JobService(
     }
 
     private fun isEnterJob(event: Event): Boolean {
-        val jobQueueSize = jobRedisRepository.size(JobStatus.ENTER.makeRedisKey(event.eventId)) ?: 0
-        val waitQueueSize = waitQueueRedisRepository.size(JobStatus.WAIT.makeRedisKey(event.eventId)) ?: 0
+        val jobQueueSize = jobRedisRepository.size(JobStatus.ENTER.makeRedisKey(event.eventId))
+        val waitQueueSize = waitQueueRedisRepository.size(JobStatus.WAIT.makeRedisKey(event.eventId))
 
         return waitQueueSize == 0L && jobQueueSize < event.jobQueueLimitTime
     }
 
     fun waitQueueRetrieve(event: Event, job: Job): JobResponse {
         if (!waitQueueRedisRepository.isMember(job)) return JobResponse(JobStatus.TIMEOUT)
-        val rank = (waitQueueRedisRepository.rank(job) ?: 0) + 1
+        val rank = (waitQueueRedisRepository.rank(job)) + 1
         val waitTimePerPerson = event.jobQueueLimitTime / event.jobQueueSize
         val waitSecond = rank * waitTimePerPerson
         return JobResponse(JobStatus.WAIT, QueueInfo(waitSecond, rank.toInt()))
