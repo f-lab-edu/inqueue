@@ -19,8 +19,8 @@ class WaitQueueServiceTest {
     private val waitQueueService: WaitQueueService = WaitQueueService(waitQueueRedisRepository)
 
     @Test
-    @DisplayName("대기열 조회")
-    fun enterWaitQueue() {
+    @DisplayName("대기열 조회 성공")
+    fun retrieve_wait_job() {
         //given
         val eventId = "testEventId"
         val userId = "testUserId"
@@ -29,7 +29,7 @@ class WaitQueueServiceTest {
         val job = Job(
             userId = userId,
             eventId = eventId,
-            jobQueueLimitTime = event.jobQueueLimitTime,
+            queueLimitTime = event.jobQueueLimitTime,
             jobQueueSize = event.jobQueueSize
         )
         val expectedRank = 5L

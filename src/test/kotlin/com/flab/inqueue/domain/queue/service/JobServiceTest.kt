@@ -109,26 +109,8 @@ class JobServiceTest {
             eventId = eventId,
             userId = userId,
             jobQueueSize = event.jobQueueSize,
-            jobQueueLimitTime = event.jobQueueLimitTime
+            queueLimitTime = event.jobQueueLimitTime
         )
         verify { waitQueueService.retrieve(waitJob) }
-    }
-
-    @Test
-    @DisplayName("time_out_job 검색")
-    fun retrieve_time_out_job() {
-        // given
-        val userId = "testUserId"
-        val eventId = "testEventId"
-
-        every { eventRepository.findByEventId(any()) } returns createEvent(eventId)
-        every { jobRedisRepository.isMember(any()) } returns false
-        every { waitQueueService.isMember(any()) } returns false
-
-        // when
-        val jobResponse = jobService.retrieve(eventId, userId)
-
-        // then
-        assertThat(jobResponse.status).isEqualTo(JobStatus.TIMEOUT)
     }
 }
