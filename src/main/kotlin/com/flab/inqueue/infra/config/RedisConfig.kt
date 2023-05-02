@@ -33,8 +33,8 @@ class RedisConfig(
         return LettuceConnectionFactory(redisStandaloneConfiguration)
     }
 
-    @Bean(name = ["jobRedisTemplate"])
-    fun jobRedisTemplate(connectionFactory: RedisConnectionFactory): RedisTemplate<String, Job> {
+    @Bean(name = ["waitQueueRedisTemplate"])
+    fun waitQueueRedisTemplate(connectionFactory: RedisConnectionFactory): RedisTemplate<String, Job> {
         val redisTemplate = RedisTemplate<String, Job>()
         redisTemplate.setEnableTransactionSupport(true)
         redisTemplate.keySerializer = StringRedisSerializer()

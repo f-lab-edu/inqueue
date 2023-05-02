@@ -4,18 +4,18 @@ import com.flab.inqueue.domain.queue.dto.QueueInfo
 import com.flab.inqueue.domain.queue.dto.QueueResponse
 import com.flab.inqueue.domain.queue.entity.Job
 import com.flab.inqueue.domain.queue.entity.JobStatus
-import com.flab.inqueue.domain.queue.repository.UserRedisRepository
+import com.flab.inqueue.domain.queue.repository.JobRedisRepository
 import com.flab.inqueue.domain.queue.repository.WaitQueueRedisRepository
 import org.springframework.stereotype.Service
 
 @Service
 class QueueService(
     private val waitQueueRedisRepository: WaitQueueRedisRepository,
-    private val userRedisRepository: UserRedisRepository,
+    private val jobRedisRepository: JobRedisRepository,
 ) {
 
     fun waitQueueRegister(job: Job): QueueResponse {
-        userRedisRepository.register(job)
+        jobRedisRepository.register(job)
         if (job.status == JobStatus.ENTER) {
             return QueueResponse(job.status)
         }
@@ -31,11 +31,11 @@ class QueueService(
     }
 
     fun size(key: String): Long? {
-        return userRedisRepository.size(key)
+        return jobRedisRepository.size(key)
     }
 
     fun isMember(job: Job): Boolean {
-        return userRedisRepository.isMember(job)
+        return jobRedisRepository.isMember(job)
     }
 
     fun range(key: String, start: Long, end: Long): MutableSet<Job>? {
