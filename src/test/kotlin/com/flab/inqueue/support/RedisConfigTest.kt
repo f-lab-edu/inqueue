@@ -1,5 +1,6 @@
 package com.flab.inqueue.support
 
+import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.flab.inqueue.domain.queue.entity.Job
 import com.flab.inqueue.infra.property.RedisProperty
@@ -35,8 +36,10 @@ class RedisConfigTest(
     @Bean(name = ["jobRedisTemplate"])
     fun jobRedisTemplate(connectionFactory: RedisConnectionFactory): RedisTemplate<String, Job> {
         val redisTemplate = RedisTemplate<String, Job>()
+        val objectMapper = jacksonObjectMapper()
+        objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
         redisTemplate.keySerializer = StringRedisSerializer()
-        redisTemplate.valueSerializer = Jackson2JsonRedisSerializer(jacksonObjectMapper(), Job::class.java)
+        redisTemplate.valueSerializer = Jackson2JsonRedisSerializer(objectMapper, Job::class.java)
         redisTemplate.setConnectionFactory(connectionFactory)
         return redisTemplate
     }
@@ -51,6 +54,7 @@ class RedisConfigTest(
     @Component
     class SessionExpiredEventListener {
         private val log = LoggerFactory.getLogger(SessionExpiredEventListener::class.java)
+
         @EventListener
         fun handleRedisKeyExpiredEvent(event: RedisKeyExpiredEvent<String>) {
             log.info("JobUser key={} has expired", String(event.id))
