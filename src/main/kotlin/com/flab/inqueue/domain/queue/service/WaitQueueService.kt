@@ -21,6 +21,10 @@ class WaitQueueService(
     }
 
     fun retrieve(job: Job): JobResponse {
+        if (!waitQueueRedisRepository.isMember(job)) {
+            return JobResponse(JobStatus.TIMEOUT)
+        }
+
         val rank = (waitQueueRedisRepository.rank(job)) + 1
         val waitSecond = rank * job.waitTimePerOneJob
         return JobResponse(JobStatus.WAIT, JobInfo(waitSecond, rank.toInt()))
