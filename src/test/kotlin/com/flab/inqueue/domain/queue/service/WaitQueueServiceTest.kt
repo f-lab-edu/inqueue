@@ -2,6 +2,7 @@ package com.flab.inqueue.domain.queue.service
 
 import com.flab.inqueue.createEvent
 import com.flab.inqueue.domain.queue.entity.Job
+import com.flab.inqueue.domain.queue.entity.JobStatus
 import com.flab.inqueue.domain.queue.repository.WaitQueueRedisRepository
 import com.flab.inqueue.support.UnitTest
 import io.mockk.every
@@ -40,5 +41,26 @@ class WaitQueueServiceTest {
 
         //then
         assertThat(jobResponse.expectedInfo!!.order).isEqualTo(job.waitTimePerOneJob * (expectedRank + 1))
+    }
+
+
+    @org.junit.Test
+    @DisplayName("대기열 조회 Time Out")
+    fun retrieve_time_out_job() {
+        // given
+        val userId = "testUserId"
+        val eventId = "testEventId"
+
+        val job = Job(
+            userId = userId,
+            eventId = eventId,
+        )
+        every { waitQueueService.isMember(job) } returns false
+
+        // when
+        val jobResponse = waitQueueService.retrieve(job)
+
+        // then
+        assertThat(jobResponse.status).isEqualTo(JobStatus.TIMEOUT)
     }
 }
