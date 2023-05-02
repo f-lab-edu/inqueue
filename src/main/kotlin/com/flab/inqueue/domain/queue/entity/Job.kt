@@ -7,9 +7,10 @@ class Job(
     val jobQueueLimitTime: Long = 1L,
     val jobQueueSize: Long? = null
 ) {
-    val redisKey = status.makeRedisKey(eventId)
-    val redisValue = "${redisKey}:${userId}"
-
+    val redisKey: String
+        get() = status.makeRedisKey(eventId)
+    val redisValue: String
+        get() = "${redisKey}:${userId}"
     val waitTimePerOneJob: Long
         get() = if (jobQueueSize == null) 0L else jobQueueLimitTime / jobQueueSize
 }
