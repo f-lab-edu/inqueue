@@ -7,7 +7,7 @@ import org.springframework.transaction.annotation.Transactional
 import java.util.concurrent.TimeUnit
 
 @Repository
-class UserRedisRepository(
+class JobRedisRepository(
     private val redisTemplate: RedisTemplate<String, String>,
 ) {
 
@@ -19,8 +19,8 @@ class UserRedisRepository(
 
     @Transactional
     fun remove(job: Job): Boolean {
-        redisTemplate.opsForSet().remove(job.redisKey(), job.redisValue()) ?: return false
-        redisTemplate.opsForValue().getAndDelete(job.redisValue()) ?: return false
+        redisTemplate.opsForSet().remove(job.redisKey(), job.redisValue())
+        redisTemplate.opsForValue().getAndDelete(job.redisValue())
         return true
     }
 

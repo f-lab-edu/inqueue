@@ -3,7 +3,7 @@ package com.flab.inqueue.domain.queue.redis
 import com.flab.inqueue.TestContainer
 import com.flab.inqueue.domain.queue.entity.Job
 import com.flab.inqueue.domain.queue.entity.JobStatus
-import com.flab.inqueue.domain.queue.repository.UserRedisRepository
+import com.flab.inqueue.domain.queue.repository.JobRedisRepository
 import com.flab.inqueue.domain.queue.repository.WaitQueueRedisRepository
 import com.flab.inqueue.support.RedisConfigTest
 import org.assertj.core.api.Assertions.*
@@ -26,7 +26,7 @@ import java.util.*
 @ComponentScan(basePackages = ["com.flab.inqueue.domain.queue.repository"])
 class JobSetRedis @Autowired constructor(
     private val waitQueueRedisRepository: WaitQueueRedisRepository,
-    private val userRedisRepository: UserRedisRepository,
+    private val jobRedisRepository: JobRedisRepository,
     private val redistemplate: RedisTemplate<String, String>,
 
     ) : TestContainer() {
@@ -40,7 +40,7 @@ class JobSetRedis @Autowired constructor(
         val job = Job("testEventId", UUID.randomUUID().toString(), JobStatus.ENTER,expireInstant)
 
         val startTime = System.currentTimeMillis()
-        userRedisRepository.register(job)
+        jobRedisRepository.register(job)
         logger.info("jobSetRedisRepository 저장 걸린시간 : {} ms ", System.currentTimeMillis() - startTime)
 
         val existExpire1 = redistemplate.getExpire(job.redisKey())
