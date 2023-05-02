@@ -5,8 +5,7 @@ import com.flab.inqueue.domain.queue.entity.Job
 import com.flab.inqueue.domain.queue.repository.WaitQueueRedisRepository
 import com.flab.inqueue.support.UnitTest
 import io.mockk.every
-import io.mockk.impl.annotations.InjectMockKs
-import io.mockk.impl.annotations.MockK
+import io.mockk.mockk
 import org.assertj.core.api.Assertions.*
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
@@ -15,12 +14,9 @@ import java.util.*
 @UnitTest
 class WaitQueueServiceTest {
 
-    @MockK
-    lateinit var waitQueueRedisRepository: WaitQueueRedisRepository
+    private val waitQueueRedisRepository: WaitQueueRedisRepository = mockk<WaitQueueRedisRepository>()
 
-    @InjectMockKs
-    lateinit var waitQueueService: WaitQueueService
-
+    private val waitQueueService: WaitQueueService = WaitQueueService(waitQueueRedisRepository)
 
     @Test
     @DisplayName("대기열 조회")
