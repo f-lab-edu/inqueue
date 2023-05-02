@@ -17,8 +17,8 @@ class JobService(
         val event = findEvent(eventId)
 
         val job =
-            if (isEnterJob(event)) Job(eventId, userId, JobStatus.ENTER, event.period.convertInstant())
-            else Job(eventId, userId, JobStatus.WAIT, event.period.convertInstant())
+            if (isEnterJob(event)) Job(eventId, userId, JobStatus.ENTER, event.jobQueueLimitTime)
+            else Job(eventId, userId, JobStatus.WAIT)
 
         return queueService.waitQueueRegister(job)
     }

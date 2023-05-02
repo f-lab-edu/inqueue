@@ -6,7 +6,7 @@ class Job(
     val eventId: String,
     val userId: String,
     var status: JobStatus = JobStatus.WAIT,
-    val redisKeySecTTL : Instant? = null
+    val workingTimeSec : Long = 1L
 ) {
 
     private val redisKey =  status.makeRedisKey(this.eventId)
