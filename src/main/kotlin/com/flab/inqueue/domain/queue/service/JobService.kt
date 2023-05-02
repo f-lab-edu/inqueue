@@ -3,7 +3,7 @@ package com.flab.inqueue.domain.queue.service
 import com.flab.inqueue.domain.event.entity.Event
 import com.flab.inqueue.domain.event.repository.EventRepository
 import com.flab.inqueue.domain.queue.dto.QueueInfo
-import com.flab.inqueue.domain.queue.dto.QueueResponse
+import com.flab.inqueue.domain.queue.dto.JobResponse
 import com.flab.inqueue.domain.queue.entity.Job
 import com.flab.inqueue.domain.queue.entity.JobStatus
 import com.flab.inqueue.domain.queue.repository.JobRedisRepository
@@ -17,13 +17,13 @@ class JobService(
     private val jobRedisRepository: JobRedisRepository
 ) {
 
-    fun enter(eventId: String, userId: String): QueueResponse {
+    fun enter(eventId: String, userId: String): JobResponse {
         val event = findEvent(eventId)
 
         if (isEnterJob(event)) {
             val job = Job(eventId, userId, JobStatus.ENTER, event.jobQueueLimitTime)
             jobRedisRepository.register(job)
-            return QueueResponse(job.status)
+            return JobResponse(job.status)
         }
 
         val job = Job(eventId, userId, JobStatus.WAIT)
@@ -31,10 +31,10 @@ class JobService(
         return waitQueueRetrieve(event, job)
     }
 
-    fun retrieve(eventId: String, userId: String): QueueResponse {
+    fun retrieve(eventId: String, userId: String): JobResponse {
         val job = Job(eventId, userId, JobStatus.ENTER)
         if (jobRedisRepository.isMember(job)) {
-            return QueueResponse(job.status)
+            return JobResponse(job.status)
         }
 
         val event = findEvent(eventId)
@@ -53,11 +53,11 @@ class JobService(
         return waitQueueSize == 0L && jobQueueSize < event.jobQueueLimitTime
     }
 
-    fun waitQueueRetrieve(event: Event, job: Job): QueueResponse {
-        if (!waitQueueRedisRepository.isMember(job)) return QueueResponse(JobStatus.TIMEOUT)
+    fun waitQueueRetrieve(event: Event, job: Job): JobResponse {
+        if (!waitQueueRedisRepository.isMember(job)) return JobResponse(JobStatus.TIMEOUT)
         val rank = (waitQueueRedisRepository.rank(job) ?: 0) + 1
         val waitTimePerPerson = event.jobQueueLimitTime / event.jobQueueSize
         val waitSecond = rank * waitTimePerPerson
-        return QueueResponse(JobStatus.WAIT, QueueInfo(waitSecond, rank.toInt()))
+        return JobResponse(JobStatus.WAIT, QueueInfo(waitSecond, rank.toInt()))
     }
 }
