@@ -41,4 +41,17 @@ class WaitQueueRedisRepository(
     fun findMe(job: Job): Cursor<ZSetOperations.TypedTuple<Job>> {
         return waitQueueRedisTemplate.opsForZSet().scan(job.redisKey(), ScanOptions.NONE)
     }
+
+    @Transactional
+    fun isMember(job: Job): Boolean {
+        val isRedisValue = userRedisTemplate.opsForValue().get(job.redisValue())
+        if (isRedisValue != null) {
+            userRedisTemplate.opsForValue().set(job.redisValue(), job.redisValue(), job.workingTimeSec, TimeUnit.SECONDS)
+            return true
+        }
+
+        userRedisTemplate.opsForValue().getAndDelete(job.redisValue())
+        waitQueueRedisTemplate.opsForZSet().remove(job.redisKey(), job.redisValue())
+        return false
+    }
 }
