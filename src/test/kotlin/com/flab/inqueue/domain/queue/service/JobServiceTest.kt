@@ -99,7 +99,6 @@ class JobServiceTest {
 
         every { eventRepository.findByEventId(any()) } returns event
         every { jobRedisRepository.isMember(any()) } returns false
-        every { waitQueueService.isMember(any()) } returns true
 
         // when
         jobService.retrieve(eventId, userId)
