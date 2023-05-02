@@ -4,7 +4,7 @@ class Job(
     val eventId: String,
     val userId: String,
     var status: JobStatus = JobStatus.WAIT,
-    val queueLimitTime: Long = 1L,
+    val queueLimitTime: Long = 1L, // 기본값을 대기열의 TTL 로 한다, 작업열의 경우 해당 값을 설정 해주어야 한다.
     val jobQueueSize: Long? = null
 ) {
     val redisKey: String
