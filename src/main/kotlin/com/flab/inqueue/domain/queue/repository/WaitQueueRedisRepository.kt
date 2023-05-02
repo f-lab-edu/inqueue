@@ -50,7 +50,7 @@ class WaitQueueRedisRepository(
     fun isMember(job: Job): Boolean {
         val hasUser = userRedisTemplate.opsForValue().get(job.redisValue)
         if (hasUser != null) {
-            userRedisTemplate.opsForValue().set(job.redisValue, job.redisValue, job.jobQueueLimitTime, TimeUnit.SECONDS)
+            userRedisTemplate.opsForValue().set(job.redisValue, job.redisValue, job.queueLimitTime, TimeUnit.SECONDS)
             return true
         }
 

@@ -28,7 +28,7 @@ class JobService(
             eventId = eventId,
             userId = userId,
             jobQueueSize = event.jobQueueSize,
-            jobQueueLimitTime = event.jobQueueLimitTime
+            queueLimitTime = event.jobQueueLimitTime
         )
         return waitQueueService.register(waitJob)
     }
@@ -44,7 +44,7 @@ class JobService(
             eventId = eventId,
             userId = userId,
             jobQueueSize = event.jobQueueSize,
-            jobQueueLimitTime = event.jobQueueLimitTime
+            queueLimitTime = event.jobQueueLimitTime
         )
         return waitQueueService.retrieve(waitJob)
     }

@@ -16,7 +16,7 @@ class JobRedisRepository(
     @Transactional
     fun register(job: Job) {
         jobRedisTemplate.opsForSet().add(job.redisKey, job)
-        userRedisTemplate.opsForValue().set(job.redisValue, job.redisValue, job.jobQueueLimitTime, TimeUnit.SECONDS)
+        userRedisTemplate.opsForValue().set(job.redisValue, job.redisValue, job.queueLimitTime, TimeUnit.SECONDS)
     }
 
     @Transactional

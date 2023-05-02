@@ -4,7 +4,7 @@ class Job(
     val eventId: String,
     val userId: String,
     var status: JobStatus = JobStatus.WAIT,
-    val jobQueueLimitTime: Long = 1L,
+    val queueLimitTime: Long = 1L,
     val jobQueueSize: Long? = null
 ) {
     val redisKey: String
@@ -12,7 +12,7 @@ class Job(
     val redisValue: String
         get() = "${redisKey}:${userId}"
     val waitTimePerOneJob: Long
-        get() = if (jobQueueSize == null) 0L else jobQueueLimitTime / jobQueueSize
+        get() = if (jobQueueSize == null) 0L else queueLimitTime / jobQueueSize
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
