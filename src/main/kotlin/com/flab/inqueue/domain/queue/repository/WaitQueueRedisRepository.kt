@@ -18,9 +18,10 @@ class WaitQueueRedisRepository(
     private val userRedisTemplate: RedisTemplate<String, String>,
 ) {
     @Transactional
-    fun register(job: Job) {
+    fun register(job: Job): Long {
         waitQueueRedisTemplate.opsForZSet().add(job.redisKey, job, System.nanoTime().toDouble())
-        userRedisTemplate.opsForValue().set(job.redisValue, job.redisValue, job.jobQueueLimitTime, TimeUnit.SECONDS)
+        userRedisTemplate.opsForValue().set(job.redisValue, job.redisValue, job.queueLimitTime, TimeUnit.SECONDS)
+        return rank(job)
     }
 
     fun size(key: String): Long {

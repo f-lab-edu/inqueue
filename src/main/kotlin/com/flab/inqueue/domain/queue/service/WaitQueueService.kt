@@ -12,8 +12,8 @@ class WaitQueueService(
     private val waitQueueRedisRepository: WaitQueueRedisRepository,
 ) {
     fun register(job: Job): JobResponse {
-        waitQueueRedisRepository.register(job)
-        return retrieve(job)
+        val rank = waitQueueRedisRepository.register(job) + 1
+        return JobResponse(JobStatus.WAIT, JobInfo(rank * job.waitTimePerOneJob, rank.toInt()))
     }
 
     fun isMember(job: Job): Boolean {
@@ -26,8 +26,7 @@ class WaitQueueService(
         }
 
         val rank = (waitQueueRedisRepository.rank(job)) + 1
-        val waitSecond = rank * job.waitTimePerOneJob
-        return JobResponse(JobStatus.WAIT, JobInfo(waitSecond, rank.toInt()))
+        return JobResponse(JobStatus.WAIT, JobInfo(rank * job.waitTimePerOneJob, rank.toInt()))
     }
 
     fun size(key: String): Long {
