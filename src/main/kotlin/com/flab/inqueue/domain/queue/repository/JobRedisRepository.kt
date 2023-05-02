@@ -9,19 +9,19 @@ import java.util.concurrent.TimeUnit
 
 @Repository
 class JobRedisRepository(
-    private val jobRedisTemplate: RedisTemplate<String, String>,
+    private val jobRedisTemplate: RedisTemplate<String, Job>,
     private val userRedisTemplate: RedisTemplate<String, String>,
 ) {
 
     @Transactional
     fun register(job: Job) {
-        jobRedisTemplate.opsForSet().add(job.redisKey, job.redisValue)
-        userRedisTemplate.opsForValue().set(job.redisValue, job.redisValue, job.workingTimeSec, TimeUnit.SECONDS)
+        jobRedisTemplate.opsForSet().add(job.redisKey, job)
+        userRedisTemplate.opsForValue().set(job.redisValue, job.redisValue, job.jobQueueLimitTime, TimeUnit.SECONDS)
     }
 
     @Transactional
     fun remove(job: Job): Boolean {
-        jobRedisTemplate.opsForSet().remove(job.redisKey, job.redisValue) ?: throw RedisException("데이터에 접근 할 수 없습니다.")
+        jobRedisTemplate.opsForSet().remove(job.redisKey, job) ?: throw RedisException("데이터에 접근 할 수 없습니다.")
         userRedisTemplate.opsForValue().getAndDelete(job.redisValue) ?: throw RedisException("데이터에 접근 할 수 없습니다.")
         return true
     }
@@ -32,12 +32,12 @@ class JobRedisRepository(
 
     @Transactional
     fun isMember(job: Job): Boolean {
-        val isRedisValue = userRedisTemplate.opsForValue().get(job.redisValue)
-        if (isRedisValue != null) {
+        val hasUser = userRedisTemplate.opsForValue().get(job.redisValue)
+        if (hasUser != null) {
             return true
         }
         userRedisTemplate.opsForValue().getAndDelete(job.redisValue) ?: throw RedisException("데이터에 접근 할 수 없습니다.")
-        jobRedisTemplate.opsForSet().remove(job.redisKey, job.redisValue) ?: throw RedisException("데이터에 접근 할 수 없습니다.")
+        jobRedisTemplate.opsForSet().remove(job.redisKey, job) ?: throw RedisException("데이터에 접근 할 수 없습니다.")
         return false
     }
 }

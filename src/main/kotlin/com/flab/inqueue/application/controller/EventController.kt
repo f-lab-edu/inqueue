@@ -1,6 +1,6 @@
 package com.flab.inqueue.application.controller
 
-import com.flab.inqueue.domain.queue.dto.QueueInfo
+import com.flab.inqueue.domain.queue.dto.JobInfo
 import com.flab.inqueue.domain.queue.dto.JobResponse
 import com.flab.inqueue.domain.event.dto.EventRequest
 import com.flab.inqueue.domain.event.dto.EventResponse
@@ -28,7 +28,7 @@ class EventController(
         @RequestHeader("Authorization") accessToken: String,
         @PathVariable("eventId") eventId: String,
     ): JobResponse {
-        return JobResponse(JobStatus.WAIT, QueueInfo(1L, 1))
+        return JobResponse(JobStatus.WAIT, JobInfo(1L, 1))
     }
 
 
@@ -38,7 +38,7 @@ class EventController(
         @RequestHeader("X-Client-Id") clientId: String,
         @PathVariable eventId: String,
     ): JobResponse {
-        return JobResponse(JobStatus.WAIT, QueueInfo(1L, 1))
+        return JobResponse(JobStatus.WAIT, JobInfo(1L, 1))
     }
 
 

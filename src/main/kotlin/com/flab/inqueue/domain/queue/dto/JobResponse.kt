@@ -4,7 +4,7 @@ import com.flab.inqueue.domain.queue.entity.JobStatus
 
 data class JobResponse(
     val status: JobStatus,
-    val expectedInfo: QueueInfo? = null,
+    val expectedInfo: JobInfo? = null,
 )
 
-data class QueueInfo(val second: Long, var order: Int)
+data class JobInfo(val second: Long, var order: Int)
