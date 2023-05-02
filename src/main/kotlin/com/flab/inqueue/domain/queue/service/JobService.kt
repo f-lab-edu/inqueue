@@ -36,7 +36,7 @@ class JobService(
     fun retrieve(eventId: String, userId: String): JobResponse {
         val job = Job(eventId, userId, JobStatus.ENTER)
         if (jobRedisRepository.isMember(job)) {
-            return JobResponse(job.status)
+            return JobResponse(JobStatus.ENTER)
         }
 
         val event = findEvent(eventId)
@@ -49,6 +49,7 @@ class JobService(
         if (!waitQueueService.isMember(job)) {
             return JobResponse(JobStatus.TIMEOUT)
         }
+
         return waitQueueService.retrieve(waitJob)
     }
 
