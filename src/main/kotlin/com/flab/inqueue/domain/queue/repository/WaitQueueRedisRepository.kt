@@ -16,8 +16,8 @@ class WaitQueueRedisRepository(
 ) {
     @Transactional
     fun register(job: Job) {
-        waitQueueRedisTemplate.opsForZSet().add(job.redisKey(), job, System.nanoTime().toDouble())
-        userRedisTemplate.opsForValue().set(job.redisValue(), job.redisValue(), job.workingTimeSec, TimeUnit.SECONDS)
+        waitQueueRedisTemplate.opsForZSet().add(job.redisKey, job, System.nanoTime().toDouble())
+        userRedisTemplate.opsForValue().set(job.redisValue, job.redisValue, job.workingTimeSec, TimeUnit.SECONDS)
     }
 
     fun size(key: String): Long? {
@@ -29,29 +29,29 @@ class WaitQueueRedisRepository(
     }
 
     fun rank(job: Job): Long? {
-        return waitQueueRedisTemplate.opsForZSet().rank(job.redisKey(), job)
+        return waitQueueRedisTemplate.opsForZSet().rank(job.redisKey, job)
     }
 
     @Transactional
     fun remove(job: Job) {
-        waitQueueRedisTemplate.opsForZSet().remove(job.redisKey(), job)
-        userRedisTemplate.opsForValue().getAndDelete(job.redisValue())
+        waitQueueRedisTemplate.opsForZSet().remove(job.redisKey, job)
+        userRedisTemplate.opsForValue().getAndDelete(job.redisValue)
     }
 
     fun findMe(job: Job): Cursor<ZSetOperations.TypedTuple<Job>> {
-        return waitQueueRedisTemplate.opsForZSet().scan(job.redisKey(), ScanOptions.NONE)
+        return waitQueueRedisTemplate.opsForZSet().scan(job.redisKey, ScanOptions.NONE)
     }
 
     @Transactional
     fun isMember(job: Job): Boolean {
-        val isRedisValue = userRedisTemplate.opsForValue().get(job.redisValue())
+        val isRedisValue = userRedisTemplate.opsForValue().get(job.redisValue)
         if (isRedisValue != null) {
-            userRedisTemplate.opsForValue().set(job.redisValue(), job.redisValue(), job.workingTimeSec, TimeUnit.SECONDS)
+            userRedisTemplate.opsForValue().set(job.redisValue, job.redisValue, job.workingTimeSec, TimeUnit.SECONDS)
             return true
         }
 
-        userRedisTemplate.opsForValue().getAndDelete(job.redisValue())
-        waitQueueRedisTemplate.opsForZSet().remove(job.redisKey(), job.redisValue())
+        userRedisTemplate.opsForValue().getAndDelete(job.redisValue)
+        waitQueueRedisTemplate.opsForZSet().remove(job.redisKey, job.redisValue)
         return false
     }
 }

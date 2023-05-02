@@ -14,14 +14,14 @@ class JobRedisRepository(
 
     @Transactional
     fun register(job: Job) {
-        jobRedisTemplate.opsForSet().add(job.redisKey(), job.redisValue())
-        userRedisTemplate.opsForValue().set(job.redisValue(), job.redisValue(), job.workingTimeSec, TimeUnit.SECONDS)
+        jobRedisTemplate.opsForSet().add(job.redisKey, job.redisValue)
+        userRedisTemplate.opsForValue().set(job.redisValue, job.redisValue, job.workingTimeSec, TimeUnit.SECONDS)
     }
 
     @Transactional
     fun remove(job: Job): Boolean {
-        jobRedisTemplate.opsForSet().remove(job.redisKey(), job.redisValue())
-        userRedisTemplate.opsForValue().getAndDelete(job.redisValue())
+        jobRedisTemplate.opsForSet().remove(job.redisKey, job.redisValue)
+        userRedisTemplate.opsForValue().getAndDelete(job.redisValue)
         return true
     }
 
@@ -31,12 +31,12 @@ class JobRedisRepository(
 
     @Transactional
     fun isMember(job: Job): Boolean {
-        val isRedisValue = userRedisTemplate.opsForValue().get(job.redisValue())
+        val isRedisValue = userRedisTemplate.opsForValue().get(job.redisValue)
         if (isRedisValue != null) {
             return true
         }
-        userRedisTemplate.opsForValue().getAndDelete(job.redisValue())
-        jobRedisTemplate.opsForSet().remove(job.redisKey(), job.redisValue())
+        userRedisTemplate.opsForValue().getAndDelete(job.redisValue)
+        jobRedisTemplate.opsForSet().remove(job.redisKey, job.redisValue)
         return false
     }
 }
