@@ -46,10 +46,6 @@ class JobService(
             jobQueueSize = event.jobQueueSize,
             jobQueueLimitTime = event.jobQueueLimitTime
         )
-        if (!waitQueueService.isMember(job)) {
-            return JobResponse(JobStatus.TIMEOUT)
-        }
-
         return waitQueueService.retrieve(waitJob)
     }
 
