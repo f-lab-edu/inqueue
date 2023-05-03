@@ -4,6 +4,7 @@ import com.flab.inqueue.AcceptanceTest
 import com.flab.inqueue.REST_DOCS_DOCUMENT_IDENTIFIER
 import com.flab.inqueue.domain.event.dto.EventInformation
 import com.flab.inqueue.domain.event.dto.EventRequest
+import com.flab.inqueue.domain.member.dto.MemberSignUpRequest
 import org.assertj.core.api.Assertions.*
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
@@ -22,6 +23,27 @@ import org.springframework.restdocs.snippet.Snippet
 import java.time.LocalDateTime
 
 class ClientTest : AcceptanceTest() {
+
+    @Test
+    @DisplayName("Member 회원가입")
+    fun signUpMember() {
+        val request = MemberSignUpRequest("testName")
+        val response = givenWithDocument.log().all()
+            .filter(SignUpMemberDocument.FILTER)
+            .contentType(MediaType.APPLICATION_JSON_VALUE)
+            .body(request).
+        `when`()
+            .post("/server/v1/members").
+        then().log().all()
+            .statusCode(HttpStatus.OK.value())
+            .extract()
+
+        val body = response.body().jsonPath()
+
+        assertThat(body.get<String>("name")).isEqualTo("testName")
+        assertThat(body.get<String>("key.clientId")).isNotEmpty
+        assertThat(body.get<String>("key.clientSecret")).isNotEmpty
+    }
 
     @Test
     @DisplayName("행사 도메인 CRUD")
@@ -58,8 +80,6 @@ class ClientTest : AcceptanceTest() {
         assertThat(body.get<String>("eventId")).isNotNull
         assertThat(body.get<String>("eventId")).isNotEmpty
     }
-
-
 }
 
 object CreateEventDocument {
@@ -100,9 +120,40 @@ object CreateEventDocument {
 
     private fun responseFieldsSnippet(): Snippet {
         return responseFields(
-            fieldWithPath("eventId")
-                .type(JsonFieldType.STRING)
-                .description("이벤트 식별자"),
+            fieldWithPath("eventId").type(JsonFieldType.STRING).description("이벤트 식별자"),
+        )
+    }
+}
+
+object SignUpMemberDocument {
+
+    val FILTER: RestDocumentationFilter = document(
+        REST_DOCS_DOCUMENT_IDENTIFIER,
+        Preprocessors.preprocessRequest(Preprocessors.prettyPrint()),
+        Preprocessors.preprocessResponse(Preprocessors.prettyPrint()),
+        headerFiledSnippet(),
+        requestFieldsSnippet(),
+        responseFieldsSnippet(),
+    )
+
+    private fun headerFiledSnippet() : Snippet {
+        return requestHeaders(
+            headerWithName(HttpHeaders.CONTENT_TYPE).description("요청-Type")
+        )
+    }
+
+    private fun requestFieldsSnippet(): Snippet {
+        return requestFields(
+            fieldWithPath("name").type(JsonFieldType.STRING).description("이름"),
+            fieldWithPath("phone").type(JsonFieldType.STRING).description("전화번호").optional(),
+        )
+    }
+
+    private fun responseFieldsSnippet(): Snippet {
+        return responseFields(
+            fieldWithPath("name").type(JsonFieldType.STRING).description("이름"),
+            fieldWithPath("key.clientId").type(JsonFieldType.STRING).description("Client-Id"),
+            fieldWithPath("key.clientSecret").type(JsonFieldType.STRING).description("Client-Secret"),
         )
     }
 }
