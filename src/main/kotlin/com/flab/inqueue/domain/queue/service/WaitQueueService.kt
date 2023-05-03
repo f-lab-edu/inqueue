@@ -12,7 +12,6 @@ import org.springframework.transaction.annotation.Transactional
 class WaitQueueService(
     private val waitQueueRedisRepository: WaitQueueRedisRepository,
 ) {
-    @Transactional
     fun register(job: Job): JobResponse {
         val rank = waitQueueRedisRepository.register(job) + 1
         return JobResponse(JobStatus.WAIT, WaitQueueInfo(rank * job.waitTimePerOneJob, rank.toInt()))
