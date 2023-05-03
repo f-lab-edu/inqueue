@@ -1,7 +1,7 @@
 package com.flab.inqueue.domain.queue.service
 
 import com.flab.inqueue.domain.queue.dto.JobResponse
-import com.flab.inqueue.domain.queue.dto.JobInfo
+import com.flab.inqueue.domain.queue.dto.WaitQueueInfo
 import com.flab.inqueue.domain.queue.entity.Job
 import com.flab.inqueue.domain.queue.entity.JobStatus
 import com.flab.inqueue.domain.queue.repository.WaitQueueRedisRepository
@@ -13,7 +13,7 @@ class WaitQueueService(
 ) {
     fun register(job: Job): JobResponse {
         val rank = waitQueueRedisRepository.register(job) + 1
-        return JobResponse(JobStatus.WAIT, JobInfo(rank * job.waitTimePerOneJob, rank.toInt()))
+        return JobResponse(JobStatus.WAIT, WaitQueueInfo(rank * job.waitTimePerOneJob, rank.toInt()))
     }
 
     fun isMember(job: Job): Boolean {
@@ -26,7 +26,7 @@ class WaitQueueService(
         }
 
         val rank = (waitQueueRedisRepository.rank(job)) + 1
-        return JobResponse(JobStatus.WAIT, JobInfo(rank * job.waitTimePerOneJob, rank.toInt()))
+        return JobResponse(JobStatus.WAIT, WaitQueueInfo(rank * job.waitTimePerOneJob, rank.toInt()))
     }
 
     fun size(key: String): Long {
