@@ -31,7 +31,7 @@ class WebSecurityConfig(
     companion object {
         private val HMAC_AUTHENTICATION_REQUEST_MATCHER = AntPathRequestMatcher("/server/**")
         private val JWT_AUTHENTICATION_REQUEST_MATCHER = AntPathRequestMatcher("/client/**")
-        private val NONE_AUTHENTICATION_REQUEST = AntPathRequestMatcher("/server/v1/members", "POST")
+        private val NONE_AUTHENTICATION_REQUEST_MATCHER = AntPathRequestMatcher("/server/v1/members", "POST")
     }
 
     @Bean
@@ -40,7 +40,7 @@ class WebSecurityConfig(
             .csrf().disable()
             .cors().disable()
             .authorizeHttpRequests()
-            .requestMatchers(NONE_AUTHENTICATION_REQUEST).permitAll()
+            .requestMatchers(NONE_AUTHENTICATION_REQUEST_MATCHER).permitAll()
             .requestMatchers(HMAC_AUTHENTICATION_REQUEST_MATCHER).authenticated()
             .requestMatchers(JWT_AUTHENTICATION_REQUEST_MATCHER).authenticated()
             .anyRequest().permitAll()
