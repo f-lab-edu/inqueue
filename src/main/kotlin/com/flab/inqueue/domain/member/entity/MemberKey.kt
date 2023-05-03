@@ -8,7 +8,7 @@ class MemberKey(
     var clientId: String,
     var clientSecret: String,
 ) {
-    fun encryptClientSecret(encryptionUtil: EncryptionUtil) {
-        this.clientSecret = encryptionUtil.encrypt(this.clientSecret)
+    fun encrypt(encryptionUtil: EncryptionUtil): MemberKey {
+        return MemberKey(clientId, encryptionUtil.encrypt(this.clientSecret))
     }
 }
