@@ -4,8 +4,8 @@ spring:
   datasource:
     url: jdbc:tc:mysql:8:///test-db
     driver-class-name: org.testcontainers.jdbc.ContainerDatabaseDriver
-    username:
-    password:
+    username: test
+    password: test
     hikari:
       auto-commit: false
   jpa:
