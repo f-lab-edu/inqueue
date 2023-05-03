@@ -3,6 +3,7 @@ package com.flab.inqueue.domain.queue.service
 import com.flab.inqueue.domain.event.entity.Event
 import com.flab.inqueue.domain.event.repository.EventRepository
 import com.flab.inqueue.domain.queue.dto.JobResponse
+import com.flab.inqueue.domain.queue.dto.JobVerificationResponse
 import com.flab.inqueue.domain.queue.entity.Job
 import com.flab.inqueue.domain.queue.entity.JobStatus
 import com.flab.inqueue.domain.queue.repository.JobRedisRepository
@@ -47,6 +48,12 @@ class JobService(
             queueLimitTime = event.jobQueueLimitTime
         )
         return waitQueueService.retrieve(waitJob)
+    }
+
+    fun verify(eventId: String, userId: String): JobVerificationResponse {
+        val job = Job(eventId, userId, JobStatus.ENTER)
+        val isVerified = jobRedisRepository.isMember(job)
+        return JobVerificationResponse(isVerified)
     }
 
     private fun findEvent(eventId: String): Event {
