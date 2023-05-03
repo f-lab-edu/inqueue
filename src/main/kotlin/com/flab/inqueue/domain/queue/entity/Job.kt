@@ -5,8 +5,7 @@ import java.time.Instant
 class Job(
     val eventId: String,
     val userId: String,
-    var status: JobStatus = JobStatus.WAIT,
-    val redisKeySecTTL : Instant? = null
+    var status: JobStatus = JobStatus.WAIT
 ) {
 
     private val redisKey =  status.makeRedisKey(this.eventId)

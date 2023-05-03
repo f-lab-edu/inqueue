@@ -36,8 +36,7 @@ class JobSetRedis @Autowired constructor(
     @Test
     @DisplayName("redis set ttl 테스트")
     fun testRedisTTL() {
-        val expireInstant = LocalDateTime.now().plusSeconds(1).toInstant(ZoneOffset.ofHours(9))
-        val job = Job("testEventId", UUID.randomUUID().toString(), JobStatus.ENTER,expireInstant)
+        val job = Job("testEventId", UUID.randomUUID().toString(), JobStatus.ENTER)
 
         val startTime = System.currentTimeMillis()
         userRedisRepository.register(job)

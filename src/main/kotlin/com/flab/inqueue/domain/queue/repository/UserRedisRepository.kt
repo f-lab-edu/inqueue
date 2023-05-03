@@ -13,8 +13,9 @@ class UserRedisRepository(
 
     @Transactional
     fun register(job: Job) {
-        redisTemplate.opsForSet().add(job.redisKey(), job.redisValue() )
-        job.redisKeySecTTL?.let { redisTemplate.expireAt(job.redisKey(), it) }
+        if(job.status == JobStatus.ENTER){
+            redisTemplate.opsForSet().add(job.redisKey(), job.redisValue() )
+        }
         redisTemplate.opsForSet().add(job.redisValue() ,job.redisValue() )
         // TODO:대기열, 작업엽 검증에 있어서 TTL 이 달라야 할 것 같습니다.
         redisTemplate.expire(job.redisValue(), 1L, TimeUnit.SECONDS)
