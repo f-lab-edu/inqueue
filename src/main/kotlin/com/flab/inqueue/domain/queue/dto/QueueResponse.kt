@@ -7,4 +7,4 @@ data class QueueResponse(
     val expectedInfo: QueueInfo? = null,
 )
 
-data class QueueInfo(val second: Long, var order: Int)
+data class QueueInfo(val time: Long, var order: Int)

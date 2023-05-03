@@ -1,6 +1,7 @@
 package com.flab.inqueue.domain.queue.repository
 
 import com.flab.inqueue.domain.queue.entity.Job
+import com.flab.inqueue.domain.queue.entity.JobStatus
 import org.springframework.data.redis.core.RedisTemplate
 import org.springframework.stereotype.Repository
 import org.springframework.transaction.annotation.Transactional
@@ -18,7 +19,7 @@ class UserRedisRepository(
         }
         redisTemplate.opsForSet().add(job.redisValue() ,job.redisValue() )
         // TODO:대기열, 작업엽 검증에 있어서 TTL 이 달라야 할 것 같습니다.
-        redisTemplate.expire(job.redisValue(), 1L, TimeUnit.SECONDS)
+        redisTemplate.expire(job.redisValue(), 60L, TimeUnit.SECONDS)
     }
 
     @Transactional

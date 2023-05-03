@@ -44,7 +44,7 @@ class QueueServiceTest {
         if (queueResponse.status == JobStatus.ENTER) {
             assertThat(queueResponse.expectedInfo).isNull()
         } else {
-            assertThat(queueResponse.expectedInfo?.second).isGreaterThan(0)
+            assertThat(queueResponse.expectedInfo?.time).isGreaterThan(0)
             assertThat(queueResponse.expectedInfo?.order).isGreaterThan(0)
         }
     }
@@ -63,7 +63,7 @@ class QueueServiceTest {
 
         //then
         assertThat(queueResponse.status).isEqualTo(JobStatus.WAIT)
-        assertThat(queueResponse.expectedInfo?.second).isGreaterThan(0)
+        assertThat(queueResponse.expectedInfo?.time).isGreaterThan(0)
         assertThat(queueResponse.expectedInfo?.order).isGreaterThan(0)
     }
 }
