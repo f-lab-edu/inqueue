@@ -6,6 +6,7 @@ import com.flab.inqueue.domain.queue.dto.JobResponse
 import com.flab.inqueue.domain.queue.dto.JobVerificationResponse
 import com.flab.inqueue.domain.queue.entity.Job
 import com.flab.inqueue.domain.queue.entity.JobStatus
+import com.flab.inqueue.domain.queue.exception.JobNotFoundException
 import com.flab.inqueue.domain.queue.repository.JobRedisRepository
 import org.springframework.stereotype.Service
 
@@ -54,6 +55,14 @@ class JobService(
         val job = Job(eventId, userId, JobStatus.ENTER)
         val isVerified = jobRedisRepository.isMember(job)
         return JobVerificationResponse(isVerified)
+    }
+
+    fun close(eventId: String, userId: String) {
+        val job = Job(eventId, userId, JobStatus.ENTER)
+        if (!jobRedisRepository.isMember(job)) {
+            throw JobNotFoundException("Job[eventId=${eventId}, userId=${userId}]이 작업열에 존재하지 않습니다.")
+        }
+        jobRedisRepository.remove(job)
     }
 
     private fun findEvent(eventId: String): Event {
