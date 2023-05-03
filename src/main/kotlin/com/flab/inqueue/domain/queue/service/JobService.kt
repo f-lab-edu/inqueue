@@ -35,12 +35,11 @@ class JobService(
 
     private fun isEnterJob(event: Event): Boolean {
 
-        // 에서 조회를 해야함
-        val enterQueueSize = queueService.size(JobStatus.ENTER.makeRedisKey(event.eventId)) ?: 0
-        val waitQueueSize = queueService.size(JobStatus.WAIT.makeRedisKey(event.eventId)) ?: 0
+        val enterQueueSize = queueService.setSize(JobStatus.ENTER.makeRedisKey(event.eventId)) ?: 0
+        val waitQueueSize = queueService.waitSize(JobStatus.WAIT.makeRedisKey(event.eventId)) ?: 0
 
         if (waitQueueSize > 0) return false
-        if (enterQueueSize > event.jobQueueLimitTime) return false
+        if (enterQueueSize >= event.jobQueueLimitTime) return false
 
         return true
     }

@@ -30,8 +30,11 @@ class QueueService(
         return QueueResponse(JobStatus.WAIT, QueueInfo(waitSecond, rank.toInt()))
     }
 
-    fun size(key: String): Long? {
+    fun setSize(key: String): Long? {
         return userRedisRepository.size(key)
+    }
+    fun waitSize(key: String): Long? {
+        return waitQueueRedisRepository.size(key)
     }
 
     fun isMember(job: Job): Boolean {
