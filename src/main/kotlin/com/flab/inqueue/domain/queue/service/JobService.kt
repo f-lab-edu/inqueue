@@ -9,6 +9,7 @@ import com.flab.inqueue.domain.queue.entity.JobStatus
 import com.flab.inqueue.domain.queue.exception.JobNotFoundException
 import com.flab.inqueue.domain.queue.repository.JobRedisRepository
 import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Transactional
 
 @Service
 class JobService(
@@ -16,7 +17,7 @@ class JobService(
     private val eventRepository: EventRepository,
     private val waitQueueService: WaitQueueService,
 ) {
-
+    @Transactional
     fun enter(eventId: String, userId: String): JobResponse {
         val event = findEvent(eventId)
 
@@ -57,6 +58,7 @@ class JobService(
         return JobVerificationResponse(isVerified)
     }
 
+    @Transactional
     fun close(eventId: String, userId: String) {
         val job = Job(eventId, userId, JobStatus.ENTER)
         if (!jobRedisRepository.isMember(job)) {
