@@ -75,6 +75,6 @@ class JobService(
         val waitQueueSize = waitQueueService.size(JobStatus.WAIT.makeRedisKey(event.eventId))
         val jobQueueSize = jobRedisRepository.size(JobStatus.ENTER.makeRedisKey(event.eventId))
 
-        return waitQueueSize == 0L && jobQueueSize < event.jobQueueLimitTime
+        return waitQueueSize == 0L && jobQueueSize < event.jobQueueSize
     }
 }
