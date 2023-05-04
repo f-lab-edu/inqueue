@@ -5,13 +5,13 @@ enum class JobStatus {
     ENTER {
         override val prefix = "JOB_QUEUE"
         override fun makeRedisKey(eventId: String): String {
-            return "${prefix}:${eventId}"
+            return "$prefix:$eventId"
         }
     },
     WAIT {
         override val prefix = "WAIT_QUEUE"
         override fun makeRedisKey(eventId: String): String {
-            return "${prefix}:${eventId}"
+            return "$prefix:$eventId"
         }
     },
     TIMEOUT {
