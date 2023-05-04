@@ -29,17 +29,21 @@ class WaitQueueRedisRepository(
     }
 
     fun range(key: String, start: Long, end: Long): MutableSet<Job> {
-        return waitQueueRedisTemplate.opsForZSet().range(key, start, end) ?: throw RedisDataAccessException("데이터에 접근 할 수 없습니다.")
+        return waitQueueRedisTemplate.opsForZSet().range(key, start, end)
+            ?: throw RedisDataAccessException("데이터에 접근 할 수 없습니다.")
     }
 
     fun rank(job: Job): Long {
-        return waitQueueRedisTemplate.opsForZSet().rank(job.redisKey, job) ?: throw RedisDataAccessException("데이터에 접근 할 수 없습니다.")
+        return waitQueueRedisTemplate.opsForZSet().rank(job.redisKey, job)
+            ?: throw RedisDataAccessException("데이터에 접근 할 수 없습니다.")
     }
 
     @Transactional
     fun remove(job: Job) {
-        waitQueueRedisTemplate.opsForZSet().remove(job.redisKey, job) ?: throw RedisDataAccessException("데이터에 접근 할 수 없습니다.")
-        userRedisTemplate.opsForValue().getAndDelete(job.redisValue) ?: throw RedisDataAccessException("데이터에 접근 할 수 없습니다.")
+        waitQueueRedisTemplate.opsForZSet().remove(job.redisKey, job)
+            ?: throw RedisDataAccessException("데이터에 접근 할 수 없습니다.")
+        userRedisTemplate.opsForValue().getAndDelete(job.redisValue)
+            ?: throw RedisDataAccessException("데이터에 접근 할 수 없습니다.")
     }
 
     fun findMe(job: Job): Cursor<ZSetOperations.TypedTuple<Job>> {
@@ -49,10 +53,8 @@ class WaitQueueRedisRepository(
     @Transactional
     fun isMember(job: Job): Boolean {
         val hasUser = userRedisTemplate.opsForValue().get(job.redisValue)
-        if (hasUser != null) {
-            userRedisTemplate.opsForValue().set(job.redisValue, job.redisValue, job.queueLimitTime, TimeUnit.SECONDS)
-            return true
-        }
+        return hasUser != null
+    }
 
         userRedisTemplate.opsForValue().getAndDelete(job.redisValue) ?: throw RedisDataAccessException("데이터에 접근 할 수 없습니다.")
         waitQueueRedisTemplate.opsForZSet().remove(job.redisKey, job)

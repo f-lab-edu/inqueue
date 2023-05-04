@@ -33,12 +33,6 @@ class JobRedisRepository(
     @Transactional
     fun isMember(job: Job): Boolean {
         val hasUser = userRedisTemplate.opsForValue().get(job.redisValue)
-        if (hasUser != null) {
-            return true
-        }
-        userRedisTemplate.opsForValue().getAndDelete(job.redisValue)
-            ?: throw RedisDataAccessException("데이터에 접근 할 수 없습니다.")
-        jobRedisTemplate.opsForSet().remove(job.redisKey, job) ?: throw RedisDataAccessException("데이터에 접근 할 수 없습니다.")
-        return false
+        return hasUser != null
     }
 }
