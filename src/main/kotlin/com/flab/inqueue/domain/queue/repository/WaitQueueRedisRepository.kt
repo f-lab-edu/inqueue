@@ -56,9 +56,7 @@ class WaitQueueRedisRepository(
         return hasUser != null
     }
 
-        userRedisTemplate.opsForValue().getAndDelete(job.redisValue) ?: throw RedisDataAccessException("데이터에 접근 할 수 없습니다.")
-        waitQueueRedisTemplate.opsForZSet().remove(job.redisKey, job)
-            ?: throw RedisDataAccessException("데이터에 접근 할 수 없습니다.")
-        return false
+    fun updateUserTtl(job: Job) {
+        userRedisTemplate.opsForValue().getAndExpire(job.redisValue, job.queueLimitTime, TimeUnit.SECONDS)
     }
 }

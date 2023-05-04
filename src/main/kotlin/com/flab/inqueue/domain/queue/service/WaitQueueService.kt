@@ -24,6 +24,7 @@ class WaitQueueService(
         if (!waitQueueRedisRepository.isMember(job)) {
             return JobResponse(JobStatus.TIMEOUT)
         }
+        waitQueueRedisRepository.updateUserTtl(job)
 
         val rank = (waitQueueRedisRepository.rank(job)) + 1
         return JobResponse(JobStatus.WAIT, WaitQueueInfo(rank * job.waitTimePerOneJob, rank.toInt()))
