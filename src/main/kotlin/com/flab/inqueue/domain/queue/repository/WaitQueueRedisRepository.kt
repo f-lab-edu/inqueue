@@ -2,7 +2,6 @@ package com.flab.inqueue.domain.queue.repository
 
 import com.flab.inqueue.domain.queue.entity.Job
 import com.flab.inqueue.domain.queue.exception.RedisDataAccessException
-import jakarta.transaction.Transactional
 import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.data.redis.core.Cursor
 import org.springframework.data.redis.core.RedisTemplate
@@ -17,7 +16,6 @@ class WaitQueueRedisRepository(
     private val waitQueueRedisTemplate: RedisTemplate<String, Job>,
     private val userRedisTemplate: RedisTemplate<String, String>,
 ) {
-    @Transactional
     fun register(job: Job): Long {
         waitQueueRedisTemplate.opsForZSet().add(job.redisKey, job, System.nanoTime().toDouble())
         userRedisTemplate.opsForValue().set(job.redisValue, job.redisValue, job.queueLimitTime, TimeUnit.SECONDS)
@@ -38,7 +36,6 @@ class WaitQueueRedisRepository(
             ?: throw RedisDataAccessException("데이터에 접근 할 수 없습니다.")
     }
 
-    @Transactional
     fun remove(job: Job) {
         waitQueueRedisTemplate.opsForZSet().remove(job.redisKey, job)
             ?: throw RedisDataAccessException("데이터에 접근 할 수 없습니다.")
@@ -50,7 +47,6 @@ class WaitQueueRedisRepository(
         return waitQueueRedisTemplate.opsForZSet().scan(job.redisKey, ScanOptions.NONE)
     }
 
-    @Transactional
     fun isMember(job: Job): Boolean {
         val hasUser = userRedisTemplate.opsForValue().get(job.redisValue)
         return hasUser != null
