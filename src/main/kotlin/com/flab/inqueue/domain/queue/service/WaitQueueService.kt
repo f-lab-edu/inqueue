@@ -37,6 +37,7 @@ class WaitQueueService(
         return waitQueueRedisRepository.size(key)
     }
 
+    @Transactional
     fun remove(job: Job) {
         waitQueueRedisRepository.remove(job)
     }
