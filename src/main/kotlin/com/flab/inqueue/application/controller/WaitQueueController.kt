@@ -7,7 +7,7 @@ import com.flab.inqueue.domain.queue.entity.JobStatus
 import org.springframework.web.bind.annotation.*
 
 @RestController
-@RequestMapping("/v1/events/{eventId}")
+@RequestMapping("/client/v1/events/{eventId}")
 class WaitQueueController(
     private val eventService: EventService,
 ) {

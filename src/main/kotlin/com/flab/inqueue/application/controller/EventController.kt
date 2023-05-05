@@ -7,7 +7,7 @@ import jakarta.validation.Valid
 import org.springframework.web.bind.annotation.*
 
 @RestController
-@RequestMapping("/v1/events")
+@RequestMapping("/client/v1/events")
 class EventController(
     private val eventService: EventService,
 ) {

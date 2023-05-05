@@ -5,7 +5,7 @@ import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 
 @RestController
-@RequestMapping("/v1/events/{eventId}/")
+@RequestMapping("/server/v1/events/{eventId}/")
 class JobQueueController(
     private val eventService: EventService,
 ) {
