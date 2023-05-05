@@ -9,10 +9,6 @@ import org.testcontainers.junit.jupiter.Testcontainers
 abstract class TestContainer {
 
     companion object {
-//        @JvmStatic
-//        val mySQLContainer: MySQLContainer<*> = MySQLContainer("mysql:8.0.23").withDatabaseName("test-db")
-//            .withUsername("test")
-//            .withPassword("1234")
         @JvmStatic
         val redisContainer: GenericContainer<*> = GenericContainer("redis:5.0.3-alpine").withExposedPorts(6379)
 
@@ -24,7 +20,6 @@ abstract class TestContainer {
         }
 
         init {
-//            mySQLContainer.start()
             redisContainer.start()
         }
 
