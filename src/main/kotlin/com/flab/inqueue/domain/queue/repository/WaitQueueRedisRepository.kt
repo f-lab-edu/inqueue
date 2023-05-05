@@ -53,6 +53,6 @@ class WaitQueueRedisRepository(
     }
 
     fun updateUserTtl(job: Job) {
-        userRedisTemplate.opsForValue().getAndExpire(job.redisValue, job.queueLimitTime, TimeUnit.SECONDS)
+        userRedisTemplate.opsForValue().set(job.redisValue,job.redisValue, job.queueLimitTime, TimeUnit.SECONDS)
     }
 }
