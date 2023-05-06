@@ -14,6 +14,18 @@ class Job(
     val waitTimePerOneJob: Long
         get() = if (jobQueueSize == null) 0L else queueLimitTime / jobQueueSize
 
+    fun enter(queueLimitTime: Long): Job {
+        if (status != JobStatus.WAIT) {
+            return this
+        }
+        return Job(
+            eventId = eventId,
+            userId = userId,
+            status = JobStatus.ENTER,
+            queueLimitTime = queueLimitTime
+        )
+    }
+
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (javaClass != other?.javaClass) return false
