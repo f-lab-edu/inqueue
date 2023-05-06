@@ -1,32 +1,31 @@
 package com.flab.inqueue.application.controller
 
-import com.flab.inqueue.domain.event.service.EventService
 import com.flab.inqueue.domain.queue.dto.JobResponse
-import com.flab.inqueue.domain.queue.dto.WaitQueueInfo
-import com.flab.inqueue.domain.queue.entity.JobStatus
+import com.flab.inqueue.domain.queue.service.JobService
+import com.flab.inqueue.security.common.CommonPrincipal
+import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.web.bind.annotation.*
 
 @RestController
 @RequestMapping("/client/v1/events/{eventId}")
 class WaitQueueController(
-    private val eventService: EventService,
+    private val jobService: JobService
 ) {
 
     @PostMapping("/enter")
     fun enterWaitQueue(
-        @RequestHeader("Authorization") accessToken: String,
         @PathVariable("eventId") eventId: String,
     ): JobResponse {
-        return JobResponse(JobStatus.WAIT, WaitQueueInfo(1L, 1))
+        val principal = SecurityContextHolder.getContext().authentication as CommonPrincipal
+        return jobService.enter(eventId, principal.userId!!)
     }
 
-    @GetMapping("")
+    @GetMapping
     fun retrieveWaitQueue(
-        @RequestHeader("Authorization") accessToken: String,
-        @RequestHeader("X-Client-Id") clientId: String,
         @PathVariable eventId: String,
     ): JobResponse {
-        return JobResponse(JobStatus.WAIT, WaitQueueInfo(1L, 1))
+        val principal = SecurityContextHolder.getContext().authentication as CommonPrincipal
+        return jobService.retrieve(eventId, principal.userId!!)
     }
 }
 

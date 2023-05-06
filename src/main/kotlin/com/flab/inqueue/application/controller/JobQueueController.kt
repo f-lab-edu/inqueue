@@ -1,32 +1,30 @@
 package com.flab.inqueue.application.controller
 
-import com.flab.inqueue.domain.event.service.EventService
+import com.flab.inqueue.domain.queue.dto.JobVerificationResponse
+import com.flab.inqueue.domain.queue.service.JobService
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 
 @RestController
-@RequestMapping("/server/v1/events/{eventId}/")
+@RequestMapping("/server/v1/events/{eventId}")
 class JobQueueController(
-    private val eventService: EventService,
+    private val jobService: JobService
 ) {
-
 
     @PostMapping("/job-queue-check/{userId}")
     fun validateJobQueue(
-        @RequestHeader("Authorization") accessKey: String,
         @PathVariable eventId: String,
         @PathVariable userId: String,
-    ): ResponseEntity<Unit> {
-        return ResponseEntity.ok().build()
+    ): JobVerificationResponse {
+        return jobService.verify(eventId, userId)
     }
-
 
     @PostMapping("/job-queue-finish/{userId}")
     fun closeJopQueue(
-        @RequestHeader("Authorization") accessKey: String,
         @PathVariable eventId: String,
         @PathVariable userId: String,
     ): ResponseEntity<Unit> {
+        jobService.close(eventId, userId)
         return ResponseEntity.ok().build()
     }
 }
