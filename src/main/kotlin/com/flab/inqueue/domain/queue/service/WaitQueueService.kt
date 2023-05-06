@@ -40,4 +40,8 @@ class WaitQueueService(
     fun remove(job: Job) {
         waitQueueRedisRepository.remove(job)
     }
+
+    fun getJobsBySize(eventId: String, size: Long): List<Job> {
+        return waitQueueRedisRepository.popMin(JobStatus.WAIT.makeRedisKey(eventId), size).map { it.value!! }
+    }
 }
