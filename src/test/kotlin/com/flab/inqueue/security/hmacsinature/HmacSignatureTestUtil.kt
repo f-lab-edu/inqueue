@@ -14,3 +14,7 @@ fun createHmacSignature(payLoad: String, clientSecret: String): String {
 fun createHmacAuthorizationHeader(clientId: String, hmacSignature: String): String {
     return "$clientId:$hmacSignature"
 }
+
+fun createHmacAuthorizationHeader(clientId: String, clientSecret: String, payLoad: String): String {
+    return "$clientId:${createHmacSignature(payLoad, clientSecret)}"
+}
