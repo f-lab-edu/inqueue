@@ -60,6 +60,7 @@ class JobService(
         return JobVerificationResponse(isVerified)
     }
 
+    @Transactional
     fun close(eventId: String, userId: String) {
         val job = Job(eventId, userId, JobStatus.ENTER)
         if (!jobRedisRepository.isMember(job)) {

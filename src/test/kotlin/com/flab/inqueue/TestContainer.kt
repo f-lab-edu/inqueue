@@ -3,7 +3,6 @@ package com.flab.inqueue
 import org.springframework.test.context.DynamicPropertyRegistry
 import org.springframework.test.context.DynamicPropertySource
 import org.testcontainers.containers.GenericContainer
-import org.testcontainers.containers.MySQLContainer
 import org.testcontainers.junit.jupiter.Testcontainers
 
 @Testcontainers
@@ -11,9 +10,7 @@ abstract class TestContainer {
 
     companion object {
         @JvmStatic
-        val mySQLContainer: MySQLContainer<*> = MySQLContainer("mysql:8.0.23").withDatabaseName("test-db")
-        @JvmStatic
-        val redisContainer: GenericContainer<*> = GenericContainer("redis:7.0.11").withExposedPorts(6379)
+        val redisContainer: GenericContainer<*> = GenericContainer("redis:5.0.3-alpine").withExposedPorts(6379)
 
         @JvmStatic
         @DynamicPropertySource
@@ -23,7 +20,6 @@ abstract class TestContainer {
         }
 
         init {
-            mySQLContainer.start()
             redisContainer.start()
         }
 

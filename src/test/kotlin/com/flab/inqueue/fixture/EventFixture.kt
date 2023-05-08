@@ -1,4 +1,4 @@
-package com.flab.inqueue
+package com.flab.inqueue.fixture
 
 import com.flab.inqueue.domain.event.dto.EventRequest
 import com.flab.inqueue.domain.event.entity.Event

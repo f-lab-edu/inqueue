@@ -1,7 +1,7 @@
 package com.flab.inqueue.domain.queue.redis
 
 import com.flab.inqueue.TestContainer
-import com.flab.inqueue.createEventRequest
+import com.flab.inqueue.fixture.createEventRequest
 import com.flab.inqueue.domain.queue.entity.Job
 import com.flab.inqueue.support.RedisConfigTest
 import org.assertj.core.api.Assertions.assertThat

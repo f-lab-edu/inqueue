@@ -1,6 +1,6 @@
 package com.flab.inqueue.domain.queue.service
 
-import com.flab.inqueue.createEvent
+import com.flab.inqueue.fixture.createEvent
 import com.flab.inqueue.domain.event.repository.EventRepository
 import com.flab.inqueue.domain.queue.entity.Job
 import com.flab.inqueue.domain.queue.entity.JobStatus
