@@ -2,7 +2,6 @@ package com.flab.inqueue.api
 
 import com.flab.inqueue.AcceptanceTest
 import com.flab.inqueue.REST_DOCS_DOCUMENT_IDENTIFIER
-import com.flab.inqueue.createEventRequest
 import com.flab.inqueue.domain.event.dto.EventInformation
 import com.flab.inqueue.domain.event.entity.Event
 import com.flab.inqueue.domain.event.repository.EventRepository
@@ -13,6 +12,7 @@ import com.flab.inqueue.domain.member.utils.memberkeygenrator.MemberKeyGenerator
 import com.flab.inqueue.domain.queue.entity.Job
 import com.flab.inqueue.domain.queue.entity.JobStatus
 import com.flab.inqueue.domain.queue.repository.JobRedisRepository
+import com.flab.inqueue.fixture.createEventRequest
 import com.flab.inqueue.security.hmacsinature.createHmacAuthorizationHeader
 import com.flab.inqueue.security.hmacsinature.utils.EncryptionUtil
 import org.assertj.core.api.Assertions.*
@@ -66,9 +66,8 @@ class JobTest : AcceptanceTest() {
         notEncryptedUserMemberKey = memberKeyGenerator.generate()
         member = Member(
             "TEST_MEMBER",
-            MemberKey(notEncryptedUserMemberKey.clientId, notEncryptedUserMemberKey.clientSecret)
+            key = notEncryptedUserMemberKey.encrypt(encryptionUtil)
         )
-        member.encryptMemberKey(encryptionUtil)
         memberRepository.save(member)
 
         event = createEventRequest(

@@ -3,19 +3,13 @@ package com.flab.inqueue.application.controller
 import com.flab.inqueue.domain.event.dto.EventRequest
 import com.flab.inqueue.domain.event.dto.EventResponse
 import com.flab.inqueue.domain.event.service.EventService
-import com.flab.inqueue.domain.queue.dto.JobResponse
-import com.flab.inqueue.domain.queue.service.JobService
-import com.flab.inqueue.security.common.CommonPrincipal
 import jakarta.validation.Valid
-import org.springframework.http.ResponseEntity
-import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.web.bind.annotation.*
 
 @RestController
 @RequestMapping("client/v1/events")
 class EventController(
     private val eventService: EventService,
-    private val jobService: JobService,
 ) {
     @PostMapping
     fun createEvent(
@@ -23,45 +17,6 @@ class EventController(
         @RequestBody @Valid eventRequest: EventRequest,
     ): EventResponse {
         return eventService.save(eventRequest)
-    }
-
-    @PostMapping("/{eventId}/enter")
-    fun enterWaitQueue(
-        @RequestHeader("Authorization") accessToken: String,
-        @PathVariable("eventId") eventId: String,
-    ): JobResponse {
-        val principal = SecurityContextHolder.getContext().authentication.principal as CommonPrincipal
-        return jobService.enter(eventId,principal.userId )
-    }
-
-
-    @GetMapping("/{eventId}")
-    fun retrieveWaitQueue(
-        @RequestHeader("Authorization") accessToken: String,
-        @PathVariable eventId: String,
-    ): JobResponse {
-        val principal = SecurityContextHolder.getContext().authentication.principal as CommonPrincipal
-        return jobService.retrieve(eventId,principal.userId )
-    }
-
-
-    @PostMapping("/{eventId}/job-queue-check/{userId}")
-    fun validateJobQueue(
-        @RequestHeader("Authorization") accessKey: String,
-        @PathVariable eventId: String,
-        @PathVariable userId: String,
-    ): ResponseEntity<Unit> {
-        return ResponseEntity.ok().build()
-    }
-
-
-    @PostMapping("/{eventId}/job-queue-finish/{userId}")
-    fun closeJopQueue(
-        @RequestHeader("Authorization") accessKey: String,
-        @PathVariable eventId: String,
-        @PathVariable userId: String,
-    ): ResponseEntity<Unit> {
-        return ResponseEntity.ok().build()
     }
 }
 

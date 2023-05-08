@@ -71,10 +71,9 @@ class UserTest : AcceptanceTest() {
         hmacSignaturePayload = "http://localhost:${port}" + ISSUE_TOKEN_URL
         notEncryptedUserMemberKey = memberKeyGenerator.generate()
         member = Member(
-            "TEST_MEMBER",
-            MemberKey(notEncryptedUserMemberKey.clientId, notEncryptedUserMemberKey.clientSecret)
+            name = "TEST_MEMBER",
+            key = notEncryptedUserMemberKey.encrypt(encryptionUtil)
         )
-        member.encryptMemberKey(encryptionUtil)
         memberRepository.save(member)
 
         event = createEventRequest(
