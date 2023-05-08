@@ -49,21 +49,19 @@ class HmacSignatureSecurityTest : AcceptanceTest() {
         hmacSignaturePayloadWithUser = "http://localhost:${port}" + HMAC_SECURITY_TEST_URI
         notEncryptedUserMemberKey = memberKeyGenerator.generate()
         testUser = Member(
-            "USER",
-            MemberKey(notEncryptedUserMemberKey.clientId, notEncryptedUserMemberKey.clientSecret)
+            name = "USER",
+            key = notEncryptedUserMemberKey.encrypt(encryptionUtil)
         )
-        testUser.encryptMemberKey(encryptionUtil)
         memberRepository.save(testUser)
 
         // ROLE_ADMIN
         hmacSignaturePayloadWithAdmin = "http://localhost:${port}" + HMAC_SECURITY_TEST_WITH_ADMIN_USER_URI
         notEncryptedAdminMemberKey = memberKeyGenerator.generate()
         testAdmin = Member(
-            "ADMIN",
-            MemberKey(notEncryptedAdminMemberKey.clientId, notEncryptedAdminMemberKey.clientSecret),
-            listOf(Role.USER, Role.ADMIN)
+            name = "ADMIN",
+            key = notEncryptedAdminMemberKey.encrypt(encryptionUtil),
+            roles = listOf(Role.USER, Role.ADMIN)
         )
-        testAdmin.encryptMemberKey(encryptionUtil)
         memberRepository.save(testAdmin)
     }
 
