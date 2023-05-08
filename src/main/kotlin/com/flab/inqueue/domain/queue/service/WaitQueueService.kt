@@ -6,6 +6,7 @@ import com.flab.inqueue.domain.queue.entity.Job
 import com.flab.inqueue.domain.queue.entity.JobStatus
 import com.flab.inqueue.domain.queue.repository.WaitQueueRedisRepository
 import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Transactional
 
 @Service
 class WaitQueueService(
@@ -20,10 +21,12 @@ class WaitQueueService(
         return waitQueueRedisRepository.isMember(job)
     }
 
+    @Transactional
     fun retrieve(job: Job): JobResponse {
         if (!waitQueueRedisRepository.isMember(job)) {
             return JobResponse(JobStatus.TIMEOUT)
         }
+        waitQueueRedisRepository.updateUserTtl(job)
 
         val rank = (waitQueueRedisRepository.rank(job)) + 1
         return JobResponse(JobStatus.WAIT, WaitQueueInfo(rank * job.waitTimePerOneJob, rank.toInt()))
@@ -33,6 +36,7 @@ class WaitQueueService(
         return waitQueueRedisRepository.size(key)
     }
 
+    @Transactional
     fun remove(job: Job) {
         waitQueueRedisRepository.remove(job)
     }
