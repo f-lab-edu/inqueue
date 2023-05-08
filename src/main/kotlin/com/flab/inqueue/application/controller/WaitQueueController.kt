@@ -16,7 +16,7 @@ class WaitQueueController(
     fun enterWaitQueue(
         @PathVariable("eventId") eventId: String,
     ): JobResponse {
-        val principal = SecurityContextHolder.getContext().authentication as CommonPrincipal
+        val principal = SecurityContextHolder.getContext().authentication.principal as CommonPrincipal
         return jobService.enter(eventId, principal.userId!!)
     }
 
@@ -24,7 +24,7 @@ class WaitQueueController(
     fun retrieveWaitQueue(
         @PathVariable eventId: String,
     ): JobResponse {
-        val principal = SecurityContextHolder.getContext().authentication as CommonPrincipal
+        val principal = SecurityContextHolder.getContext().authentication.principal as CommonPrincipal
         return jobService.retrieve(eventId, principal.userId!!)
     }
 }
