@@ -10,7 +10,7 @@ abstract class TestContainer {
 
     companion object {
         @JvmStatic
-        val redisContainer: GenericContainer<*> = GenericContainer("redis:5.0.3-alpine").withExposedPorts(6379)
+        val redisContainer: GenericContainer<*> = GenericContainer("redis:7.0.11").withExposedPorts(6379).withExposedPorts(6379)
 
         @JvmStatic
         @DynamicPropertySource

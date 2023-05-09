@@ -21,7 +21,6 @@ class WaitQueueService(
         return waitQueueRedisRepository.isMember(job)
     }
 
-    @Transactional
     fun retrieve(job: Job): JobResponse {
         if (!waitQueueRedisRepository.isMember(job)) {
             return JobResponse(JobStatus.TIMEOUT)
