@@ -8,8 +8,8 @@ import com.flab.inqueue.support.UnitTest
 import io.mockk.every
 import io.mockk.mockk
 import org.assertj.core.api.Assertions.*
-import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.DisplayName
 import java.util.*
 
 @UnitTest
@@ -35,6 +35,8 @@ class WaitQueueServiceTest {
         )
         val expectedRank = 5L
         every { waitQueueRedisRepository.rank(job) } returns expectedRank
+        every { waitQueueRedisRepository.isMember(job) } returns true
+        every { waitQueueRedisRepository.updateUserTtl(job) } returns Unit
 
         //given
         val jobResponse = waitQueueService.retrieve(job)
@@ -44,7 +46,7 @@ class WaitQueueServiceTest {
     }
 
 
-    @org.junit.Test
+    @Test
     @DisplayName("대기열 조회 Time Out")
     fun retrieve_time_out_job() {
         // given
