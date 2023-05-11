@@ -73,7 +73,7 @@ class JobService(
         jobRedisRepository.remove(job)
     }
 
-    fun getAvailableJobQueueSize(event: Event) :Long {
+    fun getJobQueueSize(event: Event) :Long {
         return jobRedisRepository.size(JobStatus.ENTER.makeRedisKey(event.eventId))
     }
 
@@ -87,7 +87,7 @@ class JobService(
 
     private fun isEnterJob(event: Event): Boolean {
         val waitQueueSize = getWaitQueueSize(event)
-        val jobQueueSize = getAvailableJobQueueSize(event)
+        val jobQueueSize = getJobQueueSize(event)
 
         return waitQueueSize == 0L && jobQueueSize < event.jobQueueSize
     }
