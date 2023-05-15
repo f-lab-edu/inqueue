@@ -2,6 +2,7 @@ package com.flab.inqueue.domain.event.entity
 
 import com.flab.inqueue.common.domain.BaseEntity
 import com.flab.inqueue.domain.event.dto.EventInformation
+import com.flab.inqueue.domain.member.entity.Member
 import jakarta.persistence.*
 import java.time.LocalDateTime
 
@@ -17,6 +18,8 @@ class Event(
     @Column(nullable = false) var jobQueueLimitTime: Long,
     @Embedded var eventInfo: EventInformation? = null,
     var redirectUrl: String?,
+    @ManyToOne(fetch = FetchType.LAZY)
+    val member: Member,
     @Column(nullable = false, updatable = false) val createdDateTime: LocalDateTime = LocalDateTime.now(),
 ) : BaseEntity() {
     @Column(nullable = false)
