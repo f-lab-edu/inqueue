@@ -3,7 +3,6 @@ package com.flab.inqueue.domain.queue.repository
 import com.flab.inqueue.domain.queue.entity.Job
 import com.flab.inqueue.domain.queue.exception.RedisDataAccessException
 import org.springframework.beans.factory.annotation.Qualifier
-import org.springframework.data.redis.connection.StringRedisConnection
 import org.springframework.data.redis.core.Cursor
 import org.springframework.data.redis.core.RedisTemplate
 import org.springframework.data.redis.core.ScanOptions
@@ -55,19 +54,5 @@ class WaitQueueRedisRepository(
 
     fun updateUserTtl(job: Job) {
         userRedisTemplate.opsForValue().getAndExpire(job.redisValue, job.queueLimitTime, TimeUnit.SECONDS)
-    }
-
-    fun popMin(key: String, size: Long): MutableSet<ZSetOperations.TypedTuple<Job>> {
-        val jobTuples = waitQueueRedisTemplate.opsForZSet().popMin(key, size)
-            ?: throw RedisDataAccessException("데이터에 접근 할 수 없습니다.")
-
-        userRedisTemplate.executePipelined { connection ->
-            val redisConnection = connection as StringRedisConnection
-            for (jobTuple in jobTuples) {
-                redisConnection.del(jobTuple.value!!.redisValue)
-            }
-            null
-        }
-        return jobTuples
     }
 }

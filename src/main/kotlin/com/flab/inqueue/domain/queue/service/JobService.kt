@@ -37,12 +37,6 @@ class JobService(
         return waitQueueService.register(waitJob)
     }
 
-    fun enterAll(event: Event, size: Long) {
-        val waitJobs: List<Job> = waitQueueService.getJobsBySize(event.eventId, size)
-        val enterJobs = waitJobs.map { it.enter(event.jobQueueLimitTime) }
-        jobRedisRepository.registerAll(enterJobs)
-    }
-
     fun retrieve(eventId: String, userId: String?): JobResponse {
         requireNotNull(userId) { "토큰을 확인해주세요" }
         val job = Job(eventId, userId, JobStatus.ENTER)
