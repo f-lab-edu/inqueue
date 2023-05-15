@@ -8,6 +8,6 @@ import java.time.LocalDateTime
 interface EventRepository : JpaRepository<Event, Long> {
     fun findByEventId(eventId: String): Event?
 
-    @Query("select event from Event event where event.period.startDateTime <= :baseTime and event.period.endDateTime >= :baseTime")
-    fun findOngoingEvents(baseTime: LocalDateTime): List<Event>
+    @Query("select event from Event event where event.period.startDateTime <= :bastTime and event.period.endDateTime >= :bastTime")
+    fun findOngoingEvents(bastTime: LocalDateTime): List<Event>
 }
