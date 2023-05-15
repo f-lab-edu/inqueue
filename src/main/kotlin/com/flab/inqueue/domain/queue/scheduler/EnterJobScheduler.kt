@@ -15,7 +15,7 @@ class EnterJobScheduler(
     @Qualifier("threadPoolTaskExecutor")
     private val taskExecutor: TaskExecutor
 ) {
-    @Scheduled(cron = "1 * * * * *")
+    @Scheduled(fixedDelay = 1000)
     fun execute() {
         val events = eventRepository.findOngoingEvents(LocalDateTime.now())
 
