@@ -15,7 +15,7 @@ class EnterJobScheduleTask(
         if (jobService.getWaitQueueSize(event) == 0L) {
             return
         }
-        val availableJobQueueSize = jobService.getJobQueueSize(event)
+        val availableJobQueueSize = jobService.getAvailableJobQueueSize(event)
         if (availableJobQueueSize <= 0) {
             return
         }
