@@ -9,6 +9,7 @@ import com.flab.inqueue.domain.queue.entity.JobStatus
 import com.flab.inqueue.domain.queue.exception.JobNotFoundException
 import com.flab.inqueue.domain.queue.repository.JobRedisRepository
 import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Transactional
 
 @Service
 class JobService(
@@ -73,21 +74,13 @@ class JobService(
         jobRedisRepository.remove(job)
     }
 
-    fun getAvailableJobQueueSize(event: Event) :Long {
-        return jobRedisRepository.size(JobStatus.ENTER.makeRedisKey(event.eventId))
-    }
-
-    fun getWaitQueueSize(event: Event) :Long {
-        return waitQueueService.size(JobStatus.WAIT.makeRedisKey(event.eventId))
-    }
-
     private fun findEvent(eventId: String): Event {
         return eventRepository.findByEventId(eventId) ?: throw NoSuchElementException("행사를 찾을 수 없습니다. $eventId")
     }
 
     private fun isEnterJob(event: Event): Boolean {
-        val waitQueueSize = getWaitQueueSize(event)
-        val jobQueueSize = getAvailableJobQueueSize(event)
+        val waitQueueSize = waitQueueService.size(JobStatus.WAIT.makeRedisKey(event.eventId))
+        val jobQueueSize = jobRedisRepository.size(JobStatus.ENTER.makeRedisKey(event.eventId))
 
         return waitQueueSize == 0L && jobQueueSize < event.jobQueueSize
     }
