@@ -4,26 +4,28 @@ import com.flab.inqueue.domain.event.dto.EventRequest
 import com.flab.inqueue.domain.event.dto.EventResponse
 import com.flab.inqueue.domain.event.dto.EventRetrieveResponse
 import com.flab.inqueue.domain.event.entity.Event
+import com.flab.inqueue.domain.event.exception.EventAccessException
+import com.flab.inqueue.domain.event.exception.EventNotFoundException
 import com.flab.inqueue.domain.event.repository.EventRepository
+import com.flab.inqueue.domain.member.exception.MemberNotFoundException
+import com.flab.inqueue.domain.member.repository.MemberRepository
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
+import java.util.*
 
 @Service
 @Transactional(readOnly = true)
 class EventService(
     private val eventRepository: EventRepository,
+    private val memberRepository: MemberRepository
 ) {
-    fun retrive(request: EventRequest): EventRetrieveResponse {
-        val findEvent = findEvent(request)
-        return EventRetrieveResponse(
-            findEvent.eventId,
-            findEvent.period.startDateTime,
-            findEvent.period.endDateTime,
-            findEvent.jobQueueSize,
-            findEvent.jobQueueLimitTime,
-            findEvent.eventInfo,
-            findEvent.redirectUrl
-        )
+    fun retrieve(clientId: String, eventId: String): EventRetrieveResponse {
+        val foundEvent = findEvent(eventId)
+        if (!foundEvent.isAccessible(clientId)) {
+            throw EventAccessException("해당 이벤트에 접근할 수 없습니다. eventId=${eventId}")
+        }
+
+        return toEventRetrieveResponse(foundEvent)
     }
 
     fun retriveAll(customId: String) {
@@ -31,22 +33,45 @@ class EventService(
     }
 
     @Transactional
-    fun save(request: EventRequest) = EventResponse(eventRepository.save(request.toEntity()).eventId)
-
-    @Transactional
-    fun update(request: EventRequest) {
-        var findEvent = findEvent(request)
-        findEvent.update(request.toEntity())
+    fun save(clientId: String, request: EventRequest): EventResponse {
+        val member = memberRepository.findByKeyClientId(clientId) ?: throw MemberNotFoundException(clientId)
+        val eventId = UUID.randomUUID().toString()
+        val savedEvent = eventRepository.save(request.toEntity(eventId, member))
+        return EventResponse(savedEvent.eventId)
     }
 
     @Transactional
-    fun delete(request: EventRequest) = eventRepository.deleteById(findEvent(request).id)
-
-    private fun validateRequest(request: EventRequest) = require(!request.eventId.isNullOrBlank()) { "eventId를 입력해주세요" }
-    private fun findEvent(request: EventRequest): Event {
-        validateRequest(request)
-        return eventRepository.findByEventId(request.eventId!!)
-            ?: throw NoSuchElementException("행사를 찾을 수 없습니다. ${request.eventId}")
+    fun update(clientId: String, eventId: String, request: EventRequest) {
+        var foundEvent = findEvent(eventId)
+        if (!foundEvent.isAccessible(clientId)) {
+            throw EventAccessException("해당 이벤트에 접근할 수 없습니다. eventId=$eventId")
+        }
+        foundEvent.update(request.toEntity(eventId, foundEvent.member))
     }
 
+    @Transactional
+    fun delete(clientId: String, eventId: String) {
+        var foundEvent = findEvent(eventId)
+        if (!foundEvent.isAccessible(clientId)) {
+            throw EventAccessException("해당 이벤트에 접근할 수 없습니다. eventId=$eventId")
+        }
+        eventRepository.deleteById(foundEvent.id)
+    }
+
+    private fun findEvent(eventId: String): Event {
+        return eventRepository.findByEventId(eventId)
+            ?: throw EventNotFoundException("행사를 찾을 수 없습니다. eventId=${eventId}")
+    }
+
+    private fun toEventRetrieveResponse(event: Event): EventRetrieveResponse {
+        return EventRetrieveResponse(
+            event.eventId,
+            event.period.startDateTime,
+            event.period.endDateTime,
+            event.jobQueueSize,
+            event.jobQueueLimitTime,
+            event.eventInfo,
+            event.redirectUrl
+        )
+    }
 }

@@ -35,14 +35,7 @@ class Event(
         this.modifiedDateTime = LocalDateTime.now()
     }
 
-    companion object {
-        fun from(event: Event) = Event(
-            event.eventId,
-            event.period,
-            event.jobQueueSize,
-            event.jobQueueLimitTime,
-            event.eventInfo,
-            event.redirectUrl,
-        )
+    fun isAccessible(clientId : String) :Boolean {
+        return this.member.key.clientId == clientId
     }
 }
