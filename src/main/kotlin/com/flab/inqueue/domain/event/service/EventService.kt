@@ -28,8 +28,8 @@ class EventService(
         return toEventRetrieveResponse(foundEvent)
     }
 
-    fun retriveAll(customId: String) {
-        // TODO: 고객사 도메인 미구현 // return eventRepository.findAllByCustomId(customId)
+    fun retrieveAll(customId: String): List<EventRetrieveResponse> {
+        return eventRepository.findAllByMemberKeyClientId(customId).map { toEventRetrieveResponse(it) }
     }
 
     @Transactional
