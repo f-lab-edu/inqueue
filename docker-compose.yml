@@ -1,0 +1,31 @@
+version: "3.4"
+services:
+  inqueue-service:
+    image: elyo9381/inqueue
+    environment:
+      - COMMAND_LINE_ARGS_AFTER=--spring.profiles.active=dev
+    ports:
+      - "8888:8888"
+    networks:
+      - inqueue
+
+  mysql:
+    image: mysql:8.0
+    ports:
+      - "3306:3306"
+    environment:
+      MYSQL_DATABASE: mydb
+      MYSQL_ROOT_PASSWORD: mypassword
+    networks:
+      - inqueue
+
+  redis:
+    image: redis:7.0.11
+    ports:
+      - "6379:6379"
+    networks:
+      - inqueue
+
+networks:
+  inqueue:
+    driver: bridge
