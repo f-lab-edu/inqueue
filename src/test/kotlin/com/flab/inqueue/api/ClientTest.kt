@@ -5,9 +5,20 @@ import com.flab.inqueue.REST_DOCS_DOCUMENT_IDENTIFIER
 import com.flab.inqueue.domain.event.dto.EventInformation
 import com.flab.inqueue.domain.event.dto.EventRequest
 import com.flab.inqueue.domain.member.dto.MemberSignUpRequest
+import com.flab.inqueue.domain.member.entity.Member
+import com.flab.inqueue.domain.member.entity.MemberKey
+import com.flab.inqueue.domain.member.repository.MemberRepository
+import com.flab.inqueue.domain.member.utils.memberkeygenrator.MemberKeyGenerator
+import com.flab.inqueue.domain.queue.entity.Job
+import com.flab.inqueue.fixture.createEventRequest
+import com.flab.inqueue.security.hmacsinature.createHmacAuthorizationHeader
+import com.flab.inqueue.security.hmacsinature.utils.EncryptionUtil
 import org.assertj.core.api.Assertions.*
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
+import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.boot.test.web.server.LocalServerPort
 import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
@@ -20,9 +31,60 @@ import org.springframework.restdocs.restassured.RestAssuredRestDocumentation.doc
 import org.springframework.restdocs.restassured.RestDocumentationFilter
 import org.springframework.restdocs.snippet.Attributes.*
 import org.springframework.restdocs.snippet.Snippet
+import org.springframework.transaction.annotation.Transactional
 import java.time.LocalDateTime
+import java.util.*
 
 class ClientTest : AcceptanceTest() {
+
+
+    @Autowired
+    lateinit var memberRepository: MemberRepository
+
+    @Autowired
+    lateinit var encryptionUtil: EncryptionUtil
+
+    @Autowired
+    lateinit var memberKeyGenerator: MemberKeyGenerator
+
+
+    var port: Int = 0
+    lateinit var member: Member
+    lateinit var notEncryptedUserMemberKey: MemberKey
+    lateinit var requestEvent: EventRequest
+    lateinit var job: Job
+    val userId = UUID.randomUUID()!!.toString()
+
+    @BeforeEach
+    @Transactional
+    fun setUp(@LocalServerPort localPort: Int) {
+        port = localPort
+        notEncryptedUserMemberKey = memberKeyGenerator.generate()
+        member = Member(
+            "TEST_MEMBER",
+            key = notEncryptedUserMemberKey.encrypt(encryptionUtil)
+        )
+        memberRepository.save(member)
+
+        requestEvent = createEventRequest(
+            null,
+            LocalDateTime.now(),
+            LocalDateTime.now().plusDays(10),
+            1L,
+            10L,
+            EventInformation(
+                "testEvent",
+                LocalDateTime.now(),
+                LocalDateTime.now().plusDays(10),
+                "test description",
+                "test place",
+                100L,
+                "TEST CONCERT"
+            ),
+            "https://test"
+        )
+
+    }
 
     @Test
     @DisplayName("Member 회원가입")
@@ -48,29 +110,20 @@ class ClientTest : AcceptanceTest() {
     @Test
     @DisplayName("행사 도메인 CRUD")
     fun createEvent() {
-        val eventRequest = EventRequest(
-            null,
-            LocalDateTime.now(),
-            LocalDateTime.now(),
-            1L,
-            1L,
-            EventInformation("testEvent",
-                LocalDateTime.now(),
-                LocalDateTime.now(),
-                "test description",
-                "test place",
-                100L,
-                "TEST CONCERT"),
-            "https://test"
-        )
+        val hmacSignaturePayload = "http://localhost:${port}/server/v1/events"
 
         val response = givenWithDocument.log().all()
             .filter(CreateEventDocument.FILTER)
-            .header(HttpHeaders.AUTHORIZATION, "X-Client-Id:(StringToSign를 ClientSecret으로 Hmac 암호화)")
+            .header(
+                HttpHeaders.AUTHORIZATION,
+                createHmacAuthorizationHeader(
+                    member.key.clientId, notEncryptedUserMemberKey.clientSecret, hmacSignaturePayload
+                )
+            )
             .contentType(MediaType.APPLICATION_JSON_VALUE)
-            .body(eventRequest).
+            .body(requestEvent).
         `when`()
-            .post("v1/events").
+            .post("server/v1/events").
         then().log().all()
             .statusCode(HttpStatus.OK.value())
             .extract()
