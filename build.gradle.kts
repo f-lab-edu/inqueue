@@ -20,6 +20,14 @@ repositories {
     mavenCentral()
 }
 
+val jarFileName = "inqueue-service"
+
+tasks.bootJar {
+    baseName = jarFileName
+    launchScript()
+}
+
+
 dependencies {
     implementation("org.springframework.boot:spring-boot-starter-validation")
     implementation("org.springframework.boot:spring-boot-starter-data-jpa")

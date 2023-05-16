@@ -3,6 +3,7 @@ package com.flab.inqueue.domain.event.dto
 import com.flab.inqueue.domain.event.entity.Event
 import com.flab.inqueue.domain.event.entity.WaitQueuePeriod
 import org.jetbrains.annotations.NotNull
+import org.springframework.format.annotation.DateTimeFormat
 import java.time.LocalDateTime
 import java.util.*
 
@@ -10,7 +11,9 @@ import java.util.*
 data class EventRequest(
 
     var eventId: String? = null,
-    @field:NotNull var waitQueueStartTime: LocalDateTime,
+    @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
+    @field:NotNull val waitQueueStartTime: LocalDateTime,
+    @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
     @field:NotNull val waitQueueEndTime: LocalDateTime,
     @field:NotNull val jobQueueSize: Long,
     @field:NotNull val jobQueueLimitTime: Long,
