@@ -1,25 +1,42 @@
 version: "3.4"
 services:
   inqueue-service:
-    image: elyo9381/inqueue
+    restart: always
+    image: inqueue/wait-queue-service:loadtest
     environment:
-      - COMMAND_LINE_ARGS_AFTER=--spring.profiles.active=dev
+      - SPRING_DATA_REDIS_HOST=docker-redis
+      - SPRING_DATASOURCE_HOST=docker-mysql
+      - SPRING_DATASOURCE_USERNAME=root
+      - SPRING_DATASOURCE_PASSWORD=1234
+      - CUSTOMER_ACCOUNT_CLIENT_ID_size=32
+      - CUSTOMER_ACCOUNT_CLIENT_SECRET_size=64
+      - JWT_TOKEN_SECRET_KEY=7nD+tPZb3K1hxywtaIE5oURk7D10KsOrtNBo5P7+uCiSrVUnwNDAo9NQG9A/e3DA9Z/urx8qJu1g3YAr8EiTQ==
+      - JWT_TOKEN_EXPIRATION_MILLS=7200000
+      - AES256_SECRET_KEY=ae19150aebb744d0931c64acc0db53ae
+      - COMMAND_LINE_ARGS_AFTER=--spring.profiles.active=loadtest
     ports:
       - "8888:8888"
+    depends_on:
+      - docker-mysql
+      - docker-redis
     networks:
       - inqueue
 
-  mysql:
+  docker-mysql:
+    container_name: docker-mysql
     image: mysql:8.0
     ports:
       - "3306:3306"
     environment:
-      MYSQL_DATABASE: mydb
-      MYSQL_ROOT_PASSWORD: mypassword
+      - MYSQL_DATABASE=inqueue
+      - MYSQL_USER=test
+      - MYSQL_USER_PASSWORD=test
+      - MYSQL_ROOT_PASSWORD=1234
     networks:
       - inqueue
 
-  redis:
+  docker-redis:
+    container_name: docker-redis
     image: redis:7.0.11
     ports:
       - "6379:6379"
