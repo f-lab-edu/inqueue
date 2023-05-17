@@ -10,7 +10,6 @@ plugins {
     kotlin("plugin.jpa") version "1.7.22"
 }
 
-val asciidoctorExt by configurations.creating
 
 group = "com.flab.inqueue"
 version = "0.0.1-SNAPSHOT"
@@ -18,13 +17,6 @@ java.sourceCompatibility = JavaVersion.VERSION_17
 
 repositories {
     mavenCentral()
-}
-
-val jarFileName = "inqueue-service"
-
-tasks.bootJar {
-    baseName = jarFileName
-    launchScript()
 }
 
 
@@ -62,7 +54,6 @@ dependencies {
 
     /* rest-assured + restdocs */
     testImplementation("io.rest-assured:rest-assured:5.3.0")
-    asciidoctorExt("org.springframework.restdocs:spring-restdocs-asciidoctor")
     testImplementation("org.springframework.restdocs:spring-restdocs-restassured")
 
     /* testcontainers */
@@ -70,13 +61,16 @@ dependencies {
     testImplementation("org.testcontainers:junit-jupiter:1.17.2")
     testImplementation("org.testcontainers:mysql:1.17.2")
 }
-
-
 tasks.withType<KotlinCompile> {
     kotlinOptions {
         freeCompilerArgs = listOf("-Xjsr305=strict")
         jvmTarget = "17"
     }
+}
+
+val asciidoctorExt: Configuration by configurations.creating
+dependencies {
+    asciidoctorExt("org.springframework.restdocs:spring-restdocs-asciidoctor")
 }
 
 val snippetsDir by extra { file("build/generated-snippets") }
@@ -86,15 +80,24 @@ tasks {
         outputs.dir(snippetsDir)
         useJUnitPlatform()
     }
+
     asciidoctor {
         dependsOn(test)
-        configurations("asciidoctorExt")
+        configurations(asciidoctorExt.name)
         inputs.dir(snippetsDir)
+        doLast {
+            copy {
+                from("build/docs/asciidoc")
+                into("src/main/resources/static/docs")
+            }
+        }
     }
 
-    bootJar {
+    build {
         dependsOn(asciidoctor)
-        from("${asciidoctor.get().outputDir}/html5")
-        into(file("static/docs"))
+    }
+
+    jar {
+        enabled = false
     }
 }
