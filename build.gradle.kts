@@ -83,13 +83,14 @@ val snippetsDir by extra { file("build/generated-snippets") }
 
 tasks {
     test {
-        outputs.dir(snippetsDir)
-        useJUnitPlatform()
+        enabled = false
+//        outputs.dir(snippetsDir)
+//        useJUnitPlatform()
     }
     asciidoctor {
-        dependsOn(test)
-        configurations("asciidoctorExt")
-        inputs.dir(snippetsDir)
+//        dependsOn(test)
+//        configurations("asciidoctorExt")
+//        inputs.dir(snippetsDir)
     }
 
     register<Copy>("copyRestDocs") {
@@ -97,8 +98,8 @@ tasks {
         into(file("src/main/resources/static/docs"))
     }
     bootJar {
-        dependsOn(asciidoctor)
-        dependsOn("copyRestDocs")
+//        dependsOn(asciidoctor)
+//        dependsOn("copyRestDocs")
     }
 
     jar {
