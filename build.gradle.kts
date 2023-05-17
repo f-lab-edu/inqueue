@@ -92,9 +92,12 @@ tasks {
         inputs.dir(snippetsDir)
     }
 
+    register<Copy>("copyRestDocs") {
+        from(file("build/docs/asciidoc/index.html"))
+        into(file("src/main/resources/static/docs"))
+    }
     bootJar {
         dependsOn(asciidoctor)
-        from("${asciidoctor.get().outputDir}/html5")
-        into(file("static/docs"))
+        dependsOn("copyRestDocs")
     }
 }
