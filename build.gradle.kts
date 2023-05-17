@@ -100,4 +100,8 @@ tasks {
         dependsOn(asciidoctor)
         dependsOn("copyRestDocs")
     }
+
+    jar {
+        enabled = false
+    }
 }
