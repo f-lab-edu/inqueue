@@ -1,0 +1,42 @@
+services:
+  inqueue-service:
+    image: inqueue
+    restart: always
+    depends_on:
+      - mysql
+      - redis
+    ports:
+      - "8080:8080"
+    environment:
+      - SPRING_DATA_REDIS_HOST=redis
+      - SPRING_DATASOURCE_HOST=mysql
+      - SPRING_DATASOURCE_USERNAME=root
+      - SPRING_DATASOURCE_PASSWORD=abcd1234!
+      - MEMBER_CLIENT_ID_SIZE=32
+      - MEMBER_CLIENT_SECRET_SIZE=64
+      - JWT_TOKEN_SECRET_KEY=7nD+tPZb3K1hxywtaIE5oURk7D10KsOrtNBo5P7+uCiSrVUnwNDAo9NQG9A/e3DA9Z/uhrx8qJu1g3YAr8EiTQ==
+      - JWT_TOKEN_EXPIRATION_MILLS=7200000
+      - AES256_SECRET_KEY=ae19150aebb744d0931c64acc0db53ae
+    networks:
+      - inqueue_network
+  mysql:
+    image: mysql:8.0
+    container_name: mysql
+    environment:
+      - MYSQL_USER=test
+      - MYSQL_USER_PASSWORD=test
+      - MYSQL_DATABASE=inqueue
+      - MYSQL_ROOT_PASSWORD=abcd1234!
+    ports:
+      - "3306:3306"
+    networks:
+      - inqueue_network
+  redis:
+    image: redis:7.0.11
+    container_name: redis
+    ports:
+      - "6379:6379"
+    networks:
+      - inqueue_network
+networks:
+  inqueue_network:

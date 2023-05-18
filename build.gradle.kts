@@ -23,10 +23,9 @@ repositories {
 val jarFileName = "inqueue-service"
 
 tasks.bootJar {
-    baseName = jarFileName
+    archiveBaseName.set(jarFileName)
     launchScript()
 }
-
 
 dependencies {
     implementation("org.springframework.boot:spring-boot-starter-validation")
@@ -83,14 +82,13 @@ val snippetsDir by extra { file("build/generated-snippets") }
 
 tasks {
     test {
-        enabled = false
-//        outputs.dir(snippetsDir)
-//        useJUnitPlatform()
+        outputs.dir(snippetsDir)
+        useJUnitPlatform()
     }
     asciidoctor {
-//        dependsOn(test)
-//        configurations("asciidoctorExt")
-//        inputs.dir(snippetsDir)
+        dependsOn(test)
+        configurations("asciidoctorExt")
+        inputs.dir(snippetsDir)
     }
 
     register<Copy>("copyRestDocs") {
@@ -98,8 +96,8 @@ tasks {
         into(file("src/main/resources/static/docs"))
     }
     bootJar {
-//        dependsOn(asciidoctor)
-//        dependsOn("copyRestDocs")
+        dependsOn(asciidoctor)
+        dependsOn("copyRestDocs")
     }
 
     jar {
