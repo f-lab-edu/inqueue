@@ -20,14 +20,14 @@ class HmacAuthenticationProvider(
 
     override fun authenticate(authentication: Authentication?): Authentication {
         val hmacAuthentication = authentication as HmacAuthenticationToken
-        val customer = memberRepository.findByKeyClientId(authentication.clientId!!)
+        val member = memberRepository.findByKeyClientId(authentication.clientId!!)
             ?: throw UsernameNotFoundException("Customer(clientId=${authentication.clientId}) not found")
 
-        val customerKey = customer.key
+        val memberKey = member.key
 
         val isValid = hmacSignatureVerifier.verify(
             signature = hmacAuthentication.signature!!,
-            clientSecret = encryptionUtil.decrypt(customerKey.clientSecret),
+            clientSecret = encryptionUtil.decrypt(memberKey.clientSecret),
             payload = hmacAuthentication.payload!!
         )
 
@@ -35,11 +35,11 @@ class HmacAuthenticationProvider(
             throw BadCredentialsException("Invalid hmac authentication - clientId: ${hmacAuthentication.clientId}")
         }
 
-        val principal = CommonPrincipal(clientId = customerKey.clientId, roles = customer.roles)
+        val principal = CommonPrincipal(clientId = memberKey.clientId, roles = member.roles)
 
         return HmacAuthenticationToken.authenticated(
             principal = principal,
-            authorities = customer.roles.map { SimpleGrantedAuthority("ROLE_$it") }.toMutableList()
+            authorities = member.roles.map { SimpleGrantedAuthority("ROLE_$it") }.toMutableList()
         )
     }
 
