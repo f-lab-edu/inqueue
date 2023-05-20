@@ -64,15 +64,18 @@ class WebSecurityConfig(
     }
 
     @Bean
+    fun providerManager(): ProviderManager {
+        return ProviderManager(hmacAuthenticationProvider, jwtAuthenticationProvider)
+    }
+
+    @Bean
     fun hmacSignatureAuthenticationFilter(): HmacSignatureAuthenticationFilter {
-        val authenticationManager = ProviderManager(hmacAuthenticationProvider)
-        return HmacSignatureAuthenticationFilter(authenticationManager, HMAC_AUTHENTICATION_REQUEST_MATCHER)
+        return HmacSignatureAuthenticationFilter(providerManager(), HMAC_AUTHENTICATION_REQUEST_MATCHER)
     }
 
     @Bean
     fun jwtAuthenticationFilter(): JwtAuthenticationFilter {
-        val authenticationManager = ProviderManager(jwtAuthenticationProvider)
-        return JwtAuthenticationFilter(authenticationManager, JWT_AUTHENTICATION_REQUEST_MATCHER)
+        return JwtAuthenticationFilter(providerManager(), JWT_AUTHENTICATION_REQUEST_MATCHER)
     }
 
     @Profile("dev")
