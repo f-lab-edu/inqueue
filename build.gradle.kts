@@ -71,7 +71,6 @@ dependencies {
     testImplementation("org.testcontainers:mysql:1.17.2")
 }
 
-
 tasks.withType<KotlinCompile> {
     kotlinOptions {
         freeCompilerArgs = listOf("-Xjsr305=strict")
@@ -99,5 +98,9 @@ tasks {
     bootJar {
         dependsOn(asciidoctor)
         dependsOn("copyRestDocs")
+    }
+
+    jar{
+        enabled = false
     }
 }
