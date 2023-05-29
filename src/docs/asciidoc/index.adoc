@@ -1,3 +1,46 @@
+= INQUEUE API 명세
+link:https://github.com/f-lab-edu/inqueue/wiki[inqueu wiki]
+:doctype: book
+:icons: font
+:source-highlighter: highlightjs // 문서에 표기되는 코드들의 하이라이팅을 highlightjs를 사용
+:toc: left // toc (Table Of Contents)를 문서의 좌측에 두기
+:toclevels: 2
+:sectlinks:
+
+[[Client-API]]
+== Client API
+
+[[Client-이벤트-생성]]
+=== Client 이벤트 생성
+operation::client_test/create_event[snippets='request-headers,request-fields,http-request,http-response,response-fields']
+
+[[Queue-API]]
+== Queue API
+
+[[고객사-작업열-조회]]
+=== 고객사 작업열 조회
+// operation::queue_test/validate_job_queue[snippets='request-headers,request-fields,http-request,http-response,response-fields']
+
+[[고객사-작업열-종료]]
+=== 고객사 작업열 종료
+// operation::queue_test/close_jop_queue[snippets='request-headers,request-fields,http-request,http-response,response-fields']
+
+
+
+[[user-API]]
+== user API
+
+[[user-토큰-발급]]
+=== user 토큰 - 발급
+// operation::user_test/generate_token[snippets='request-headers,request-fields,http-request,http-response,response-fields']
+
+[[user-대기열-진입]]
+=== user 대기열 - 진입
+operation::user_test/enter_wait_queue[snippets='request-headers,request-fields,http-request,http-response,response-fields']
+
+[[user-대기열-정보조회]]
+=== user 대기열 - 정보조회
+operation::user_test/retrieve_wait_queue[snippets='request-headers,request-fields,http-request,http-response,response-fields']
 = InQueue API 문서
 :doctype: book
 :icons: font
