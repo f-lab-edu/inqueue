@@ -1,0 +1,29 @@
+spring:
+  data:
+    redis:
+      host: ${SPRING_DATA_REDIS_HOST}
+      port: 6379
+  datasource:
+    url: jdbc:mysql://${SPRING_DATASOURCE_HOST}:3306/inqueue?characterEncoding=utf8
+    username: ${SPRING_DATASOURCE_USERNAME}
+    password: ${SPRING_DATASOURCE_PASSWORD}
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    hikari:
+      auto-commit: false
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+    open-in-view: false
+
+
+member:
+  key:
+    client-id-size: ${CUSTOMER_ACCOUNT_CLIENT_ID_size}
+    client-secret-size: ${CUSTOMER_ACCOUNT_CLIENT_SECRET_size}
+
+jwt:
+  secret-key: ${JWT_TOKEN_SECRET_KEY}
+  expiration-mills: ${JWT_TOKEN_EXPIRATION_MILLS}
+
+aes256:
+  secret-key: ${AES256_SECRET_KEY}

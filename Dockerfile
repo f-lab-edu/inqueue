@@ -14,4 +14,4 @@ RUN ./gradlew clean build ${BUILD_OPTIONS}
 FROM amazoncorretto:17-alpine-jdk
 COPY --from=builder build/libs/*.jar inqueue.jar
 
-ENTRYPOINT ["java", "-jar", "inqueue.jar"]
+ENTRYPOINT ["java", "-jar", "inqueue.jar"
