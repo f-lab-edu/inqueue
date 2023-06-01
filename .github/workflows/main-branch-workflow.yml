@@ -42,7 +42,8 @@ jobs:
         uses: docker/build-push-action@v4
         with:
           context: .
+          # build without test
           build-args: |
-            "BUILD_OPTIONS=--exclude-task test"
+            "BUILD_OPTIONS=--exclude-task test --exclude-task asciidoctor"
           push: true
           tags: ${{ secrets.DOCKERHUB_USERNAME }}/inqueue:0.1
