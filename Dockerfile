@@ -1,3 +1,4 @@
+# build jar
 FROM amazoncorretto:17-alpine-jdk AS builder
 
 ARG BUILD_OPTIONS
@@ -10,7 +11,7 @@ COPY settings.gradle.kts .
 COPY src src
 RUN ./gradlew clean build ${BUILD_OPTIONS}
 
-
+# run jar
 FROM amazoncorretto:17-alpine-jdk
 COPY --from=builder build/libs/*.jar inqueue.jar
 
