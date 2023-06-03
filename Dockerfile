@@ -1,19 +1,18 @@
-FROM openjdk:17-jdk-slim-buster
-# 빌드목적
-ARG JAR_FILENAME='inqueue-service'
-ARG PACKAGE_JAR_LOCATION=/build/libs/*.jar
-ARG VERSION
+# build jar
+FROM amazoncorretto:17-alpine-jdk AS builder
 
-# 실행목적
-# docker run --e 로 오버라이딩
-ENV COMMAND_LINE_ARGS_BEFORE=${COMMAND_LINE_ARGS_BEFORE}
-ENV COMMAND_LINE_ARGS_AFTER=${COMMAND_LINE_ARGS_AFTER}
-ENV SERVER_PORT=8888
-ENV VERSION=$VERSION
+ARG BUILD_OPTIONS
+ENV BUILD_OPTIONS ${BUILD_OPTIONS}
 
-ADD ${PACKAGE_JAR_LOCATION} /app.jar
+COPY gradlew .
+COPY gradle gradle
+COPY build.gradle.kts .
+COPY settings.gradle.kts .
+COPY src src
+RUN ./gradlew clean build ${BUILD_OPTIONS}
 
-RUN echo ${VERSION}
+# run jar
+FROM amazoncorretto:17-alpine-jdk
+COPY --from=builder build/libs/*.jar inqueue.jar
 
-EXPOSE ${SERVER_PORT}:8080
-ENTRYPOINT java ${COMMAND_LINE_ARGS_BEFRE} ${VERSION} -jar ./app.jar ${COMMAND_LINE_ARGS_AFTER}
+ENTRYPOINT ["java", "-jar", "inqueue.jar"]
