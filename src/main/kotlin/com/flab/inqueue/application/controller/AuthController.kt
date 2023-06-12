@@ -4,7 +4,7 @@ import com.flab.inqueue.domain.auth.dto.TokenRequest
 import com.flab.inqueue.domain.auth.dto.TokenResponse
 import com.flab.inqueue.domain.auth.service.TokenService
 import com.flab.inqueue.security.common.CommonPrincipal
-import org.springframework.security.core.context.SecurityContextHolder
+import org.springframework.security.core.annotation.AuthenticationPrincipal
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
@@ -15,8 +15,7 @@ class AuthController(
     val tokenService: TokenService
 ) {
     @PostMapping("/token")
-    fun issueToken(): TokenResponse {
-        val principal = SecurityContextHolder.getContext().authentication.principal as CommonPrincipal
+    fun issueToken(@AuthenticationPrincipal principal: CommonPrincipal): TokenResponse {
         return tokenService.generateToken(TokenRequest(principal.clientId))
     }
 }

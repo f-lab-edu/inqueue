@@ -3,7 +3,7 @@ package com.flab.inqueue.application.controller
 import com.flab.inqueue.domain.queue.dto.JobResponse
 import com.flab.inqueue.domain.queue.service.JobService
 import com.flab.inqueue.security.common.CommonPrincipal
-import org.springframework.security.core.context.SecurityContextHolder
+import org.springframework.security.core.annotation.AuthenticationPrincipal
 import org.springframework.web.bind.annotation.*
 
 @RestController
@@ -15,16 +15,16 @@ class WaitQueueController(
     @PostMapping("/{eventId}/enter")
     fun enterWaitQueue(
         @PathVariable("eventId") eventId: String,
+        @AuthenticationPrincipal principal: CommonPrincipal,
     ): JobResponse {
-        val principal = SecurityContextHolder.getContext().authentication.principal as CommonPrincipal
         return jobService.enter(eventId, principal.userId!!)
     }
 
     @GetMapping("/{eventId}")
     fun retrieveWaitQueue(
         @PathVariable eventId: String,
+        @AuthenticationPrincipal principal: CommonPrincipal,
     ): JobResponse {
-        val principal = SecurityContextHolder.getContext().authentication.principal as CommonPrincipal
         return jobService.retrieve(eventId, principal.userId!!)
     }
 }
