@@ -28,16 +28,16 @@ class JobServiceTest {
 
     private val jobService: JobService = JobService(jobRedisRepository, eventRepository, waitQueueService)
 
+    val userId = "testUserId"
+    val eventId = "testEventId"
+    val clientId = "testClientId"
+    val member = Member(name = "testMember", key = MemberKey(clientId, "testClientSecret"))
+    val event = createEventRequest().toEntity(eventId, member)
+
     @Test
     @DisplayName("JobQueue에 여유가 있고, WaitQueue가 비어있으면 JobQueue 에 들어간다.")
     fun job_enter_job_queue() {
         // given
-        val userId = "testUserId"
-        val eventId = "testEventId"
-        val member = Member(name = "testMember", key = MemberKey("testClientId", "testClientSecret"))
-        val event = createEventRequest().toEntity(eventId, member)
-
-
         every { eventRepository.findByEventId(eventId) } returns event
         every { waitQueueService.size(JobStatus.WAIT.makeRedisKey(eventId)) } returns 0
         every { jobRedisRepository.size(JobStatus.ENTER.makeRedisKey(eventId)) } returns 5
@@ -59,11 +59,6 @@ class JobServiceTest {
     @DisplayName("JobQueue에 여유가 있으나, WaitQueue가 비어있지 않으면 WaitQueue 에 들어간다.")
     fun job_enter_wait_queue() {
         // given
-        val userId = "testUserId"
-        val eventId = "testEventId"
-        val member = Member(name = "testMember", key = MemberKey("testClientId", "testClientSecret"))
-        val event = createEventRequest().toEntity(eventId, member)
-
         every { eventRepository.findByEventId(eventId) } returns event
         every { waitQueueService.size(JobStatus.WAIT.makeRedisKey(eventId)) } returns 5
         every { jobRedisRepository.size(JobStatus.ENTER.makeRedisKey(eventId)) } returns 0
@@ -83,8 +78,6 @@ class JobServiceTest {
     @DisplayName("enter_job 검색")
     fun retrieve_enter_job() {
         // given
-        val userId = "testUserId"
-        val eventId = "testEventId"
         val enterJob = Job(eventId, userId, JobStatus.ENTER)
 
         every { jobRedisRepository.isMember(enterJob) } returns true
@@ -100,11 +93,6 @@ class JobServiceTest {
     @DisplayName("wait_job 검색")
     fun retrieve_wait_job() {
         // given
-        val userId = "testUserId"
-        val eventId = "testEventId"
-        val member = Member(name = "testMember", key = MemberKey("testClientId", "testClientSecret"))
-        val event = createEventRequest().toEntity(eventId, member)
-
         every { eventRepository.findByEventId(any()) } returns event
         every { jobRedisRepository.isMember(any()) } returns false
 
@@ -125,11 +113,6 @@ class JobServiceTest {
     @DisplayName("작업열 검증 성공")
     fun verify_job_queue() {
         // given
-        val userId = "testUserId"
-        val eventId = "testEventId"
-        val clientId = "testClientId"
-        val member = Member(name = "testMember", key = MemberKey(clientId, "testClientSecret"))
-        val event = createEventRequest().toEntity(eventId, member)
         val job = Job(eventId, userId, JobStatus.ENTER)
 
         every { eventRepository.findByEventId(eventId) } returns event
@@ -146,13 +129,7 @@ class JobServiceTest {
     @DisplayName("작업열 검증 실패")
     fun fail_to_verify_job_queue() {
         // given
-        val userId = "testUserId"
-        val eventId = "testEventId"
-        val clientId = "testClientId"
-        val member = Member(name = "testMember", key = MemberKey(clientId, "testClientSecret"))
-        val event = createEventRequest().toEntity(eventId, member)
         every { eventRepository.findByEventId(eventId) } returns event
-
 
         // when & then
         val anotherClientId = "otherClientId"
@@ -163,11 +140,6 @@ class JobServiceTest {
     @DisplayName("작업열 종료 성공")
     fun close_job_queue() {
         // given
-        val userId = "testUserId"
-        val eventId = "testEventId"
-        val clientId = "testClientId"
-        val member = Member(name = "testMember", key = MemberKey(clientId, "testClientSecret"))
-        val event = createEventRequest().toEntity(eventId, member)
         val job = Job(eventId, userId, JobStatus.ENTER)
         every { eventRepository.findByEventId(eventId) } returns event
         every { jobRedisRepository.isMember(job) } returns true
@@ -183,11 +155,6 @@ class JobServiceTest {
     @DisplayName("작업열 종료 실패")
     fun fail_to_close_job_queue() {
         // given
-        val userId = "testUserId"
-        val eventId = "testEventId"
-        val clientId = "testClientId"
-        val member = Member(name = "testMember", key = MemberKey(clientId, "testClientSecret"))
-        val event = createEventRequest().toEntity(eventId, member)
         every { eventRepository.findByEventId(eventId) } returns event
 
         // when
