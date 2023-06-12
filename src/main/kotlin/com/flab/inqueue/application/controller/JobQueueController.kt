@@ -2,7 +2,9 @@ package com.flab.inqueue.application.controller
 
 import com.flab.inqueue.domain.queue.dto.JobVerificationResponse
 import com.flab.inqueue.domain.queue.service.JobService
+import com.flab.inqueue.security.common.CommonPrincipal
 import org.springframework.http.ResponseEntity
+import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.web.bind.annotation.*
 
 @RestController
@@ -16,7 +18,8 @@ class JobQueueController(
         @PathVariable eventId: String,
         @PathVariable userId: String,
     ): JobVerificationResponse {
-        return jobService.verify(eventId, userId)
+        val principal = SecurityContextHolder.getContext().authentication as CommonPrincipal
+        return jobService.verify(eventId, principal.clientId, userId)
     }
 
     @PostMapping("/job-queue-finish/{userId}")
@@ -24,7 +27,8 @@ class JobQueueController(
         @PathVariable eventId: String,
         @PathVariable userId: String,
     ): ResponseEntity<Unit> {
-        jobService.close(eventId, userId)
+        val principal = SecurityContextHolder.getContext().authentication as CommonPrincipal
+        jobService.close(eventId, principal.clientId, userId)
         return ResponseEntity.ok().build()
     }
 }
