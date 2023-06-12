@@ -1,6 +1,7 @@
 package com.flab.inqueue.domain.queue.service
 
 import com.flab.inqueue.domain.event.entity.Event
+import com.flab.inqueue.domain.event.exception.EventAccessException
 import com.flab.inqueue.domain.event.repository.EventRepository
 import com.flab.inqueue.domain.queue.dto.JobResponse
 import com.flab.inqueue.domain.queue.dto.JobVerificationResponse
@@ -59,13 +60,23 @@ class JobService(
         return waitQueueService.retrieve(waitJob)
     }
 
-    fun verify(eventId: String, userId: String): JobVerificationResponse {
+    fun verify(eventId: String, clientId: String, userId: String): JobVerificationResponse {
+        val event = findEvent(eventId)
+        if (!event.isAccessible(clientId)) {
+            throw EventAccessException("해당 이벤트에 접근할 수 없습니다. eventId=${eventId}")
+        }
+
         val job = Job(eventId, userId, JobStatus.ENTER)
         val isVerified = jobRedisRepository.isMember(job)
         return JobVerificationResponse(isVerified)
     }
 
-    fun close(eventId: String, userId: String) {
+    fun close(eventId: String, clientId: String, userId: String) {
+        val event = findEvent(eventId)
+        if (!event.isAccessible(clientId)) {
+            throw EventAccessException("해당 이벤트에 접근할 수 없습니다. eventId=${eventId}")
+        }
+
         val job = Job(eventId, userId, JobStatus.ENTER)
         if (!jobRedisRepository.isMember(job)) {
             throw JobNotFoundException("Job[eventId=${eventId}, userId=${userId}]이 작업열에 존재하지 않습니다.")
@@ -73,7 +84,7 @@ class JobService(
         jobRedisRepository.remove(job)
     }
 
-    fun getJobQueueSize(event: Event) :Long {
+    fun getJobQueueSize(event: Event): Long {
         return jobRedisRepository.size(JobStatus.ENTER.makeRedisKey(event.eventId))
     }
 
