@@ -1,5 +1,6 @@
 package com.flab.inqueue.domain.queue.service
 
+import com.flab.inqueue.domain.event.entity.Event
 import com.flab.inqueue.domain.event.exception.EventAccessException
 import com.flab.inqueue.domain.event.repository.EventRepository
 import com.flab.inqueue.domain.member.entity.Member
@@ -13,32 +14,40 @@ import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.Test
+
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
+import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 
 @UnitTest
 class JobServiceTest {
 
     private val jobRedisRepository: JobRedisRepository = mockk<JobRedisRepository>(relaxed = true)
-
     private val eventRepository: EventRepository = mockk<EventRepository>()
-
     private val waitQueueService: WaitQueueService = mockk<WaitQueueService>(relaxed = true)
-
     private val jobService: JobService = JobService(jobRedisRepository, eventRepository, waitQueueService)
 
-    val userId = "testUserId"
-    val eventId = "testEventId"
-    val clientId = "testClientId"
-    val member = Member(name = "testMember", key = MemberKey(clientId, "testClientSecret"))
-    val event = createEventRequest().toEntity(eventId, member)
+    lateinit var userId: String
+    lateinit var eventId: String
+    lateinit var clientId: String
+    lateinit var member: Member
+    lateinit var event: Event
+
+    @BeforeEach
+    fun setUp() {
+        userId = "testUserId"
+        eventId = "testEventId"
+        clientId = "testClientId"
+        member = Member(name = "testMember", key = MemberKey(clientId, "testClientSecret"))
+        event = createEventRequest().toEntity(eventId, member)
+        every { eventRepository.findByEventId(eventId) } returns event
+    }
 
     @Test
     @DisplayName("JobQueue에 여유가 있고, WaitQueue가 비어있으면 JobQueue 에 들어간다.")
     fun job_enter_job_queue() {
         // given
-        every { eventRepository.findByEventId(eventId) } returns event
         every { waitQueueService.size(JobStatus.WAIT.makeRedisKey(eventId)) } returns 0
         every { jobRedisRepository.size(JobStatus.ENTER.makeRedisKey(eventId)) } returns 5
 
@@ -59,7 +68,6 @@ class JobServiceTest {
     @DisplayName("JobQueue에 여유가 있으나, WaitQueue가 비어있지 않으면 WaitQueue 에 들어간다.")
     fun job_enter_wait_queue() {
         // given
-        every { eventRepository.findByEventId(eventId) } returns event
         every { waitQueueService.size(JobStatus.WAIT.makeRedisKey(eventId)) } returns 5
         every { jobRedisRepository.size(JobStatus.ENTER.makeRedisKey(eventId)) } returns 0
 
@@ -79,7 +87,6 @@ class JobServiceTest {
     fun retrieve_enter_job() {
         // given
         val enterJob = Job(eventId, userId, JobStatus.ENTER)
-
         every { jobRedisRepository.isMember(enterJob) } returns true
 
         // when
@@ -93,7 +100,6 @@ class JobServiceTest {
     @DisplayName("wait_job 검색")
     fun retrieve_wait_job() {
         // given
-        every { eventRepository.findByEventId(any()) } returns event
         every { jobRedisRepository.isMember(any()) } returns false
 
         // when
@@ -114,8 +120,6 @@ class JobServiceTest {
     fun verify_job_queue() {
         // given
         val job = Job(eventId, userId, JobStatus.ENTER)
-
-        every { eventRepository.findByEventId(eventId) } returns event
         every { jobRedisRepository.isMember(job) } returns true
 
         // when
@@ -128,9 +132,6 @@ class JobServiceTest {
     @Test
     @DisplayName("작업열 검증 실패")
     fun fail_to_verify_job_queue() {
-        // given
-        every { eventRepository.findByEventId(eventId) } returns event
-
         // when & then
         val anotherClientId = "otherClientId"
         assertThrows<EventAccessException> {  jobService.verify(eventId, anotherClientId, userId) }
@@ -141,7 +142,6 @@ class JobServiceTest {
     fun close_job_queue() {
         // given
         val job = Job(eventId, userId, JobStatus.ENTER)
-        every { eventRepository.findByEventId(eventId) } returns event
         every { jobRedisRepository.isMember(job) } returns true
 
         // when
@@ -154,10 +154,7 @@ class JobServiceTest {
     @Test
     @DisplayName("작업열 종료 실패")
     fun fail_to_close_job_queue() {
-        // given
-        every { eventRepository.findByEventId(eventId) } returns event
-
-        // when
+        // when & then
         val anotherClientId = "otherClientId"
         assertThrows<EventAccessException> {  jobService.close(eventId, anotherClientId, userId) }
     }
