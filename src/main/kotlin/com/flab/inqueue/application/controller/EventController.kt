@@ -6,7 +6,7 @@ import com.flab.inqueue.domain.event.dto.EventRetrieveResponse
 import com.flab.inqueue.domain.event.service.EventService
 import com.flab.inqueue.security.common.CommonPrincipal
 import jakarta.validation.Valid
-import org.springframework.security.core.context.SecurityContextHolder
+import org.springframework.security.core.annotation.AuthenticationPrincipal
 import org.springframework.web.bind.annotation.*
 
 @RestController
@@ -17,23 +17,23 @@ class EventController(
     @PostMapping
     fun createEvent(
         @RequestBody @Valid eventRequest: EventRequest,
+        @AuthenticationPrincipal principal: CommonPrincipal,
     ): EventResponse {
-        val principal = SecurityContextHolder.getContext().authentication.principal as CommonPrincipal
         return eventService.save(principal.clientId, eventRequest)
     }
 
     @GetMapping("/{eventId}")
     fun retrieveEvent(
-        @PathVariable eventId: String
+        @PathVariable eventId: String,
+        @AuthenticationPrincipal principal: CommonPrincipal
     ): EventRetrieveResponse {
-        val principal = SecurityContextHolder.getContext().authentication.principal as CommonPrincipal
         return eventService.retrieve(principal.clientId, eventId)
     }
 
     @GetMapping
     fun retrieveEvent(
+        @AuthenticationPrincipal principal: CommonPrincipal,
     ): List<EventRetrieveResponse> {
-        val principal = SecurityContextHolder.getContext().authentication.principal as CommonPrincipal
         return eventService.retrieveAll(principal.clientId)
     }
 
@@ -41,16 +41,16 @@ class EventController(
     fun updateEvent(
         @PathVariable eventId: String,
         @RequestBody @Valid eventRequest: EventRequest,
+        @AuthenticationPrincipal principal: CommonPrincipal,
     ) {
-        val principal = SecurityContextHolder.getContext().authentication.principal as CommonPrincipal
         return eventService.update(principal.clientId, eventId, eventRequest)
     }
 
     @DeleteMapping("/{eventId}")
     fun deleteEvent(
-        @PathVariable eventId: String
+        @PathVariable eventId: String,
+        @AuthenticationPrincipal principal: CommonPrincipal,
     ) {
-        val principal = SecurityContextHolder.getContext().authentication.principal as CommonPrincipal
         eventService.delete(principal.clientId, eventId)
     }
 }
