@@ -22,7 +22,7 @@ class EventService(
     fun retrieve(clientId: String, eventId: String): EventRetrieveResponse {
         val foundEvent = findEvent(eventId)
         if (!foundEvent.isAccessible(clientId)) {
-            throw EventAccessException("해당 이벤트에 접근할 수 없습니다. eventId=${eventId}")
+            throw EventAccessException("해당 이벤트에 접근할 수 없습니다.")
         }
 
         return toEventRetrieveResponse(foundEvent)
@@ -34,7 +34,8 @@ class EventService(
 
     @Transactional
     fun save(clientId: String, request: EventRequest): EventResponse {
-        val member = memberRepository.findByKeyClientId(clientId) ?: throw MemberNotFoundException(clientId)
+        val member = memberRepository.findByKeyClientId(clientId)
+            ?: throw MemberNotFoundException("회원을 찾을 수 업습니다.")
         val eventId = UUID.randomUUID().toString()
         val savedEvent = eventRepository.save(request.toEntity(eventId, member))
         return EventResponse(savedEvent.eventId)
@@ -44,7 +45,7 @@ class EventService(
     fun update(clientId: String, eventId: String, request: EventRequest) {
         var foundEvent = findEvent(eventId)
         if (!foundEvent.isAccessible(clientId)) {
-            throw EventAccessException("해당 이벤트에 접근할 수 없습니다. eventId=$eventId")
+            throw EventAccessException("해당 이벤트에 접근할 수 없습니다.")
         }
         foundEvent.update(request.toEntity(eventId, foundEvent.member))
     }
@@ -53,14 +54,14 @@ class EventService(
     fun delete(clientId: String, eventId: String) {
         var foundEvent = findEvent(eventId)
         if (!foundEvent.isAccessible(clientId)) {
-            throw EventAccessException("해당 이벤트에 접근할 수 없습니다. eventId=$eventId")
+            throw EventAccessException("해당 이벤트에 접근할 수 없습니다.")
         }
         eventRepository.deleteById(foundEvent.id)
     }
 
     private fun findEvent(eventId: String): Event {
         return eventRepository.findByEventId(eventId)
-            ?: throw EventNotFoundException("행사를 찾을 수 없습니다. eventId=${eventId}")
+            ?: throw EventNotFoundException("행사를 찾을 수 없습니다.")
     }
 
     private fun toEventRetrieveResponse(event: Event): EventRetrieveResponse {

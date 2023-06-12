@@ -60,7 +60,7 @@ class JobService(
     fun verify(eventId: String, clientId: String, userId: String): JobVerificationResponse {
         val event = findEvent(eventId)
         if (!event.isAccessible(clientId)) {
-            throw EventAccessException("해당 이벤트에 접근할 수 없습니다. eventId=${eventId}")
+            throw EventAccessException("해당 이벤트에 접근할 수 없습니다.")
         }
 
         val job = Job(eventId, userId, JobStatus.ENTER)
@@ -71,7 +71,7 @@ class JobService(
     fun close(eventId: String, clientId: String, userId: String) {
         val event = findEvent(eventId)
         if (!event.isAccessible(clientId)) {
-            throw EventAccessException("해당 이벤트에 접근할 수 없습니다. eventId=${eventId}")
+            throw EventAccessException("해당 이벤트에 접근할 수 없습니다.")
         }
 
         val job = Job(eventId, userId, JobStatus.ENTER)
