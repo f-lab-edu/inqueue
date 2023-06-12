@@ -36,6 +36,7 @@ class RedisConfigTest(
     @Bean(name = ["jobRedisTemplate"])
     fun jobRedisTemplate(connectionFactory: RedisConnectionFactory): RedisTemplate<String, Job> {
         val redisTemplate = RedisTemplate<String, Job>()
+        redisTemplate.setEnableTransactionSupport(true)
         val objectMapper = jacksonObjectMapper()
         objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
         redisTemplate.keySerializer = StringRedisSerializer()
@@ -44,9 +45,10 @@ class RedisConfigTest(
         return redisTemplate
     }
 
-    @Bean
+    @Bean(name = ["redisTemplate"])
     fun redisTemplate(): RedisTemplate<*, *> {
         val redisTemplate: RedisTemplate<*, *> = RedisTemplate<Any, Any>()
+        redisTemplate.setEnableTransactionSupport(true)
         redisTemplate.setConnectionFactory(redisConnectionFactory()!!)
         return redisTemplate
     }

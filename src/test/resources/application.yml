@@ -1,6 +1,7 @@
 spring:
-  profiles:
-    active: test
+  config:
+    activate:
+      on-profile: test
   datasource:
     url: jdbc:tc:mysql:8:///test-db
     driver-class-name: org.testcontainers.jdbc.ContainerDatabaseDriver
@@ -10,7 +11,7 @@ spring:
       auto-commit: false
   jpa:
     hibernate:
-      ddl-auto: create-drop
+      ddl-auto: create
   data:
     redis:
       host: localhost

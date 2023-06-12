@@ -7,12 +7,12 @@ import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.web.bind.annotation.*
 
 @RestController
-@RequestMapping("/client/v1/events/{eventId}")
+@RequestMapping("/client/v1/events")
 class WaitQueueController(
     private val jobService: JobService
 ) {
 
-    @PostMapping("/enter")
+    @PostMapping("/{eventId}/enter")
     fun enterWaitQueue(
         @PathVariable("eventId") eventId: String,
     ): JobResponse {
@@ -20,7 +20,7 @@ class WaitQueueController(
         return jobService.enter(eventId, principal.userId!!)
     }
 
-    @GetMapping
+    @GetMapping("/{eventId}")
     fun retrieveWaitQueue(
         @PathVariable eventId: String,
     ): JobResponse {

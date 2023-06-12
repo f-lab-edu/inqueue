@@ -77,20 +77,21 @@ class UserTest : AcceptanceTest() {
         memberRepository.save(member)
 
         event = createEventRequest(
-            null,
             LocalDateTime.now(),
             LocalDateTime.now().plusDays(10),
             1L,
             10L,
-            EventInformation("testEvent",
+            EventInformation(
+                "testEvent",
                 LocalDateTime.now(),
                 LocalDateTime.now().plusDays(10),
                 "test description",
                 "test place",
                 100L,
-                "TEST CONCERT"),
+                "TEST CONCERT"
+            ),
             "https://test"
-        ).toEntity()
+        ).toEntity(UUID.randomUUID().toString(), member)
 
         eventRepository.save(event)
     }

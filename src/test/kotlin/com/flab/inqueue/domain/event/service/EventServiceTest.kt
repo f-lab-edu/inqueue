@@ -1,14 +1,18 @@
 package com.flab.inqueue.domain.event.service
 
-import com.flab.inqueue.fixture.createEvent
-import com.flab.inqueue.fixture.createEventRequest
+import com.flab.inqueue.domain.event.exception.EventNotFoundException
 import com.flab.inqueue.domain.event.repository.EventRepository
+import com.flab.inqueue.domain.member.entity.Member
+import com.flab.inqueue.domain.member.entity.MemberKey
+import com.flab.inqueue.domain.member.repository.MemberRepository
+import com.flab.inqueue.fixture.createEventRequest
 import com.flab.inqueue.support.UnitTest
 import io.mockk.every
 import io.mockk.impl.annotations.InjectMockKs
 import io.mockk.impl.annotations.MockK
 import org.assertj.core.api.Assertions.*
 import org.junit.jupiter.api.*
+import java.util.*
 
 @UnitTest
 class EventServiceTest {
@@ -19,21 +23,34 @@ class EventServiceTest {
     @InjectMockKs
     lateinit var eventService: EventService
 
+    lateinit var member: Member
+
+    @MockK
+    lateinit var memberRepository: MemberRepository
+
+    @BeforeEach
+    fun setUp() {
+        val key = MemberKey(UUID.randomUUID().toString(), UUID.randomUUID().toString())
+        member = Member(name = "testMember", key = key)
+        every { memberRepository.findByKeyClientId(key.clientId) }.returns(member)
+    }
 
     @Test
     @DisplayName("이벤트 조회 성공")
-    fun successRetrieve() {
+    fun succeedToRetrieve() {
         //given
-        val createdEvent = createEvent()
-        val requestEvent = createEventRequest(createdEvent.eventId)
-        every { eventRepository.findByEventId(any()) } returns createdEvent
+        val eventId = UUID.randomUUID().toString()
+        val member = Member(name = "testMember", key = MemberKey("testClientId", "testClientSecret"))
+        val event = createEventRequest().toEntity(eventId, member)
+
+        every { eventRepository.findByEventId(eventId) } returns event
 
         //when
-        val eventResponse = eventService.retrive(requestEvent)
+        val eventResponse = eventService.retrieve(member.key.clientId, eventId)
 
         //then
         assertAll(
-            { assertThat(eventResponse.eventId).isEqualTo(createdEvent.eventId) },
+            { assertThat(eventResponse.eventId).isEqualTo(eventId) },
             { assertThat(eventResponse.waitQueueStartTime).isNotNull() },
             { assertThat(eventResponse.waitQueueEndTime).isNotNull() },
             { assertThat(eventResponse.jobQueueSize).isNotNull() },
@@ -42,49 +59,32 @@ class EventServiceTest {
     }
 
     @Test
-    @DisplayName("이벤트 조회 실패 잘못된 eventId")
-    fun failRetrieve() {
+    @DisplayName("잘못된 eventId가 주어졌을때 이벤트 검색 실패")
+    fun failToRetrieveWhenGivenWrongEventId() {
         //given
-        val createdEvent = createEvent()
-        val requestEvent = createEventRequest(eventId = "testUUID")
-        every { eventRepository.findByEventId(any()) } returns null
+        val clientId = "test_client_id"
+        val eventId = "test_event_id"
+        every { eventRepository.findByEventId(eventId) } returns null
 
-        //when
-        val exception = assertThrows<NoSuchElementException> { eventService.retrive(requestEvent) }
-
-        //Then
-        assertThat(exception.message).isEqualTo("행사를 찾을 수 없습니다. ${requestEvent.eventId}")
-    }
-
-    @Test
-    @DisplayName("이벤트 조회 상황에서 eventId가 null 혹은 빈값이 올때")
-    fun isNullOrBlankEventId() {
-        //given
-        val createdEvent = createEvent()
-        val requestEvent = createEventRequest()
-        every { eventRepository.findByEventId(any()) } returns createdEvent
-
-        //when
-        val exception = assertThrows<IllegalArgumentException> { eventService.retrive(requestEvent) }
-
-        //Then
-        assertThat(exception.message).isEqualTo("eventId를 입력해주세요")
+        //when & then
+        assertThrows<EventNotFoundException> { eventService.retrieve(clientId, eventId) }
     }
 
     @Test
     @DisplayName("이벤트 저장 성공")
-    fun successSave() {
+    fun succeedToSave() {
         //given
-        val createdEvent = createEvent()
-        val requestEvent = createEventRequest()
-        every { eventRepository.save(any()) } returns createdEvent
+        val eventRequest = createEventRequest()
+        val eventId = UUID.randomUUID().toString()
+        val event = eventRequest.toEntity(eventId, member)
+        every { eventRepository.save(event) } returns event
 
         //when
-        val eventResponse = eventService.save(requestEvent)
+        val eventResponse = eventService.save(member.key.clientId, eventRequest)
 
         //then
         assertAll(
-            { assertThat(eventResponse.eventId).isEqualTo(createdEvent.eventId) }
+            { assertThat(eventResponse.eventId).isEqualTo(eventId) }
         )
     }
 }

@@ -71,7 +71,6 @@ class JobTest : AcceptanceTest() {
         memberRepository.save(member)
 
         event = createEventRequest(
-            null,
             LocalDateTime.now(),
             LocalDateTime.now().plusDays(10),
             1L,
@@ -86,7 +85,7 @@ class JobTest : AcceptanceTest() {
                 "TEST CONCERT"
             ),
             "https://test"
-        ).toEntity()
+        ).toEntity(UUID.randomUUID().toString(), member)
 
         eventRepository.save(event)
         job = Job(event.eventId, userId, JobStatus.ENTER, event.jobQueueLimitTime, event.jobQueueSize)
