@@ -1,11 +1,12 @@
 package com.flab.inqueue
 
-import org.springframework.boot.test.context.SpringBootTest
+import com.flab.inqueue.support.IntegrationTest
+import org.junit.jupiter.api.Test
 
-@SpringBootTest
-class InqueueApplicationTests {
+@IntegrationTest
+class InqueueApplicationTests: TestContainer() {
 
-
+    @Test
     fun contextLoads() {
     }
 

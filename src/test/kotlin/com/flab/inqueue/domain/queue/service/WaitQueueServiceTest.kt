@@ -1,15 +1,17 @@
 package com.flab.inqueue.domain.queue.service
 
-import com.flab.inqueue.fixture.createEvent
+import com.flab.inqueue.domain.member.entity.Member
+import com.flab.inqueue.domain.member.entity.MemberKey
 import com.flab.inqueue.domain.queue.entity.Job
 import com.flab.inqueue.domain.queue.entity.JobStatus
 import com.flab.inqueue.domain.queue.repository.WaitQueueRedisRepository
+import com.flab.inqueue.fixture.createEventRequest
 import com.flab.inqueue.support.UnitTest
 import io.mockk.every
 import io.mockk.mockk
 import org.assertj.core.api.Assertions.*
-import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.DisplayName
+import org.junit.jupiter.api.Test
 import java.util.*
 
 @UnitTest
@@ -25,7 +27,8 @@ class WaitQueueServiceTest {
         //given
         val eventId = "testEventId"
         val userId = "testUserId"
-        val event = createEvent(eventId)
+        val member = Member(name = "testMember", key = MemberKey("testClientId", "testClientSecret"))
+        val event = createEventRequest().toEntity(eventId, member)
 
         val job = Job(
             userId = userId,

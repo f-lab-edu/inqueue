@@ -1,10 +1,12 @@
 package com.flab.inqueue.domain.queue.service
 
-import com.flab.inqueue.fixture.createEvent
 import com.flab.inqueue.domain.event.repository.EventRepository
+import com.flab.inqueue.domain.member.entity.Member
+import com.flab.inqueue.domain.member.entity.MemberKey
 import com.flab.inqueue.domain.queue.entity.Job
 import com.flab.inqueue.domain.queue.entity.JobStatus
 import com.flab.inqueue.domain.queue.repository.JobRedisRepository
+import com.flab.inqueue.fixture.createEventRequest
 import com.flab.inqueue.support.UnitTest
 import io.mockk.every
 import io.mockk.mockk
@@ -30,7 +32,9 @@ class JobServiceTest {
         // given
         val userId = "testUserId"
         val eventId = "testEventId"
-        val event = createEvent(eventId = eventId)
+        val member = Member(name = "testMember", key = MemberKey("testClientId", "testClientSecret"))
+        val event = createEventRequest().toEntity(eventId, member)
+
 
         every { eventRepository.findByEventId(eventId) } returns event
         every { waitQueueService.size(JobStatus.WAIT.makeRedisKey(eventId)) } returns 0
@@ -55,7 +59,8 @@ class JobServiceTest {
         // given
         val userId = "testUserId"
         val eventId = "testEventId"
-        val event = createEvent(eventId = eventId)
+        val member = Member(name = "testMember", key = MemberKey("testClientId", "testClientSecret"))
+        val event = createEventRequest().toEntity(eventId, member)
 
         every { eventRepository.findByEventId(eventId) } returns event
         every { waitQueueService.size(JobStatus.WAIT.makeRedisKey(eventId)) } returns 5
@@ -95,7 +100,8 @@ class JobServiceTest {
         // given
         val userId = "testUserId"
         val eventId = "testEventId"
-        val event = createEvent(eventId)
+        val member = Member(name = "testMember", key = MemberKey("testClientId", "testClientSecret"))
+        val event = createEventRequest().toEntity(eventId, member)
 
         every { eventRepository.findByEventId(any()) } returns event
         every { jobRedisRepository.isMember(any()) } returns false

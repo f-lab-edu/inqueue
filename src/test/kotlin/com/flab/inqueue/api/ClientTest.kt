@@ -3,13 +3,11 @@ package com.flab.inqueue.api
 import com.flab.inqueue.AcceptanceTest
 import com.flab.inqueue.REST_DOCS_DOCUMENT_IDENTIFIER
 import com.flab.inqueue.domain.event.dto.EventInformation
-import com.flab.inqueue.domain.event.dto.EventRequest
 import com.flab.inqueue.domain.member.dto.MemberSignUpRequest
 import com.flab.inqueue.domain.member.entity.Member
 import com.flab.inqueue.domain.member.entity.MemberKey
 import com.flab.inqueue.domain.member.repository.MemberRepository
 import com.flab.inqueue.domain.member.utils.memberkeygenrator.MemberKeyGenerator
-import com.flab.inqueue.domain.queue.entity.Job
 import com.flab.inqueue.fixture.createEventRequest
 import com.flab.inqueue.security.hmacsinature.createHmacAuthorizationHeader
 import com.flab.inqueue.security.hmacsinature.utils.EncryptionUtil
@@ -37,7 +35,6 @@ import java.util.*
 
 class ClientTest : AcceptanceTest() {
 
-
     @Autowired
     lateinit var memberRepository: MemberRepository
 
@@ -51,9 +48,6 @@ class ClientTest : AcceptanceTest() {
     var port: Int = 0
     lateinit var member: Member
     lateinit var notEncryptedUserMemberKey: MemberKey
-    lateinit var requestEvent: EventRequest
-    lateinit var job: Job
-    val userId = UUID.randomUUID()!!.toString()
 
     @BeforeEach
     @Transactional
@@ -65,25 +59,6 @@ class ClientTest : AcceptanceTest() {
             key = notEncryptedUserMemberKey.encrypt(encryptionUtil)
         )
         memberRepository.save(member)
-
-        requestEvent = createEventRequest(
-            null,
-            LocalDateTime.now(),
-            LocalDateTime.now().plusDays(10),
-            1L,
-            10L,
-            EventInformation(
-                "testEvent",
-                LocalDateTime.now(),
-                LocalDateTime.now().plusDays(10),
-                "test description",
-                "test place",
-                100L,
-                "TEST CONCERT"
-            ),
-            "https://test"
-        )
-
     }
 
     @Test
@@ -110,7 +85,25 @@ class ClientTest : AcceptanceTest() {
     @Test
     @DisplayName("행사 도메인 CRUD")
     fun createEvent() {
-        val hmacSignaturePayload = "http://localhost:${port}/server/v1/events"
+        val hmacSignaturePayload =
+            "http://localhost:${port}/server/v1/events"
+
+        val eventRequest = createEventRequest(
+            LocalDateTime.now(),
+            LocalDateTime.now().plusDays(10),
+            1L,
+            10L,
+            EventInformation(
+                "testEvent",
+                LocalDateTime.now(),
+                LocalDateTime.now().plusDays(10),
+                "test description",
+                "test place",
+                100L,
+                "TEST CONCERT"
+            ),
+            "https://test"
+        )
 
         val response = givenWithDocument.log().all()
             .filter(CreateEventDocument.FILTER)
@@ -121,9 +114,9 @@ class ClientTest : AcceptanceTest() {
                 )
             )
             .contentType(MediaType.APPLICATION_JSON_VALUE)
-            .body(requestEvent).
+            .body(eventRequest).
         `when`()
-            .post("server/v1/events").
+            .post("/server/v1/events").
         then().log().all()
             .statusCode(HttpStatus.OK.value())
             .extract()
