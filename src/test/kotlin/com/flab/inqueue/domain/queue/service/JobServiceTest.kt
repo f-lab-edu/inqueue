@@ -1,5 +1,6 @@
 package com.flab.inqueue.domain.queue.service
 
+import com.flab.inqueue.domain.event.exception.EventAccessException
 import com.flab.inqueue.domain.event.repository.EventRepository
 import com.flab.inqueue.domain.member.entity.Member
 import com.flab.inqueue.domain.member.entity.MemberKey
@@ -14,6 +15,7 @@ import io.mockk.verify
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 import org.junit.jupiter.api.DisplayName
+import org.junit.jupiter.api.assertThrows
 
 @UnitTest
 class JobServiceTest {
@@ -117,5 +119,79 @@ class JobServiceTest {
             queueLimitTime = event.jobQueueLimitTime
         )
         verify { waitQueueService.retrieve(waitJob) }
+    }
+
+    @Test
+    @DisplayName("작업열 검증 성공")
+    fun verify_job_queue() {
+        // given
+        val userId = "testUserId"
+        val eventId = "testEventId"
+        val clientId = "testClientId"
+        val member = Member(name = "testMember", key = MemberKey(clientId, "testClientSecret"))
+        val event = createEventRequest().toEntity(eventId, member)
+        val job = Job(eventId, userId, JobStatus.ENTER)
+
+        every { eventRepository.findByEventId(eventId) } returns event
+        every { jobRedisRepository.isMember(job) } returns true
+
+        // when
+        val verificationResponse = jobService.verify(eventId, clientId, userId)
+
+        // then
+        assertThat(verificationResponse.isVerified).isTrue()
+    }
+
+    @Test
+    @DisplayName("작업열 검증 실패")
+    fun fail_to_verify_job_queue() {
+        // given
+        val userId = "testUserId"
+        val eventId = "testEventId"
+        val clientId = "testClientId"
+        val member = Member(name = "testMember", key = MemberKey(clientId, "testClientSecret"))
+        val event = createEventRequest().toEntity(eventId, member)
+        every { eventRepository.findByEventId(eventId) } returns event
+
+
+        // when & then
+        val anotherClientId = "otherClientId"
+        assertThrows<EventAccessException> {  jobService.verify(eventId, anotherClientId, userId) }
+    }
+
+    @Test
+    @DisplayName("작업열 종료 성공")
+    fun close_job_queue() {
+        // given
+        val userId = "testUserId"
+        val eventId = "testEventId"
+        val clientId = "testClientId"
+        val member = Member(name = "testMember", key = MemberKey(clientId, "testClientSecret"))
+        val event = createEventRequest().toEntity(eventId, member)
+        val job = Job(eventId, userId, JobStatus.ENTER)
+        every { eventRepository.findByEventId(eventId) } returns event
+        every { jobRedisRepository.isMember(job) } returns true
+
+        // when
+        jobService.close(eventId, clientId, userId)
+
+        // then
+        verify { jobRedisRepository.remove(job) }
+    }
+
+    @Test
+    @DisplayName("작업열 종료 실패")
+    fun fail_to_close_job_queue() {
+        // given
+        val userId = "testUserId"
+        val eventId = "testEventId"
+        val clientId = "testClientId"
+        val member = Member(name = "testMember", key = MemberKey(clientId, "testClientSecret"))
+        val event = createEventRequest().toEntity(eventId, member)
+        every { eventRepository.findByEventId(eventId) } returns event
+
+        // when
+        val anotherClientId = "otherClientId"
+        assertThrows<EventAccessException> {  jobService.close(eventId, anotherClientId, userId) }
     }
 }
