@@ -18,7 +18,7 @@ class JobQueueController(
         @PathVariable eventId: String,
         @PathVariable userId: String,
     ): JobVerificationResponse {
-        val principal = SecurityContextHolder.getContext().authentication as CommonPrincipal
+        val principal = SecurityContextHolder.getContext().authentication.principal as CommonPrincipal
         return jobService.verify(eventId, principal.clientId, userId)
     }
 
@@ -27,7 +27,7 @@ class JobQueueController(
         @PathVariable eventId: String,
         @PathVariable userId: String,
     ): ResponseEntity<Unit> {
-        val principal = SecurityContextHolder.getContext().authentication as CommonPrincipal
+        val principal = SecurityContextHolder.getContext().authentication.principal as CommonPrincipal
         jobService.close(eventId, principal.clientId, userId)
         return ResponseEntity.ok().build()
     }
