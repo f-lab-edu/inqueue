@@ -17,9 +17,7 @@ class JobService(
     private val eventRepository: EventRepository,
     private val waitQueueService: WaitQueueService,
 ) {
-    fun enter(eventId: String, userId: String?): JobResponse {
-        requireNotNull(userId) { "토큰을 확인해주세요" }
-
+    fun enter(eventId: String, userId: String): JobResponse {
         val event = findEvent(eventId)
 
         if (isEnterJob(event)) {
@@ -43,8 +41,7 @@ class JobService(
         jobRedisRepository.registerAll(enterJobs)
     }
 
-    fun retrieve(eventId: String, userId: String?): JobResponse {
-        requireNotNull(userId) { "토큰을 확인해주세요" }
+    fun retrieve(eventId: String, userId: String): JobResponse {
         val job = Job(eventId, userId, JobStatus.ENTER)
         if (jobRedisRepository.isMember(job)) {
             return JobResponse(JobStatus.ENTER)
