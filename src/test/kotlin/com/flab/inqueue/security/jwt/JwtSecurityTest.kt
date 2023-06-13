@@ -43,14 +43,9 @@ class JwtSecurityTest : AcceptanceTest() {
         then().log().all()
             .statusCode(HttpStatus.OK.value())
             .assertThat()
-            .body("authenticated", Matchers.equalTo(true))
-            .body("principal.clientId", Matchers.equalTo(TEST_CLIENT_ID))
-            .body("principal.userId", Matchers.equalTo(TEST_USER_ID))
-            .body("principal.roles", Matchers.hasItem("USER"))
-            .body("jwtToken", Matchers.nullValue())
-            .body("credentials", Matchers.nullValue())
-            .body("details", Matchers.nullValue())
-            .body("authorities.authority", Matchers.hasItem("ROLE_USER"))
+            .body("clientId", Matchers.equalTo(TEST_CLIENT_ID))
+            .body("userId", Matchers.equalTo(TEST_USER_ID))
+            .body("roles", Matchers.hasItem("USER"))
     }
 
     @Test
