@@ -82,16 +82,9 @@ class HmacSignatureSecurityTest : AcceptanceTest() {
         then().log().all()
             .statusCode(HttpStatus.OK.value())
             .assertThat()
-            .body("authenticated", Matchers.equalTo(true))
             .body("clientId", Matchers.equalTo(notEncryptedUserMemberKey.clientId))
-            .body("signature", Matchers.nullValue())
-            .body("payload", Matchers.nullValue())
-            .body("credentials", Matchers.nullValue())
-            .body("details", Matchers.nullValue())
-            .body("principal.clientId", Matchers.equalTo(notEncryptedUserMemberKey.clientId))
-            .body("principal.userId", Matchers.nullValue())
-            .body("principal.roles", Matchers.hasItem("USER"))
-            .body("authorities.authority", Matchers.hasItem("ROLE_USER"))
+            .body("userId", Matchers.nullValue())
+            .body("roles", Matchers.hasItem("USER"))
     }
 
     @Test
@@ -177,16 +170,9 @@ class HmacSignatureSecurityTest : AcceptanceTest() {
         then().log().all()
             .statusCode(HttpStatus.OK.value())
             .assertThat()
-            .body("authenticated", Matchers.equalTo(true))
             .body("clientId", Matchers.equalTo(notEncryptedAdminMemberKey.clientId))
-            .body("signature", Matchers.nullValue())
-            .body("payload", Matchers.nullValue())
-            .body("credentials", Matchers.nullValue())
-            .body("details", Matchers.nullValue())
-            .body("principal.clientId", Matchers.equalTo(notEncryptedAdminMemberKey.clientId))
-            .body("principal.userId", Matchers.nullValue())
-            .body("principal.roles", Matchers.hasItems("USER", "ADMIN"))
-            .body("authorities.authority", Matchers.hasItems("ROLE_USER", "ROLE_ADMIN"))
+            .body("userId", Matchers.nullValue())
+            .body("roles", Matchers.hasItems("USER", "ADMIN"))
     }
 
     @Test
