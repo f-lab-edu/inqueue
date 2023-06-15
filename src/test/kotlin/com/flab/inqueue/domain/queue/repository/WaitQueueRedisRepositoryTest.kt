@@ -11,10 +11,12 @@ import org.springframework.boot.test.autoconfigure.data.redis.DataRedisTest
 import org.springframework.context.annotation.ComponentScan
 import org.springframework.context.annotation.Import
 import org.springframework.data.redis.core.RedisTemplate
+import org.springframework.test.context.ActiveProfiles
 import java.util.*
 
 @ComponentScan(basePackages = ["com.flab.inqueue.domain.queue.repository"])
 @Import(RedisConfigTest::class)
+@ActiveProfiles("test")
 @DataRedisTest
 class WaitQueueRedisRepositoryTest : TestContainer() {
 
