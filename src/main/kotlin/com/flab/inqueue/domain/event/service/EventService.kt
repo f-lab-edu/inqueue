@@ -66,13 +66,13 @@ class EventService(
 
     private fun toEventRetrieveResponse(event: Event): EventRetrieveResponse {
         return EventRetrieveResponse(
-            event.eventId,
-            event.period.startDateTime,
-            event.period.endDateTime,
-            event.jobQueueSize,
-            event.jobQueueLimitTime,
-            event.eventInfo,
-            event.redirectUrl
+            eventId = event.eventId,
+            waitQueueStartTime = event.period.startDateTime,
+            waitQueueEndTime = event.period.endDateTime,
+            jobQueueSize = event.jobQueueSize,
+            jobQueueLimitTime = event.jobQueueLimitTime,
+            eventInformation = event.eventInfo,
+            redirectUrl = event.redirectUrl
         )
     }
 }
