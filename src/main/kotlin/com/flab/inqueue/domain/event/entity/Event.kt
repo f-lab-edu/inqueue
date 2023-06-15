@@ -19,6 +19,7 @@ class Event(
     @Embedded var eventInfo: EventInformation? = null,
     var redirectUrl: String?,
     @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "member_id")
     val member: Member,
     @Column(nullable = false, updatable = false) val createdDateTime: LocalDateTime = LocalDateTime.now(),
 ) : BaseEntity() {
