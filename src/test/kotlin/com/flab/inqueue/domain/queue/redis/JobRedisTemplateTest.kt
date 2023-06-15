@@ -138,7 +138,7 @@ class JobRedisTemplateTest @Autowired constructor(
         }
 
         //when
-        val range = zSetOperations.removeRange(eventId, 0, 9)
+        zSetOperations.removeRange(eventId, 0, 9)
         val size = zSetOperations.size(eventId)
         //then
         assertThat(size).isEqualTo(90)
