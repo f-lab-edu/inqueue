@@ -10,9 +10,9 @@ import java.time.LocalDateTime
 
 
 data class EventRequest(
-    @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
+    @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSZ")
     @field:NotNull var startTime: LocalDateTime,
-    @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
+    @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSZ")
     @field:NotNull val endTime: LocalDateTime,
     @field:NotNull val jobQueueSize: Long,
     @field:NotNull val jobQueueLimitTime: Long,
