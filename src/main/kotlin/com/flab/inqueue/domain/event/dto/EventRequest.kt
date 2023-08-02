@@ -1,6 +1,7 @@
 package com.flab.inqueue.domain.event.dto
 
 import com.flab.inqueue.domain.event.entity.Event
+import com.flab.inqueue.domain.event.entity.EventInformation
 import com.flab.inqueue.domain.event.entity.WaitQueuePeriod
 import com.flab.inqueue.domain.member.entity.Member
 import org.jetbrains.annotations.NotNull

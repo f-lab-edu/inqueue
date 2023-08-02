@@ -1,4 +1,4 @@
-package com.flab.inqueue.domain.event.dto
+package com.flab.inqueue.domain.event.entity
 
 import jakarta.persistence.Column
 import jakarta.persistence.Embeddable

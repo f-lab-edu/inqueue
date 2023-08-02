@@ -2,7 +2,7 @@ package com.flab.inqueue.api
 
 import com.flab.inqueue.AcceptanceTest
 import com.flab.inqueue.REST_DOCS_DOCUMENT_IDENTIFIER
-import com.flab.inqueue.domain.event.dto.EventInformation
+import com.flab.inqueue.domain.event.entity.EventInformation
 import com.flab.inqueue.domain.member.dto.MemberSignUpRequest
 import com.flab.inqueue.domain.member.entity.Member
 import com.flab.inqueue.domain.member.entity.MemberKey

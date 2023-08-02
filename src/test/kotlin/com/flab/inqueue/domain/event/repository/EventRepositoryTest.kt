@@ -1,6 +1,6 @@
 package com.flab.inqueue.domain.event.repository
 
-import com.flab.inqueue.domain.event.dto.EventInformation
+import com.flab.inqueue.domain.event.entity.EventInformation
 import com.flab.inqueue.domain.event.entity.Event
 import com.flab.inqueue.domain.member.entity.Member
 import com.flab.inqueue.domain.member.entity.MemberKey

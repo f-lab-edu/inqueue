@@ -1,6 +1,6 @@
 package com.flab.inqueue.fixture
 
-import com.flab.inqueue.domain.event.dto.EventInformation
+import com.flab.inqueue.domain.event.entity.EventInformation
 import com.flab.inqueue.domain.event.dto.EventRequest
 import java.time.LocalDateTime
 

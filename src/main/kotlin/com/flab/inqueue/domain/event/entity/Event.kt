@@ -1,7 +1,6 @@
 package com.flab.inqueue.domain.event.entity
 
 import com.flab.inqueue.common.domain.BaseEntity
-import com.flab.inqueue.domain.event.dto.EventInformation
 import com.flab.inqueue.domain.member.entity.Member
 import jakarta.persistence.*
 import java.time.LocalDateTime
