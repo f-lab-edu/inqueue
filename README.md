@@ -12,7 +12,7 @@
 
 ## Issue 해결 과제
 - [Spring Security를 이용한 다양햔(Hmac, Jwt) 인증 통합](https://mark-tech-talk.tistory.com/3)
-- Redis SortedSet내 Element(Value)에 TTL 적용 효과 구현
+- Redis SortedSet내 Element(Value)에 TTL(Time to Live) 적용 효과 구현
 - Redis Pipeline을 통한 다중 Insert 성능 개선
 - TestContainer를 사용하여 실 환경과 유사한 테스트 환경 구축
 
