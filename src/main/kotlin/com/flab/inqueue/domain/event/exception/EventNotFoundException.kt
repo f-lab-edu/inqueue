@@ -1,4 +1,5 @@
 package com.flab.inqueue.domain.event.exception
 
-class EventNotFoundException(message: String) : EventException(404, message) {
-}
+import org.springframework.http.HttpStatus
+
+class EventNotFoundException(message: String) : EventException(HttpStatus.NOT_FOUND, message)

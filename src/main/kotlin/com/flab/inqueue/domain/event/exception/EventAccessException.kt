@@ -1,3 +1,6 @@
 package com.flab.inqueue.domain.event.exception
 
-class EventAccessException(message: String) : EventException(403, message)
+import org.springframework.http.HttpStatus
+
+class EventAccessException(httpStatus: HttpStatus = HttpStatus.FORBIDDEN, message: String) :
+    EventException(httpStatus, message)
