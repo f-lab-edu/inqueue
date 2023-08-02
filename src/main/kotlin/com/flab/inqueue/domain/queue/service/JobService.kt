@@ -29,8 +29,7 @@ class JobService(
         val waitJob = Job(
             eventId = eventId,
             userId = userId,
-            jobQueueSize = event.jobQueueSize,
-            queueLimitTime = event.jobQueueLimitTime
+            jobQueueSize = event.jobQueueSize
         )
         return waitQueueService.register(waitJob)
     }
@@ -52,8 +51,8 @@ class JobService(
             eventId = eventId,
             userId = userId,
             jobQueueSize = event.jobQueueSize,
-            queueLimitTime = event.jobQueueLimitTime
         )
+
         return waitQueueService.retrieve(waitJob)
     }
 
