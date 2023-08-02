@@ -12,7 +12,7 @@ import java.time.LocalDateTime
 @Entity
 class Event(
     @Column(nullable = false) val eventId: String,
-    @Embedded var period: WaitQueuePeriod,
+    @Embedded var period: EventPeriod,
     @Column(nullable = false) var jobQueueSize: Long,
     @Column(nullable = false) var jobQueueLimitTime: Long,
     @Embedded var eventInfo: EventInformation? = null,
@@ -35,7 +35,11 @@ class Event(
         this.modifiedDateTime = LocalDateTime.now()
     }
 
-    fun isAccessible(clientId : String) :Boolean {
+    fun isAccessible(clientId: String): Boolean {
         return this.member.key.clientId == clientId
+    }
+
+    fun isOpen(currentDateTime: LocalDateTime): Boolean {
+        return period.contains(currentDateTime)
     }
 }

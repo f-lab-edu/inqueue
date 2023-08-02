@@ -22,7 +22,7 @@ class EventService(
     fun retrieve(clientId: String, eventId: String): EventRetrieveResponse {
         val foundEvent = findEvent(eventId)
         if (!foundEvent.isAccessible(clientId)) {
-            throw EventAccessException("해당 이벤트에 접근할 수 없습니다.")
+            throw EventAccessException(message = "행사에 접근할 수 없습니다.")
         }
 
         return toEventRetrieveResponse(foundEvent)
@@ -43,18 +43,18 @@ class EventService(
 
     @Transactional
     fun update(clientId: String, eventId: String, request: EventRequest) {
-        var foundEvent = findEvent(eventId)
+        val foundEvent = findEvent(eventId)
         if (!foundEvent.isAccessible(clientId)) {
-            throw EventAccessException("해당 이벤트에 접근할 수 없습니다.")
+            throw EventAccessException(message = "행사에 접근할 수 없습니다.")
         }
         foundEvent.update(request.toEntity(eventId, foundEvent.member))
     }
 
     @Transactional
     fun delete(clientId: String, eventId: String) {
-        var foundEvent = findEvent(eventId)
+        val foundEvent = findEvent(eventId)
         if (!foundEvent.isAccessible(clientId)) {
-            throw EventAccessException("해당 이벤트에 접근할 수 없습니다.")
+            throw EventAccessException(message = "행사에 접근할 수 없습니다.")
         }
         eventRepository.deleteById(foundEvent.id)
     }

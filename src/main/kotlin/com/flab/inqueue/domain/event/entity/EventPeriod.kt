@@ -7,7 +7,7 @@ import java.time.LocalDateTime
 import java.time.ZoneOffset
 
 @Embeddable
-data class WaitQueuePeriod(
+data class EventPeriod(
     @Column(nullable = false) val startDateTime: LocalDateTime,
 
     @Column(nullable = false) val endDateTime: LocalDateTime,
