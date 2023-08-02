@@ -6,6 +6,7 @@ import com.flab.inqueue.security.common.CommonPrincipal
 import org.springframework.http.ResponseEntity
 import org.springframework.security.core.annotation.AuthenticationPrincipal
 import org.springframework.web.bind.annotation.*
+import java.time.LocalDateTime
 
 @RestController
 @RequestMapping("/server/v1/events/{eventId}")
@@ -19,7 +20,7 @@ class JobQueueController(
         @PathVariable userId: String,
         @AuthenticationPrincipal principal: CommonPrincipal,
     ): JobVerificationResponse {
-        return jobService.verify(eventId, principal.clientId, userId)
+        return jobService.verify(eventId, principal.clientId, userId, LocalDateTime.now())
     }
 
     @PostMapping("/job-queue-finish/{userId}")
@@ -28,7 +29,7 @@ class JobQueueController(
         @PathVariable userId: String,
         @AuthenticationPrincipal principal: CommonPrincipal,
     ): ResponseEntity<Unit> {
-        jobService.close(eventId, principal.clientId, userId)
+        jobService.close(eventId, principal.clientId, userId, LocalDateTime.now())
         return ResponseEntity.ok().build()
     }
 }

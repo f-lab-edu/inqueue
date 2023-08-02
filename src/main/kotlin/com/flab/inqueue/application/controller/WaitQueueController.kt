@@ -5,6 +5,7 @@ import com.flab.inqueue.domain.queue.service.JobService
 import com.flab.inqueue.security.common.CommonPrincipal
 import org.springframework.security.core.annotation.AuthenticationPrincipal
 import org.springframework.web.bind.annotation.*
+import java.time.LocalDateTime
 
 @RestController
 @RequestMapping("/client/v1/events")
@@ -17,7 +18,7 @@ class WaitQueueController(
         @PathVariable("eventId") eventId: String,
         @AuthenticationPrincipal principal: CommonPrincipal,
     ): JobResponse {
-        return jobService.enter(eventId, principal.userId!!)
+        return jobService.enter(eventId, principal.userId!!, LocalDateTime.now())
     }
 
     @GetMapping("/{eventId}")
@@ -25,7 +26,7 @@ class WaitQueueController(
         @PathVariable eventId: String,
         @AuthenticationPrincipal principal: CommonPrincipal,
     ): JobResponse {
-        return jobService.retrieve(eventId, principal.userId!!)
+        return jobService.retrieve(eventId, principal.userId!!, LocalDateTime.now())
     }
 }
 
