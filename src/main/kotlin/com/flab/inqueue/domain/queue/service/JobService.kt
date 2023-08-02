@@ -44,12 +44,13 @@ class JobService(
     }
 
     fun retrieve(eventId: String, userId: String, currentDateTime: LocalDateTime): JobResponse {
+        val event = findEvent(eventId, currentDateTime)
+
         val job = Job(eventId, userId, JobStatus.ENTER)
         if (jobRedisRepository.isMember(job)) {
             return JobResponse(JobStatus.ENTER)
         }
 
-        val event = findEvent(eventId, currentDateTime)
         val waitJob = Job(
             eventId = eventId,
             userId = userId,
@@ -75,7 +76,23 @@ class JobService(
         return JobVerificationResponse(isVerified)
     }
 
-    fun close(eventId: String, clientId: String, userId: String, currentDateTime: LocalDateTime) {
+    fun exitWaitQueue(eventId: String, userId: String, currentDateTime: LocalDateTime) {
+        val event = findEvent(eventId, currentDateTime)
+
+        val job = Job(
+            eventId = eventId,
+            userId = userId,
+            jobQueueSize = event.jobQueueSize,
+        )
+
+        if (!waitQueueService.isMember(job)) {
+            throw JobNotFoundException("Job[eventId=${eventId}, userId=${userId}]이 대기열에 존재하지 않습니다.")
+        }
+
+        waitQueueService.remove(job)
+    }
+
+    fun exitJobQueue(eventId: String, clientId: String, userId: String, currentDateTime: LocalDateTime) {
         val event = findEvent(eventId, currentDateTime)
         if (!event.isAccessible(clientId)) {
             throw EventAccessException(message = "행사에 접근할 수 없습니다.")

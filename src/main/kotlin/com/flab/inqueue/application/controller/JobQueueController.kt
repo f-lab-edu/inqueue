@@ -29,7 +29,7 @@ class JobQueueController(
         @PathVariable userId: String,
         @AuthenticationPrincipal principal: CommonPrincipal,
     ): ResponseEntity<Unit> {
-        jobService.close(eventId, principal.clientId, userId, LocalDateTime.now())
+        jobService.exitJobQueue(eventId, principal.clientId, userId, LocalDateTime.now())
         return ResponseEntity.ok().build()
     }
 }

@@ -21,6 +21,14 @@ class WaitQueueController(
         return jobService.enter(eventId, principal.userId!!, LocalDateTime.now())
     }
 
+    @PostMapping("/{eventId}/exit")
+    fun exitWaitQueue(
+        @PathVariable("eventId") eventId: String,
+        @AuthenticationPrincipal principal: CommonPrincipal,
+    ) {
+        jobService.exitWaitQueue(eventId, principal.userId!!, LocalDateTime.now())
+    }
+
     @GetMapping("/{eventId}")
     fun retrieveWaitQueue(
         @PathVariable eventId: String,

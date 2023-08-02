@@ -8,12 +8,14 @@ import com.flab.inqueue.domain.member.entity.Member
 import com.flab.inqueue.domain.member.entity.MemberKey
 import com.flab.inqueue.domain.queue.entity.Job
 import com.flab.inqueue.domain.queue.entity.JobStatus
+import com.flab.inqueue.domain.queue.exception.JobNotFoundException
 import com.flab.inqueue.domain.queue.repository.JobRedisRepository
 import com.flab.inqueue.fixture.createEventRequest
 import com.flab.inqueue.support.UnitTest
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
+import org.assertj.core.api.Assertions
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.assertj.core.api.AssertionsForClassTypes
@@ -188,7 +190,7 @@ class JobServiceTest {
         every { jobRedisRepository.isMember(job) } returns true
 
         // when
-        jobService.close(eventId, clientId, userId, currentDateTime)
+        jobService.exitJobQueue(eventId, clientId, userId, currentDateTime)
 
         // then
         verify { jobRedisRepository.remove(job) }
@@ -202,6 +204,43 @@ class JobServiceTest {
 
         // when & then
         val anotherClientId = "otherClientId"
-        assertThrows<EventAccessException> { jobService.close(eventId, anotherClientId, userId, currentDateTime) }
+        assertThrows<EventAccessException> {
+            jobService.exitJobQueue(
+                eventId,
+                anotherClientId,
+                userId,
+                currentDateTime
+            )
+        }
+    }
+
+    @Test
+    @DisplayName("대기열에 Job이 있으면 대기열에서 job을 퇴장 시킬수 있다.")
+    fun exit_wait_queue() {
+        // given
+        val currentDateTime = LocalDateTime.of(2023, 8, 3, 11, 0, 0)
+        val job = Job(eventId, userId, JobStatus.WAIT, event.jobQueueSize)
+        every { waitQueueService.isMember(job) } returns true
+
+        // when
+        jobService.exitWaitQueue(eventId, userId, currentDateTime)
+
+        // then
+        verify(exactly = 1) { waitQueueService.remove(job) }
+    }
+
+    @Test
+    @DisplayName("대기열에 Job이 없으면 대기열에서 job을 퇴장 시킬수 없다.")
+    fun not_exit_wait_queue_without_job() {
+        // given
+        val currentDateTime = LocalDateTime.of(2023, 8, 3, 11, 0, 0)
+        val job = Job(eventId, userId, JobStatus.WAIT, event.jobQueueSize)
+        every { waitQueueService.isMember(job) } returns false
+
+        // when & then
+        assertThatThrownBy { jobService.exitWaitQueue(eventId, userId, currentDateTime) }
+            .isInstanceOf(JobNotFoundException::class.java)
+
+        verify(exactly = 0) { waitQueueService.remove(job) }
     }
 }
