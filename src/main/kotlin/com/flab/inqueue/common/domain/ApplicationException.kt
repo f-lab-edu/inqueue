@@ -1,4 +1,4 @@
-package com.flab.inqueue.application.common
+package com.flab.inqueue.common.domain
 
 import org.springframework.http.HttpStatus
 
