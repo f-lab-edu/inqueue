@@ -55,7 +55,7 @@ class EventRepositoryTest(
             { assertThat(event!!.eventId).isEqualTo(testEventId1) },
             { assertThat(event!!.jobQueueSize).isNotNull },
             { assertThat(event!!.jobQueueLimitTime).isNotNull },
-            { assertThat(event!!.period).isNotNull }
+            { assertThat(event!!.waitQueuePeriod).isNotNull }
         )
     }
 

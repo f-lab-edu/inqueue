@@ -15,7 +15,6 @@ import com.flab.inqueue.support.UnitTest
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
-import org.assertj.core.api.Assertions
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.assertj.core.api.AssertionsForClassTypes
@@ -49,7 +48,7 @@ class JobServiceTest {
 
         val startDateTime = LocalDateTime.of(2023, 8, 3, 10, 0, 0)
         val endDateTime = LocalDateTime.of(2023, 8, 3, 12, 0, 0)
-        event = createEventRequest(startDateTime = startDateTime, endDateTime = endDateTime).toEntity(eventId, member)
+        event = createEventRequest(waitQueueStartDateTime = startDateTime, waitQueueEndDateTime = endDateTime).toEntity(eventId, member)
         every { eventRepository.findByEventId(eventId) } returns event
     }
 

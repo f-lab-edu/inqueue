@@ -11,6 +11,6 @@ interface EventRepository : JpaRepository<Event, Long> {
 
     fun findAllByMemberKeyClientId(clientId: String): List<Event>
 
-    @Query("select event from Event event where event.period.startDateTime <= :baseTime and event.period.endDateTime >= :baseTime")
+    @Query("select event from Event event where event.waitQueuePeriod.startDateTime <= :baseTime and event.waitQueuePeriod.endDateTime >= :baseTime")
     fun findOngoingEvents(baseTime: LocalDateTime): List<Event>
 }

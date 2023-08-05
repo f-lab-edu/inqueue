@@ -12,7 +12,7 @@ import java.time.LocalDateTime
 @Entity
 class Event(
     @Column(nullable = false) val eventId: String,
-    @Embedded var period: EventPeriod,
+    @Embedded var waitQueuePeriod: WaitQueuePeriod,
     @Column(nullable = false) var jobQueueSize: Long,
     @Column(nullable = false) var jobQueueLimitTime: Long,
     @Embedded var eventInfo: EventInformation? = null,
@@ -27,7 +27,7 @@ class Event(
         private set
 
     fun update(event: Event) {
-        this.period = event.period
+        this.waitQueuePeriod = event.waitQueuePeriod
         this.jobQueueSize = event.jobQueueSize
         this.jobQueueLimitTime = event.jobQueueLimitTime
         this.eventInfo = event.eventInfo
@@ -40,6 +40,6 @@ class Event(
     }
 
     fun isOpen(currentDateTime: LocalDateTime): Boolean {
-        return period.contains(currentDateTime)
+        return waitQueuePeriod.contains(currentDateTime)
     }
 }

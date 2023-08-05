@@ -5,7 +5,7 @@ import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import java.time.LocalDateTime
 
-class EventPeriodTest {
+class WaitQueuePeriodTest {
 
     @DisplayName("현재 시간이 시작 시간과 종료 시간 사이에 있다.")
     @Test
@@ -15,10 +15,10 @@ class EventPeriodTest {
 
         val startDateTime = LocalDateTime.of(2023, 8, 3, 10, 0, 0)
         val endDateTime = LocalDateTime.of(2023, 8, 3, 12, 0, 0)
-        val eventPeriod = EventPeriod(startDateTime, endDateTime)
+        val waitQueuePeriod = WaitQueuePeriod(startDateTime, endDateTime)
 
         // when
-        val result = eventPeriod.contains(currentDateTime)
+        val result = waitQueuePeriod.contains(currentDateTime)
 
         // then
         assertThat(result).isTrue
@@ -32,10 +32,10 @@ class EventPeriodTest {
 
         val startDateTime = LocalDateTime.of(2023, 8, 3, 10, 0, 0)
         val endDateTime = LocalDateTime.of(2023, 8, 3, 12, 0, 0)
-        val eventPeriod = EventPeriod(startDateTime, endDateTime)
+        val waitQueuePeriod = WaitQueuePeriod(startDateTime, endDateTime)
 
         // when
-        val result = eventPeriod.contains(currentDateTime)
+        val result = waitQueuePeriod.contains(currentDateTime)
 
         // then
         assertThat(result).isFalse
@@ -49,10 +49,10 @@ class EventPeriodTest {
 
         val startDateTime = LocalDateTime.of(2023, 8, 3, 10, 0, 0)
         val endDateTime = LocalDateTime.of(2023, 8, 3, 12, 0, 0)
-        val eventPeriod = EventPeriod(startDateTime, endDateTime)
+        val waitQueuePeriod = WaitQueuePeriod(startDateTime, endDateTime)
 
         // when
-        val result = eventPeriod.contains(currentDateTime)
+        val result = waitQueuePeriod.contains(currentDateTime)
 
         // then
         assertThat(result).isFalse

@@ -5,7 +5,7 @@ import jakarta.persistence.Embeddable
 import java.time.LocalDateTime
 
 @Embeddable
-data class EventPeriod(
+data class WaitQueuePeriod(
     @Column(nullable = false) val startDateTime: LocalDateTime,
 
     @Column(nullable = false) val endDateTime: LocalDateTime,

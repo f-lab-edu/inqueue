@@ -67,8 +67,8 @@ class EventService(
     private fun toEventRetrieveResponse(event: Event): EventRetrieveResponse {
         return EventRetrieveResponse(
             eventId = event.eventId,
-            waitQueueStartTime = event.period.startDateTime,
-            waitQueueEndTime = event.period.endDateTime,
+            waitQueueStartTime = event.waitQueuePeriod.startDateTime,
+            waitQueueEndTime = event.waitQueuePeriod.endDateTime,
             jobQueueSize = event.jobQueueSize,
             jobQueueLimitTime = event.jobQueueLimitTime,
             eventInformation = event.eventInfo,
